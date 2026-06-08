@@ -45,6 +45,7 @@ export function UpdatesCard() {
         mode: "remote",
         installedVersion: null,
         installedAt: null,
+        workspaceCreatedAt: null,
         latestVersion: null,
         latestPublishedAt: null,
         changelog: null,
