@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { requireRole } from "@/lib/auth/require-auth";
+import { requireAuth } from "@/lib/auth/require-auth";
 import { fetchUrlAsText } from "@/lib/sources/fetch";
 import { fireAndForgetDistill } from "@/lib/sources/distill";
 import { appendEvolutionForSource } from "@/lib/projects/evolution";
@@ -17,12 +17,16 @@ import { appendEvolutionForSource } from "@/lib/projects/evolution";
  *       stores text content, kicks off evolution append.
  */
 
+// Owner-scoped: a project's knowledge sources are managed by the project's
+// owner. Admins are read-only on members' projects (no source writes), so
+// authorization here is ownership, not role.
 async function getProjectIfOwned(
   firmId: string,
   id: string,
+  ownerUserId: string,
 ): Promise<{ id: string } | null> {
   return prisma.project.findFirst({
-    where: { id, firmId, status: "ACTIVE" },
+    where: { id, firmId, ownerUserId, status: "ACTIVE" },
     select: { id: true },
   });
 }
@@ -31,9 +35,9 @@ export async function GET(
   _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await requireRole("VC_ADMIN", "PRINCIPE_ADMIN");
+  const session = await requireAuth();
   const { id } = await params;
-  const project = await getProjectIfOwned(session.firmId, id);
+  const project = await getProjectIfOwned(session.firmId, id, session.userId);
   if (!project) {
     return NextResponse.json({ error: "Project not found." }, { status: 404 });
   }
@@ -67,9 +71,9 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await requireRole("VC_ADMIN", "PRINCIPE_ADMIN");
+  const session = await requireAuth();
   const { id } = await params;
-  const project = await getProjectIfOwned(session.firmId, id);
+  const project = await getProjectIfOwned(session.firmId, id, session.userId);
   if (!project) {
     return NextResponse.json({ error: "Project not found." }, { status: 404 });
   }

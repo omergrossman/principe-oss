@@ -2,7 +2,7 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { requireRole } from "@/lib/auth/require-auth";
+import { requireAuth } from "@/lib/auth/require-auth";
 import { appendEvolutionForSource } from "@/lib/projects/evolution";
 import { fireAndForgetDistill } from "@/lib/sources/distill";
 
@@ -20,11 +20,17 @@ export async function POST(
   req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
-  const session = await requireRole("VC_ADMIN", "PRINCIPE_ADMIN");
+  const session = await requireAuth();
   const { id } = await params;
 
   const project = await prisma.project.findFirst({
-    where: { id, firmId: session.firmId, status: "ACTIVE" },
+    // Owner-scoped: only the project owner uploads its sources.
+    where: {
+      id,
+      firmId: session.firmId,
+      ownerUserId: session.userId,
+      status: "ACTIVE",
+    },
     select: { id: true },
   });
   if (!project) {

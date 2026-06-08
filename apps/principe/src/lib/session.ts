@@ -1,9 +1,31 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
 import { encodeSession, decodeSession } from "@dp/rbac";
 
 const SESSION_COOKIE = "principe_session";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8h sliding (per ADR + spec)
+
+/**
+ * Key used to HMAC-sign the session cookie so a client can't forge or tamper
+ * with it (role escalation / tenant switch). Derived from the already-required
+ * PRINCIPE_ENCRYPTION_KEY, domain-separated from its AES-256-GCM use for
+ * secrets-at-rest so the two never share key material. Memoised.
+ */
+let _sessionSigningKey: Buffer | null = null;
+function sessionSigningKey(): Buffer {
+  if (_sessionSigningKey) return _sessionSigningKey;
+  const master = process.env.PRINCIPE_ENCRYPTION_KEY;
+  if (!master) {
+    throw new Error(
+      "PRINCIPE_ENCRYPTION_KEY is required (used to sign session cookies).",
+    );
+  }
+  _sessionSigningKey = createHash("sha256")
+    .update(`principe-session-signing:v1:${master}`)
+    .digest();
+  return _sessionSigningKey;
+}
 
 /**
  * Principe session payload.
@@ -49,6 +71,7 @@ export async function getSession(): Promise<Session | null> {
   return decodeSession<Session>(raw, {
     validate: isSession,
     maxAgeSec: SESSION_MAX_AGE,
+    secret: sessionSigningKey(),
   });
 }
 
@@ -57,7 +80,7 @@ export async function createSession(
 ): Promise<void> {
   const store = await cookies();
   const session: Session = { ...payload, createdAt: Date.now() };
-  store.set(SESSION_COOKIE, encodeSession(session), {
+  store.set(SESSION_COOKIE, encodeSession(session, sessionSigningKey()), {
     httpOnly: true,
     sameSite: "lax",
     // Secure cookies require HTTPS. The OSS distribution often runs on

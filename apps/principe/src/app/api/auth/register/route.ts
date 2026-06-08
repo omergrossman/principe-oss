@@ -27,7 +27,7 @@ import { prisma } from "@/lib/db/prisma";
 
 const RP_NAME = process.env.WEBAUTHN_RP_NAME ?? "Príncipe";
 const RP_ID = process.env.WEBAUTHN_RP_ID ?? "localhost";
-const ORIGIN = process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3001";
+const ORIGIN = process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3000";
 
 export async function GET() {
   const session = await getSession();
