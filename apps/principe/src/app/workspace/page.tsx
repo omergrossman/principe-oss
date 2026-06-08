@@ -44,6 +44,8 @@ export default async function WorkspacePage() {
     : null;
 
   const keyConnected = Boolean(firm?.anthropicKeyLast4);
+  const isAdmin =
+    session.role === "VC_ADMIN" || session.role === "PRINCIPE_ADMIN";
 
   const jar = await cookies();
   const cookieProjectId = jar.get(PROJECT_COOKIE)?.value ?? null;
@@ -108,7 +110,7 @@ export default async function WorkspacePage() {
           )}
         </header>
 
-        {!keyConnected && <KeyMissingBanner />}
+        {!keyConnected && <KeyMissingBanner isAdmin={isAdmin} />}
 
         {/* Key by project id so switching projects fully remounts the
             ask form — clears stale history (and the "View all N responses"
@@ -135,19 +137,22 @@ export default async function WorkspacePage() {
   );
 }
 
-function KeyMissingBanner() {
+function KeyMissingBanner({ isAdmin }: { isAdmin: boolean }) {
   return (
     <div className="mb-6 p-4 rounded-md bg-flare-100 border border-flare-600/30">
       <p className="text-[14px] text-ink-900 font-semibold mb-1">
         Anthropic key required
       </p>
       <p className="text-[13px] text-ink-700 mb-3 leading-relaxed">
-        The panel uses your Anthropic API key (BYO). Add it once in Settings —
-        it&apos;s stored encrypted at rest.
+        {isAdmin
+          ? "The panel uses your Anthropic API key (BYO). Add it once in Settings — it's stored encrypted at rest."
+          : "The panel needs an Anthropic API key for this workspace. Ask your workspace admin to add one — then you can run asks."}
       </p>
-      <Button href="/settings" variant="primary" size="md">
-        Open settings →
-      </Button>
+      {isAdmin && (
+        <Button href="/settings" variant="primary" size="md">
+          Open settings →
+        </Button>
+      )}
     </div>
   );
 }
