@@ -6,9 +6,15 @@ import { initialsFor } from "@/lib/user/display";
 interface TopBarProps {
   /** Resolved display name (never an email). */
   displayName: string;
+  /**
+   * Whether the signed-in user can reach /settings (VC_ADMIN or
+   * PRINCIPE_ADMIN). Members are redirected away by the page guard, so we
+   * hide the link rather than show a control that silently bounces them.
+   */
+  isAdmin?: boolean;
 }
 
-export function TopBar({ displayName }: TopBarProps) {
+export function TopBar({ displayName, isAdmin = false }: TopBarProps) {
   const initials = initialsFor(displayName);
   return (
     <div className="sticky top-0 z-10 bg-canvas/90 backdrop-blur-sm border-b border-ink-100">
@@ -34,9 +40,11 @@ export function TopBar({ displayName }: TopBarProps) {
           <Button href="/projects" variant="text" size="sm">
             Projects
           </Button>
-          <Button href="/settings" variant="text" size="sm">
-            Settings
-          </Button>
+          {isAdmin && (
+            <Button href="/settings" variant="text" size="sm">
+              Settings
+            </Button>
+          )}
           <Button href="/about" variant="text" size="sm">
             About
           </Button>
