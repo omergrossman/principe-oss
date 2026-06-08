@@ -105,13 +105,15 @@ export function workspaceSubtitle(summary: CompositionSummary): string {
 
 /**
  * Runtime estimate for a panel of N personas. Whole-minute granularity.
- * Recalibrated after the run-pipeline acceleration: the default 100-persona
- * panel now lands ~2-3 min (was ~3-5). Linear fit: ~0.9-0.95s/persona +
- * ~35s synthesis/validation overhead. Anchors: 30→~1-2, 100→~2-3, 200→~3-4.
+ * Recalibrated to observed throughput on an Anthropic Tier-2 key: the default
+ * 100-persona panel now lands ~1 min, so the estimate reads ~1-2 min. Linear
+ * fit: ~0.45-0.6s/persona + ~15-25s synthesis/validation overhead. Anchors:
+ * 30→~1-2, 100→~1-2, 200→~1-3. (Slower API tiers run longer; the high bound
+ * gives headroom.)
  */
 export function estimateRuntime(panelSize: number): string {
   const n = Math.max(1, Math.round(panelSize));
-  const lowMin = Math.max(1, Math.floor((n * 0.9 + 35) / 60));
-  const highMin = Math.max(lowMin + 1, Math.ceil((n * 0.95 + 35) / 60));
+  const lowMin = Math.max(1, Math.floor((n * 0.45 + 15) / 60));
+  const highMin = Math.max(lowMin + 1, Math.ceil((n * 0.6 + 25) / 60));
   return `~${lowMin}-${highMin} minutes`;
 }
