@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { AppTopBar } from "@/components/app/AppTopBar";
 import { AnthropicKeyForm } from "./AnthropicKeyForm";
+import { UpdatesCard } from "./UpdatesCard";
 
 export const dynamic = "force-dynamic";
 
@@ -81,6 +82,8 @@ export default async function SettingsPage() {
             last4={firm?.anthropicKeyLast4 ?? null}
           />
         </Card>
+
+        <UpdatesCard />
 
         <MonthlyCostCard firmId={session.firmId} />
       </main>

@@ -532,6 +532,9 @@ enum KnowledgeSourceKind {
   // Phase 5+ baseline-KB pushdown — plain text snippet shipped by DP
   // master's /admin/baseline. No URL, no file, content stored inline.
   TEXT
+  // Sprint 9 — entry that arrived via a signed update bundle. The
+  // bundle path is recorded as the title; sha256 lives in contentHash.
+  BUNDLE
 }
 
 // Sprint 5 extension — license posture drives how source text is
@@ -836,3 +839,20 @@ model ProjectAsk {
 
   @@index([projectId, createdAt])
 }
+
+model BundleInstall {
+  id           String   @id @default(cuid())
+  // Bundle manifest version string (e.g. "2026-W23" or ISO date).
+  version      String   @unique
+  // SHA-256 of the full bundle tarball, hex-encoded. Audit trail.
+  sha256       String
+  // Where the bundle came from (URL or 'local').
+  source       String
+  // What this install changed: counts of new/updated/skipped entries
+  // per type. JSON shape: { knowledge: { new: 3, updated: 1, skipped: 12 } }
+  diffSummary  Json     @db.Json
+  installedAt  DateTime @default(now())
+
+  @@index([installedAt])
+}
+
