@@ -10,7 +10,6 @@ import {
   kickoffRefreshAll,
   getRefreshStatus,
 } from "@/lib/sources/bulk-fetch";
-import { ensureInstanceBootstrap } from "@/lib/bootstrap/instance";
 
 /**
  * Launch-page bootstrap. Idempotent.
@@ -48,14 +47,9 @@ export interface LaunchInitResult {
 }
 
 export async function POST(): Promise<NextResponse<LaunchInitResult>> {
-  // Run the per-instance tenant + first-admin bootstrap before anything
-  // else. Idempotent + cached after the first call. In the OSS
-  // distribution this is a no-op stub — first-run setup happens via
-  // the /setup wizard.
-  await ensureInstanceBootstrap();
-
   // OSS first-run gate: if the database has zero users, route the
-  // visitor to /setup instead of /login.
+  // visitor to /setup instead of /login. (First-run setup happens via
+  // the /setup wizard; there is no env-driven bootstrap in OSS.)
   const userCount = await prisma.user.count();
   const setupComplete = userCount > 0;
 
