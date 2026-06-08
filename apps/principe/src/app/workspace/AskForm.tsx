@@ -146,7 +146,9 @@ export function AskForm({ disabled }: { disabled: boolean }) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (question.trim().length < 8) return;
+    // Only block a truly empty question — the button activates on the first
+    // character, so don't reject short-but-real ones here.
+    if (question.trim().length === 0) return;
     void runQuestion(question.trim());
   }
 
@@ -316,7 +318,7 @@ function QuestionForm({
             type="submit"
             variant="primary"
             size="md"
-            disabled={disabled || submitting || question.trim().length < 8}
+            disabled={disabled || submitting || question.trim().length === 0}
           >
             {submitting ? "Asking 100 CISOs…" : editing ? "Re-ask" : "Ask the panel"}
           </Button>
