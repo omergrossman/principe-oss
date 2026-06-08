@@ -24,7 +24,7 @@ export function LaunchSplash() {
   const [step, setStep] = useState<Step>({ kind: "creating", current: 0 });
   const [fading, setFading] = useState(false);
   const initResultRef = useRef<{
-    destination: "/projects" | "/login";
+    destination: "/projects" | "/login" | "/setup";
     anthropic: "ok" | "skipped" | "error";
     anthropicError?: string;
   } | null>(null);

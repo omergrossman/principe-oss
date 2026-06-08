@@ -48,7 +48,7 @@ services:
       DATABASE_URL: postgresql://principe:${POSTGRES_PASSWORD:-principe}@db:5432/principe
       STATISTICIAN_SERVICE_URL: http://statistician:8000
       STATISTICIAN_SHARED_SECRET: ${STATISTICIAN_SHARED_SECRET:?}
-      WIZARD_SECRET: ${WIZARD_SECRET:?WIZARD_SECRET must be set — see bin/start.sh}
+      PRINCIPE_ENCRYPTION_KEY: ${PRINCIPE_ENCRYPTION_KEY:?PRINCIPE_ENCRYPTION_KEY must be set — see bin/start.sh}
       WEBAUTHN_ORIGIN: ${WEBAUTHN_ORIGIN:-http://localhost:3000}
     depends_on:
       db:

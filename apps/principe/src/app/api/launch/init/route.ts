@@ -43,14 +43,20 @@ export interface LaunchInitResult {
     latencyMs?: number;
   };
   authed: boolean;
-  destination: "/projects" | "/login";
+  destination: "/projects" | "/login" | "/setup";
 }
 
 export async function POST(): Promise<NextResponse<LaunchInitResult>> {
   // Run the per-instance tenant + first-admin bootstrap before anything
-  // else. Idempotent + cached after the first call. Safe no-op when the
-  // DP-provided env vars aren't set (legacy single-user flow continues).
+  // else. Idempotent + cached after the first call. In the OSS
+  // distribution this is a no-op stub — first-run setup happens via
+  // the /setup wizard.
   await ensureInstanceBootstrap();
+
+  // OSS first-run gate: if the database has zero users, route the
+  // visitor to /setup instead of /login.
+  const userCount = await prisma.user.count();
+  const setupComplete = userCount > 0;
 
   const session = await getSession();
   const seed = await ensureAgenticPanel();
@@ -60,7 +66,7 @@ export async function POST(): Promise<NextResponse<LaunchInitResult>> {
     sources: { seeded: false, refreshing: false, pending: 0 },
     anthropic: { state: "skipped-no-auth" },
     authed: Boolean(session),
-    destination: session ? "/projects" : "/login",
+    destination: !setupComplete ? "/setup" : session ? "/projects" : "/login",
   };
 
   if (!session?.firmId) {

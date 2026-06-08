@@ -18,13 +18,13 @@ if [[ ! -f "$ENV_FILE" ]]; then
   # 32-byte random hex strings. openssl is in coreutils on every platform
   # docker supports; if you're missing it, install openssl first.
   STATISTICIAN_SHARED_SECRET=$(openssl rand -hex 32)
-  WIZARD_SECRET=$(openssl rand -hex 32)
+  PRINCIPE_ENCRYPTION_KEY=$(openssl rand -hex 32)
 
   cat > "$ENV_FILE" <<EOF
 # Principe runtime secrets — generated $(date -u +%Y-%m-%dT%H:%M:%SZ).
 # Do NOT commit this file. Rotate by deleting it and re-running bin/start.sh.
 STATISTICIAN_SHARED_SECRET=${STATISTICIAN_SHARED_SECRET}
-WIZARD_SECRET=${WIZARD_SECRET}
+PRINCIPE_ENCRYPTION_KEY=${PRINCIPE_ENCRYPTION_KEY}
 POSTGRES_PASSWORD=principe
 WEB_PORT=3000
 WEBAUTHN_ORIGIN=http://localhost:3000
