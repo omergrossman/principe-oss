@@ -149,11 +149,11 @@ const INDUSTRIES = [
 ];
 
 const SIZES = [
-  { label: "150-400 (Series B)", budgetFactor: 0.6 },
-  { label: "400-1k (Series C)", budgetFactor: 1.0 },
-  { label: "1k-5k (Series D+/pre-IPO)", budgetFactor: 2.5 },
-  { label: "5k-20k (mid-market)", budgetFactor: 6.0 },
-  { label: "20k+ (enterprise)", budgetFactor: 18.0 },
+  { label: "150-400", budgetFactor: 0.6 },
+  { label: "400-1k", budgetFactor: 1.0 },
+  { label: "1k-5k", budgetFactor: 2.5 },
+  { label: "5k-20k", budgetFactor: 6.0 },
+  { label: "20k+", budgetFactor: 18.0 },
 ];
 
 const TENURES = [
