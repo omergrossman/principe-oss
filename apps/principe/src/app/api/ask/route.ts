@@ -44,9 +44,9 @@ export async function POST(req: Request) {
   const question =
     typeof body.question === "string" ? body.question.trim() : "";
 
-  if (question.length < 8) {
+  if (question.length === 0) {
     return NextResponse.json(
-      { error: "Question must be at least 8 characters." },
+      { error: "Please enter a question." },
       { status: 400 },
     );
   }
