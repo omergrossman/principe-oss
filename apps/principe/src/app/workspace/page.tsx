@@ -89,7 +89,7 @@ export default async function WorkspacePage() {
               Responses in {estimateRuntime(currentProject?.panelSize ?? 100)}.
             </p>
             <p className="text-[12px] text-ink-300 mt-2 font-mono">
-              Signed in as {user?.email}
+              Signed in as {user?.name ?? user?.email}
               {firm?.name ? ` · ${firm.name}` : ""}
               {currentProjectMeta ? ` · ${currentProjectMeta.name}` : ""}
             </p>
