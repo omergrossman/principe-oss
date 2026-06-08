@@ -48,8 +48,6 @@ export function MembersAdminClient({
   const [lastCreatedLink, setLastCreatedLink] = useState<{
     email: string;
     link: string;
-    delivered: boolean;
-    deliveryNote: string;
   } | null>(null);
 
   async function createInvite() {
@@ -70,17 +68,9 @@ export function MembersAdminClient({
         setError(data.error ?? "Could not create invite.");
         return;
       }
-      const deliveryNote =
-        data.delivery?.delivered === true
-          ? `Email sent via ${data.delivery.provider}.`
-          : data.delivery?.provider === "console"
-            ? "Email provider not configured — share the link manually."
-            : `Email delivery failed (${data.delivery?.error ?? "unknown"}). Share the link manually.`;
       setLastCreatedLink({
         email: data.invite.email,
         link: data.link,
-        delivered: data.delivery?.delivered === true,
-        deliveryNote,
       });
       setInviteEmail("");
       setInviteRole("MEMBER");
@@ -124,9 +114,9 @@ export function MembersAdminClient({
           Invite a teammate
         </h2>
         <p className="text-[13px] text-ink-500 mb-3">
-          They&apos;ll get an email with an accept link, valid for 7 days.
-          You&apos;ll also see the link below so you can share it
-          manually if needed.
+          Generate an invite link for their email, valid for 7 days. Send
+          it to them however you like — the link appears below to copy once
+          it&apos;s created.
         </p>
         <div className="flex flex-col sm:flex-row gap-2">
           <input
@@ -154,7 +144,7 @@ export function MembersAdminClient({
             onClick={createInvite}
             disabled={busy || !inviteEmail.trim() || adminCapExhausted}
           >
-            Send invite
+            Create invite link
           </Button>
         </div>
         <p className="text-[12px] text-ink-300 mt-2">
@@ -179,8 +169,8 @@ export function MembersAdminClient({
           <div className="mt-3 p-3 rounded-md bg-verdict-pass/10 border border-verdict-pass/30">
             <p className="text-[13px] text-ink-700 mb-2">
               Invite created for{" "}
-              <strong>{lastCreatedLink.email}</strong>.{" "}
-              {lastCreatedLink.deliveryNote}
+              <strong>{lastCreatedLink.email}</strong>. Share this link with
+              them:
             </p>
             <CopyableLink link={lastCreatedLink.link} />
           </div>
