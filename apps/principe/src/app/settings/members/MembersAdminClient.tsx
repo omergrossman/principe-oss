@@ -35,10 +35,12 @@ export function MembersAdminClient({
   members,
   invites,
   adminQuota,
+  keyConnected,
 }: {
   members: Member[];
   invites: Invite[];
   adminQuota: AdminQuota;
+  keyConnected: boolean;
 }) {
   const router = useRouter();
   const [inviteEmail, setInviteEmail] = useState("");
@@ -118,6 +120,19 @@ export function MembersAdminClient({
           it to them however you like — the link appears below to copy once
           it&apos;s created.
         </p>
+        {!keyConnected && (
+          <p className="text-[13px] text-ink-700 bg-flare-100 border border-flare-600/30 px-3 py-2 rounded-md mb-3">
+            This workspace has no Anthropic key yet. People you invite can
+            sign in, but won&apos;t be able to run asks until you add one in{" "}
+            <a
+              href="/settings"
+              className="underline underline-offset-4 hover:text-ink-900"
+            >
+              Settings
+            </a>
+            .
+          </p>
+        )}
         <div className="flex flex-col sm:flex-row gap-2">
           <input
             type="email"
