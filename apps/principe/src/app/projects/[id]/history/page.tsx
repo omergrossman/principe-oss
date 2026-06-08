@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui/Pill";
 import { Button } from "@/components/ui/Button";
 import { prisma } from "@/lib/db/prisma";
 import { getProject } from "@/lib/projects/repo";
+import { projectDisplayName } from "@/lib/projects/describe";
 
 export const dynamic = "force-dynamic";
 
@@ -41,6 +42,11 @@ export default async function ProjectHistoryPage({
       </main>
     );
   }
+
+  // Viewing someone else's project (admin oversight) is strictly read-only:
+  // no "open the project" / "ask" affordances, since you can only see it.
+  const readOnly = project.ownerUserId !== session.userId;
+  const displayName = projectDisplayName(project);
 
   const asks = await prisma.projectAsk.findMany({
     where: { projectId: id },
@@ -78,12 +84,16 @@ export default async function ProjectHistoryPage({
             projects
           </Link>
           <span>›</span>
-          <Link
-            href={`/projects/${id}/select`}
-            className="text-ink-700 hover:text-flare-600 transition-colors"
-          >
-            {project.name}
-          </Link>
+          {readOnly ? (
+            <span className="text-ink-700">{displayName}</span>
+          ) : (
+            <Link
+              href={`/projects/${id}/select`}
+              className="text-ink-700 hover:text-flare-600 transition-colors"
+            >
+              {displayName}
+            </Link>
+          )}
           <span>›</span>
           <span className="text-ink-700">history</span>
         </nav>
@@ -96,18 +106,24 @@ export default async function ProjectHistoryPage({
               )}
               {project.isDefault && <Pill tone="default">default</Pill>}
             </div>
-            <Link
-              href={`/projects/${id}/select`}
-              className="group inline-flex items-baseline gap-2 hover:text-flare-600 transition-colors"
-              title={`Open ${project.name} — ask the panel`}
-            >
-              <h1 className="text-[36px] font-bold text-ink-900 tracking-tight group-hover:text-flare-600 transition-colors">
-                {project.name}
+            {readOnly ? (
+              <h1 className="text-[36px] font-bold text-ink-900 tracking-tight">
+                {displayName}
               </h1>
-              <span className="text-[20px] text-ink-300 group-hover:text-flare-600 transition-colors" aria-hidden>
-                ↩
-              </span>
-            </Link>
+            ) : (
+              <Link
+                href={`/projects/${id}/select`}
+                className="group inline-flex items-baseline gap-2 hover:text-flare-600 transition-colors"
+                title={`Open ${displayName} — ask the panel`}
+              >
+                <h1 className="text-[36px] font-bold text-ink-900 tracking-tight group-hover:text-flare-600 transition-colors">
+                  {displayName}
+                </h1>
+                <span className="text-[20px] text-ink-300 group-hover:text-flare-600 transition-colors" aria-hidden>
+                  ↩
+                </span>
+              </Link>
+            )}
             <p className="text-ink-500 mt-2 max-w-2xl">
               {asks.length > 0
                 ? "Past asks in this project. Click any row to re-open the full dashboard from saved data."
@@ -118,9 +134,13 @@ export default async function ProjectHistoryPage({
               {project.agentsCount} agents materialised
             </p>
           </div>
-          <Button href="/workspace" variant="primary" size="md">
-            Ask a new question
-          </Button>
+          {readOnly ? (
+            <Pill tone="default">read-only</Pill>
+          ) : (
+            <Button href="/workspace" variant="primary" size="md">
+              Ask a new question
+            </Button>
+          )}
         </header>
 
         {asks.length === 0 ? (
