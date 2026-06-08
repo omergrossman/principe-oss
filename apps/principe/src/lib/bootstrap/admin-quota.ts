@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { prisma } from "@/lib/db/prisma";
-import { MAX_ADMINS_PER_FIRM } from "./instance";
+
+/** Hard cap: at most this many tenant admins per firm. */
+export const MAX_ADMINS_PER_FIRM = 3;
 
 /**
  * Hard cap: at most MAX_ADMINS_PER_FIRM tenant admins per firm. Counts
