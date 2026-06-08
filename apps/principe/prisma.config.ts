@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Load .env.local first (Next.js convention), then .env as fallback.
 import { config as loadEnv } from "dotenv";
 loadEnv({ path: ".env.local" });

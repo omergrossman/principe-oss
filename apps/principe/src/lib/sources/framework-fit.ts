@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Sprint 4 — industry-typical framework map. Used by the briefing builder
 // to award +3 score when a source's `applicableFrameworks` overlaps with
 // the persona's industry's typical framework set.

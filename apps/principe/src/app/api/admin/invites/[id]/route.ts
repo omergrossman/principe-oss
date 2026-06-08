@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-auth";
 import { revokeInvite } from "@/lib/invites/repo";

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { DPThemeProvider } from "@dp/theme";

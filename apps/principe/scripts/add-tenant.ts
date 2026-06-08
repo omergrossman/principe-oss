@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Add a new tenant (org + first admin) to the local Principe instance.
  *

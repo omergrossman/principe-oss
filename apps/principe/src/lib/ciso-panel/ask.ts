@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type Anthropic from "@anthropic-ai/sdk";
 import type { AgenticPersona } from "@/lib/personas/generate100";
 import {

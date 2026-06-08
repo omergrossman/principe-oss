@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { prisma } from "@/lib/db/prisma";
 import type { WorkspaceRole } from "@prisma/client";
 import { assertAdminSlotAvailable } from "@/lib/bootstrap/admin-quota";

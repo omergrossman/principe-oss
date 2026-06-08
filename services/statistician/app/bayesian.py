@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 from __future__ import annotations
 
 # Sprint 3 — hierarchical Bayesian verdict via PyMC. Replaces the stub

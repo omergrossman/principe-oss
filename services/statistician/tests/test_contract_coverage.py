@@ -1,3 +1,4 @@
+# SPDX-License-Identifier: AGPL-3.0-or-later
 """Sprint 7 T5 — contract-coverage assertions.
 
 For each documented input field on VerdictRequest, run two requests that

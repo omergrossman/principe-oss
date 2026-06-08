@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextRequest, NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { generateAuthOptions, verifyAuthResponse } from "@dp/rbac";

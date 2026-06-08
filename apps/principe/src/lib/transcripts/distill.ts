@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Sprint 5 — transcript distillation. One LLM call per transcript that
 // extracts a fan of typed insights with routing tags. Distinct from
 // `lib/sources/distill.ts` (which distills a single KnowledgeSource

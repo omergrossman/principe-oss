@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { prisma } from "@/lib/db/prisma";
 import type { AgenticPersona } from "@/lib/personas/generate100";
 

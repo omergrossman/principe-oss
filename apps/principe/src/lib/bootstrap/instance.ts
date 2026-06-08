@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // First-run bootstrap stub.
 //
 // In the SaaS donor repo this module read INSTANCE_TENANT_NAME +

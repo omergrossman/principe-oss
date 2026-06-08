@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { AuthenticatorTransportFuture } from "@dp/rbac";
 import { prisma } from "@/lib/db/prisma";
 

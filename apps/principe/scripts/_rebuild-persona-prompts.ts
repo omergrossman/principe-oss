@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * One-off: rebuild every ProjectAgent.baseMarkdown using the current
  * buildSystemPrompt() in generate100.ts.

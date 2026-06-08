@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type Anthropic from "@anthropic-ai/sdk";
 import type { PanelResponse, PanelAggregates } from "./ask";
 import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";

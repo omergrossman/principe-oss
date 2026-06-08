@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Sprint 5 — auto-population of persona depth fields from transcripts.
 //
 // When a transcript distills successfully, every ProjectAgent matching

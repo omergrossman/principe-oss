@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { requireAuth } from "@/lib/auth/require-auth";
 import { AppTopBar } from "@/components/app/AppTopBar";
 

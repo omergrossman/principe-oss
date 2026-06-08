@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { cookies } from "next/headers";
 import { encodeSession, decodeSession } from "@dp/rbac";
 
