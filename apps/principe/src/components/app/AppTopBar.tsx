@@ -17,5 +17,7 @@ export async function AppTopBar() {
     return <TopBar displayName="Signed out" />;
   }
   const display = await resolveUserDisplay(session);
-  return <TopBar displayName={display.displayName} />;
+  const isAdmin =
+    session.role === "VC_ADMIN" || session.role === "PRINCIPE_ADMIN";
+  return <TopBar displayName={display.displayName} isAdmin={isAdmin} />;
 }
