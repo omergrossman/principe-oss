@@ -59,12 +59,13 @@ services:
       STATISTICIAN_SHARED_SECRET: ${STATISTICIAN_SHARED_SECRET:?}
       PRINCIPE_ENCRYPTION_KEY: ${PRINCIPE_ENCRYPTION_KEY:?PRINCIPE_ENCRYPTION_KEY must be set — see bin/start.sh}
       WEBAUTHN_ORIGIN: ${WEBAUTHN_ORIGIN:-http://localhost:3000}
-      # Pre-configured updates endpoint. When the publisher infra at
-      # updates.principe.cloud is live, every fresh install will start
-      # in remote mode (signed pull updates) automatically. Override by
-      # setting PRINCIPE_UPDATES_URL in .env.runtime (or to the literal
-      # string "disabled" to hide the updates UI entirely).
-      PRINCIPE_UPDATES_URL: ${PRINCIPE_UPDATES_URL:-https://updates.principe.cloud}
+      # Updates mode. Default is LOCAL — empty string means no remote check,
+      # nothing pings home (matches the README's privacy promise). Opt in to
+      # signed pull-updates by setting PRINCIPE_UPDATES_URL in .env.runtime
+      # to a publisher endpoint, or to the literal "disabled" to hide the
+      # updates UI entirely. (Do not point this at a live endpoint until a
+      # real signing public key ships — the default key is a placeholder.)
+      PRINCIPE_UPDATES_URL: ${PRINCIPE_UPDATES_URL:-}
     depends_on:
       db:
         condition: service_healthy

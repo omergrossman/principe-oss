@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db/prisma";
-import { requireRole } from "@/lib/auth/require-auth";
+import { requireAuth } from "@/lib/auth/require-auth";
 import { fetchUrlAsText } from "@/lib/sources/fetch";
 import { kickoffPendingFetches } from "@/lib/sources/bulk-fetch";
 import { fireAndForgetDistill } from "@/lib/sources/distill";
@@ -29,7 +29,7 @@ export async function PATCH(
   req: Request,
   { params }: { params: Promise<{ id: string; sourceId: string }> },
 ) {
-  const session = await requireRole("VC_ADMIN", "PRINCIPE_ADMIN");
+  const session = await requireAuth();
   const { id, sourceId } = await params;
   const body = await req.json().catch(() => ({}));
 
@@ -38,6 +38,8 @@ export async function PATCH(
       id: sourceId,
       firmId: session.firmId,
       projectId: id,
+      // Owner-scoped: only the project owner edits/deletes its sources.
+      project: { ownerUserId: session.userId },
     },
     select: { id: true, url: true, kind: true, isCurated: true },
   });
@@ -166,13 +168,15 @@ export async function DELETE(
   _req: Request,
   { params }: { params: Promise<{ id: string; sourceId: string }> },
 ) {
-  const session = await requireRole("VC_ADMIN", "PRINCIPE_ADMIN");
+  const session = await requireAuth();
   const { id, sourceId } = await params;
   const existing = await prisma.knowledgeSource.findFirst({
     where: {
       id: sourceId,
       firmId: session.firmId,
       projectId: id,
+      // Owner-scoped: only the project owner edits/deletes its sources.
+      project: { ownerUserId: session.userId },
     },
     select: { id: true, isCurated: true },
   });

@@ -23,7 +23,15 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "projectId required" }, { status: 400 });
   }
   const project = await prisma.project.findFirst({
-    where: { id: projectId, firmId: session.firmId, status: "ACTIVE" },
+    // Owner-scoped: you can only make your OWN project active (the active
+    // project is the ask/run context). Admins are read-only on members'
+    // projects and view them via the projects list, not by switching into them.
+    where: {
+      id: projectId,
+      firmId: session.firmId,
+      ownerUserId: session.userId,
+      status: "ACTIVE",
+    },
     select: { id: true, name: true },
   });
   if (!project) {

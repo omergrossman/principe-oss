@@ -8,20 +8,29 @@
  * `next/headers` or any framework primitives — that keeps it usable from
  * route handlers, middleware, scripts, and tests alike.
  *
- * Wire format (v0): base64(JSON.stringify(payload)). Plain (un-signed) for
- * now — Fable historically used the same shape and we keep wire compatibility
- * so existing cookies survive the extraction. A signed variant can be added
- * later behind a different helper without breaking this one.
+ * Wire format (v1): `<payload>.<sig>` where `payload` is
+ * base64url(JSON.stringify(payload)) and `sig` is a base64url
+ * HMAC-SHA256 of `payload` keyed by a caller-supplied server secret.
+ * decodeSession verifies the HMAC (timing-safe) BEFORE parsing, so a
+ * client cannot forge or tamper with their session (e.g. escalate role or
+ * switch tenant) — the cookie being `httpOnly` only stops theft, not
+ * fabrication, which is why the signature is mandatory.
  *
  * The payload is a generic — consumers describe their own session shape
- * (e.g. `{ userId, currentOrgId, createdAt }` for Fable) and pass it in.
- * The only field this module looks at is `createdAt`, which it uses for the
- * max-age check.
+ * and pass it in. The only field this module looks at is `createdAt`,
+ * which it uses for the max-age check.
  */
+
+import { createHmac, timingSafeEqual } from 'node:crypto'
 
 export interface BaseSessionPayload {
   /** Wall-clock milliseconds at which the session was issued. */
   createdAt: number
+}
+
+/** HMAC-SHA256 of the payload segment, base64url-encoded. */
+function sign(payloadB64: string, secret: string | Buffer): string {
+  return createHmac('sha256', secret).update(payloadB64).digest('base64url')
 }
 
 /** Default cookie name. Consumers may (and Fable does) override per project. */
@@ -37,8 +46,12 @@ export const DEFAULT_SESSION_MAX_AGE_SEC = 60 * 60 * 8
  * to the actual cookie store (with the desired cookie attributes:
  * `httpOnly`, `sameSite`, `maxAge`, `path`).
  */
-export function encodeSession<T extends BaseSessionPayload>(payload: T): string {
-  return Buffer.from(JSON.stringify(payload)).toString('base64')
+export function encodeSession<T extends BaseSessionPayload>(
+  payload: T,
+  secret: string | Buffer,
+): string {
+  const payloadB64 = Buffer.from(JSON.stringify(payload)).toString('base64url')
+  return `${payloadB64}.${sign(payloadB64, secret)}`
 }
 
 /**
@@ -57,6 +70,8 @@ export function decodeSession<T extends BaseSessionPayload>(
   raw: string | null | undefined,
   opts: {
     validate: (value: unknown) => value is T
+    /** Server secret the cookie was signed with. Required. */
+    secret: string | Buffer
     maxAgeSec?: number
     /** Allow injecting a deterministic clock for tests. */
     now?: () => number
@@ -66,9 +81,22 @@ export function decodeSession<T extends BaseSessionPayload>(
   const maxAgeSec = opts.maxAgeSec ?? DEFAULT_SESSION_MAX_AGE_SEC
   const now = opts.now ?? Date.now
 
+  // Split `<payload>.<sig>`. A legacy unsigned cookie (no `.`) or a tampered
+  // one fails here and is rejected before we ever parse attacker-controlled
+  // JSON.
+  const dot = raw.lastIndexOf('.')
+  if (dot <= 0 || dot === raw.length - 1) return null
+  const payloadB64 = raw.slice(0, dot)
+  const providedSig = raw.slice(dot + 1)
+
+  const expectedSig = sign(payloadB64, opts.secret)
+  const a = Buffer.from(providedSig)
+  const b = Buffer.from(expectedSig)
+  if (a.length !== b.length || !timingSafeEqual(a, b)) return null
+
   let parsed: unknown
   try {
-    parsed = JSON.parse(Buffer.from(raw, 'base64').toString())
+    parsed = JSON.parse(Buffer.from(payloadB64, 'base64url').toString())
   } catch {
     return null
   }

@@ -32,7 +32,7 @@ const AUTHENTICATION_CHALLENGE_COOKIE = "principe_auth_challenge";
 // the challenge on the verifying POST. Only mark Secure when served over
 // https (set WEBAUTHN_ORIGIN=https://… behind a reverse proxy).
 const SECURE_COOKIES = (
-  process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3001"
+  process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3000"
 ).startsWith("https://");
 
 async function setChallengeCookie(
