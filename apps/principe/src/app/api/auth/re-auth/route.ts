@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextRequest, NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { generateAuthOptions, verifyAuthResponse } from "@dp/rbac";
 import {
   setAuthenticationChallenge,
@@ -19,20 +18,12 @@ import { getSession, markReAuth } from "@/lib/session";
  * session, it stamps `reAuthAt` on the existing session. The session must
  * already exist (user is signed in); ceremony must complete within 5 min.
  *
- *   GET  — returns options + sets ceremony cookie
+ *   GET  — returns options + sets the auth-challenge cookie
  *   POST — verifies + calls markReAuth() to stamp session.reAuthAt
  */
 
 const RP_ID = process.env.WEBAUTHN_RP_ID ?? "localhost";
 const ORIGIN = process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3001";
-const CEREMONY_COOKIE = "principe_re_auth_ceremony";
-const CEREMONY_TTL_SEC = 5 * 60;
-
-function newCeremonyId(): string {
-  const buf = new Uint8Array(16);
-  crypto.getRandomValues(buf);
-  return Buffer.from(buf).toString("base64url");
-}
 
 export async function GET() {
   const session = await getSession();
@@ -48,16 +39,7 @@ export async function GET() {
     userVerification: "preferred",
   });
 
-  const ceremonyId = newCeremonyId();
-  setAuthenticationChallenge(ceremonyId, options.challenge);
-
-  const store = await cookies();
-  store.set(CEREMONY_COOKIE, ceremonyId, {
-    httpOnly: true,
-    sameSite: "strict",
-    maxAge: CEREMONY_TTL_SEC,
-    path: "/",
-  });
+  await setAuthenticationChallenge(options.challenge);
 
   return NextResponse.json(options);
 }
@@ -68,15 +50,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Sign in first" }, { status: 401 });
   }
 
-  const store = await cookies();
-  const ceremonyId = store.get(CEREMONY_COOKIE)?.value;
-  if (!ceremonyId) {
-    return NextResponse.json(
-      { error: "No challenge cookie — call GET first" },
-      { status: 400 },
-    );
-  }
-  const challenge = getAuthenticationChallenge(ceremonyId);
+  const challenge = await getAuthenticationChallenge();
   if (!challenge) {
     return NextResponse.json(
       { error: "Challenge expired" },
@@ -107,8 +81,7 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    clearAuthenticationChallenge(ceremonyId);
-    store.delete(CEREMONY_COOKIE);
+    await clearAuthenticationChallenge();
 
     if (!verification.verified) {
       return NextResponse.json(

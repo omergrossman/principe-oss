@@ -1,77 +1,81 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+import { cookies } from "next/headers";
 import type { AuthenticatorTransportFuture } from "@dp/rbac";
 import { prisma } from "@/lib/db/prisma";
 
 /**
  * Principe passkey auth storage.
  *
- * Lifted from Fable's pattern:
  *   - Passkey rows persisted via Prisma (the `Passkey` model)
- *   - Challenges kept in-memory (5-minute TTL; ephemeral by design)
- *   - Registration challenges keyed by userId (we know who they are)
- *   - Authentication challenges keyed by a synthetic ceremony id (the user
- *     identifies via the credentialId returned by the authenticator)
+ *   - Challenges held in a per-browser HttpOnly cookie (see below)
  */
 
-// ─── Challenge store (in-memory, short-lived) ────────────────────────────
+// ─── Challenge store (HttpOnly cookie, short-lived) ──────────────────────
+//
+// WebAuthn challenges live in an HttpOnly cookie, NOT in process memory. An
+// in-memory Map is lost on every server restart and isn't shared across
+// instances — so if the process recycled (deploy, crash, scale-out) or the
+// TTL lapsed between a ceremony's GET and its verifying POST, the challenge
+// vanished. Critically, the authenticator has *already* created the
+// credential by then, so a lost challenge orphans it: it lives in the user's
+// keychain but is never persisted server-side, and they can never sign in
+// with it. A cookie survives restarts and is naturally scoped to the one
+// browser running the ceremony, so the POST always finds its challenge.
 
-interface ChallengeRecord {
-  challenge: string;
-  expiresAt: number;
-}
+const CHALLENGE_TTL_SEC = 5 * 60;
+const REGISTRATION_CHALLENGE_COOKIE = "principe_reg_challenge";
+const AUTHENTICATION_CHALLENGE_COOKIE = "principe_auth_challenge";
 
-const CHALLENGE_TTL_MS = 5 * 60 * 1000;
+// Gate `Secure` on the actual origin scheme, NOT NODE_ENV. The OSS default
+// is http://localhost, and a `Secure` cookie is dropped over plain http on a
+// non-localhost host (e.g. a LAN-IP self-host) — which would silently strip
+// the challenge on the verifying POST. Only mark Secure when served over
+// https (set WEBAUTHN_ORIGIN=https://… behind a reverse proxy).
+const SECURE_COOKIES = (
+  process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3001"
+).startsWith("https://");
 
-const registrationChallenges = new Map<string, ChallengeRecord>();
-const authenticationChallenges = new Map<string, ChallengeRecord>();
-
-function setChallenge(
-  store: Map<string, ChallengeRecord>,
-  key: string,
+async function setChallengeCookie(
+  name: string,
   challenge: string,
-): void {
-  store.set(key, { challenge, expiresAt: Date.now() + CHALLENGE_TTL_MS });
+): Promise<void> {
+  const store = await cookies();
+  store.set(name, challenge, {
+    httpOnly: true,
+    sameSite: "strict",
+    secure: SECURE_COOKIES,
+    maxAge: CHALLENGE_TTL_SEC,
+    path: "/",
+  });
 }
 
-function getChallenge(
-  store: Map<string, ChallengeRecord>,
-  key: string,
-): string | null {
-  const record = store.get(key);
-  if (!record) return null;
-  if (record.expiresAt < Date.now()) {
-    store.delete(key);
-    return null;
-  }
-  return record.challenge;
+async function getChallengeCookie(name: string): Promise<string | null> {
+  const store = await cookies();
+  return store.get(name)?.value ?? null;
 }
 
-function clearChallenge(
-  store: Map<string, ChallengeRecord>,
-  key: string,
-): void {
-  store.delete(key);
+async function clearChallengeCookie(name: string): Promise<void> {
+  const store = await cookies();
+  store.delete(name);
 }
 
-export const setRegistrationChallenge = (userId: string, challenge: string) =>
-  setChallenge(registrationChallenges, userId, challenge);
+export const setRegistrationChallenge = (challenge: string) =>
+  setChallengeCookie(REGISTRATION_CHALLENGE_COOKIE, challenge);
 
-export const getRegistrationChallenge = (userId: string) =>
-  getChallenge(registrationChallenges, userId);
+export const getRegistrationChallenge = () =>
+  getChallengeCookie(REGISTRATION_CHALLENGE_COOKIE);
 
-export const clearRegistrationChallenge = (userId: string) =>
-  clearChallenge(registrationChallenges, userId);
+export const clearRegistrationChallenge = () =>
+  clearChallengeCookie(REGISTRATION_CHALLENGE_COOKIE);
 
-export const setAuthenticationChallenge = (
-  ceremonyId: string,
-  challenge: string,
-) => setChallenge(authenticationChallenges, ceremonyId, challenge);
+export const setAuthenticationChallenge = (challenge: string) =>
+  setChallengeCookie(AUTHENTICATION_CHALLENGE_COOKIE, challenge);
 
-export const getAuthenticationChallenge = (ceremonyId: string) =>
-  getChallenge(authenticationChallenges, ceremonyId);
+export const getAuthenticationChallenge = () =>
+  getChallengeCookie(AUTHENTICATION_CHALLENGE_COOKIE);
 
-export const clearAuthenticationChallenge = (ceremonyId: string) =>
-  clearChallenge(authenticationChallenges, ceremonyId);
+export const clearAuthenticationChallenge = () =>
+  clearChallengeCookie(AUTHENTICATION_CHALLENGE_COOKIE);
 
 // ─── Passkey persistence (Prisma) ────────────────────────────────────────
 
