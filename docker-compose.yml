@@ -1,0 +1,60 @@
+# Principe — self-hosted OSS stack.
+# One command boots Postgres + the Statistician + the web app.
+#
+#   docker compose up -d
+#   open http://localhost:3000
+#
+# First boot is slow (image builds, Prisma migrations run, PyMC warms up).
+# Subsequent boots are seconds.
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: principe
+      POSTGRES_USER: principe
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-principe}
+    volumes:
+      - principe_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U principe -d principe"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  statistician:
+    build:
+      context: .
+      dockerfile: services/statistician/Dockerfile
+    restart: unless-stopped
+    environment:
+      STATISTICIAN_SHARED_SECRET: ${STATISTICIAN_SHARED_SECRET:?STATISTICIAN_SHARED_SECRET must be set — see bin/start.sh}
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8000/healthz || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/principe/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://principe:${POSTGRES_PASSWORD:-principe}@db:5432/principe
+      STATISTICIAN_SERVICE_URL: http://statistician:8000
+      STATISTICIAN_SHARED_SECRET: ${STATISTICIAN_SHARED_SECRET:?}
+      WIZARD_SECRET: ${WIZARD_SECRET:?WIZARD_SECRET must be set — see bin/start.sh}
+      WEBAUTHN_ORIGIN: ${WEBAUTHN_ORIGIN:-http://localhost:3000}
+    depends_on:
+      db:
+        condition: service_healthy
+      statistician:
+        condition: service_healthy
+
+volumes:
+  principe_db:

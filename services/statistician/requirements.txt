@@ -1,0 +1,12 @@
+# Principe Statistician — runtime dependencies
+# Pinned to the same floors as services/statistician/pyproject.toml.
+
+fastapi==0.115.*
+pydantic==2.9.*
+uvicorn[standard]==0.32.*
+
+# Bayesian stack — requires Python 3.10+
+numpy==1.26.*
+pandas==2.2.*
+pymc==5.16.*
+numpyro==0.15.*
