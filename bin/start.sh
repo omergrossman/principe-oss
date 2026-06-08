@@ -36,6 +36,29 @@ else
 fi
 
 echo "[start] Booting docker compose..."
+
+# Stage the boot: bring Postgres up and wait for it to be healthy BEFORE
+# the rest. On a fresh volume, initdb can take 60-90s (slower under
+# qemu-backed Docker on macOS). If we boot everything at once, web's
+# `depends_on: db service_healthy` races that initdb and compose aborts
+# web with "dependency db is unhealthy" — even though db recovers seconds
+# later. Bringing db up first makes the one-command boot deterministic.
+echo "[start] Starting Postgres and waiting for it to accept connections..."
+docker compose --env-file "$ENV_FILE" up -d --build db
+
+DB_WAIT_TIMEOUT=180
+elapsed=0
+until [[ "$(docker compose --env-file "$ENV_FILE" ps db --format '{{.Health}}' 2>/dev/null)" == "healthy" ]]; do
+  if (( elapsed >= DB_WAIT_TIMEOUT )); then
+    echo "[start] ERROR: Postgres did not become healthy within ${DB_WAIT_TIMEOUT}s." >&2
+    echo "[start] Check: docker compose --env-file $ENV_FILE logs db" >&2
+    exit 1
+  fi
+  sleep 3
+  elapsed=$((elapsed + 3))
+done
+echo "[start] Postgres healthy after ~${elapsed}s. Booting statistician + web..."
+
 docker compose --env-file "$ENV_FILE" up -d --build
 
 echo ""
