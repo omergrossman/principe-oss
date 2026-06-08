@@ -90,7 +90,17 @@ export async function resolveCurrentProject(
 }> {
   if (requestedProjectId) {
     const project = await prisma.project.findFirst({
-      where: { id: requestedProjectId, firmId, status: "ACTIVE" },
+      // Scope to the OWNER, not just the firm. The active-project context
+      // drives /api/ask (a write/run), so a member must not be able to make
+      // another member's project their active project by passing its id —
+      // and admins are read-only on members' projects, so they resolve their
+      // own too. A non-matching id falls through to the caller's Default.
+      where: {
+        id: requestedProjectId,
+        firmId,
+        status: "ACTIVE",
+        ...(ownerUserId ? { ownerUserId } : {}),
+      },
       select: { id: true, isDefault: true, composition: true, panelSize: true },
     });
     if (project) return project;

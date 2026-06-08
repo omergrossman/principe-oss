@@ -1,16 +1,18 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/auth/require-auth";
 import { createInvite, listPendingInvites } from "@/lib/invites/repo";
 
-/** Resolve the user-facing accept URL from the request origin. */
-function acceptUrl(req: NextRequest, token: string): string {
-  const proto = req.headers.get("x-forwarded-proto") ?? "https";
-  const host =
-    req.headers.get("x-forwarded-host") ??
-    req.headers.get("host") ??
-    "localhost:3000";
-  return `${proto}://${host}/accept-invite?token=${token}`;
+/**
+ * Resolve the user-facing accept URL from the CONFIGURED origin, never from
+ * request headers. Building it from x-forwarded-host/host lets an attacker
+ * who can influence those headers mint invite links (carrying a valid token)
+ * that point at a host they control — a token-leak vector. WEBAUTHN_ORIGIN is
+ * the one canonical, operator-set origin the app is reachable from.
+ */
+function acceptUrl(token: string): string {
+  const origin = process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3000";
+  return `${origin.replace(/\/$/, "")}/accept-invite?token=${token}`;
 }
 
 export async function GET() {
@@ -30,7 +32,7 @@ export async function GET() {
   });
 }
 
-export async function POST(req: NextRequest) {
+export async function POST(req: Request) {
   const session = await requireAdmin();
   if (!session.firmId) {
     return NextResponse.json({ error: "Organisation required" }, { status: 403 });
@@ -49,7 +51,7 @@ export async function POST(req: NextRequest) {
       role,
     });
 
-    const link = acceptUrl(req, invite.token);
+    const link = acceptUrl(invite.token);
 
     // OSS distribution: email delivery is removed. The admin gets the
     // accept link back in the response and shares it with the invitee

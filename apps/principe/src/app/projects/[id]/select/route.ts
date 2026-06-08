@@ -25,7 +25,15 @@ export async function GET(
   }
   const { id } = await params;
   const project = await prisma.project.findFirst({
-    where: { id, firmId: session.firmId, status: "ACTIVE" },
+    // Owner-scoped: selecting makes a project the active ask context, which
+    // is always your own. Admins inspect members' projects via the read-only
+    // history/settings pages, not by selecting them.
+    where: {
+      id,
+      firmId: session.firmId,
+      ownerUserId: session.userId,
+      status: "ACTIVE",
+    },
     select: { id: true },
   });
   if (!project) {
