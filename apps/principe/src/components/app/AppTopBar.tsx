@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { getSession } from "@/lib/session";
 import { resolveUserDisplay } from "@/lib/user/display";
 import { TopBar } from "./TopBar";

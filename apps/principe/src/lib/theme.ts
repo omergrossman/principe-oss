@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { makeDefaultTheme } from "@dp/theme";
 import { PrincipeWordmark } from "@/components/brand/PrincipeWordmark";
 

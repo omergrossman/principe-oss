@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { requireAuth } from "@/lib/auth/require-auth";
 import { prisma } from "@/lib/db/prisma";
 import { resolveUserDisplay } from "@/lib/user/display";

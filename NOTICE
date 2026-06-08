@@ -1,0 +1,62 @@
+Príncipe
+Copyright (C) 2026 Omer Grossman and contributors
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU Affero General Public License as published
+by the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. See the LICENSE file at the root
+of this repository for the full license text.
+
+═══════════════════════════════════════════════════════════════════════
+Third-party dependencies
+═══════════════════════════════════════════════════════════════════════
+
+Príncipe stands on the shoulders of many open-source projects. The full
+list of npm and pip dependencies is in apps/principe/package.json and
+services/statistician/requirements.txt; the licenses for each are
+fetched at install time and surfaced in node_modules/<pkg>/LICENSE
+and site-packages/<pkg>-*.dist-info/.
+
+Notable AGPL-compatible runtime dependencies whose presence is
+load-bearing for Príncipe's functionality:
+
+  • Next.js                  MIT             https://nextjs.org
+  • React                    MIT             https://react.dev
+  • Prisma                   Apache-2.0      https://prisma.io
+  • Tailwind CSS             MIT             https://tailwindcss.com
+  • SimpleWebAuthn           MIT             https://simplewebauthn.dev
+  • Anthropic SDK            MIT             https://github.com/anthropics/anthropic-sdk-typescript
+  • PostgreSQL               PostgreSQL      https://postgresql.org
+  • FastAPI                  MIT             https://fastapi.tiangolo.com
+  • PyMC                     Apache-2.0      https://pymc.io
+  • NumPyro                  Apache-2.0      https://num.pyro.ai
+  • NumPy                    BSD-3-Clause    https://numpy.org
+  • Pandas                   BSD-3-Clause    https://pandas.pydata.org
+  • Pydantic                 MIT             https://pydantic.dev
+
+Vendored packages under packages/:
+  packages/rbac, packages/theme, packages/telemetry — first-party
+  code authored by the Príncipe project, distributed under AGPL-3.0
+  along with the rest of this repository.
+
+═══════════════════════════════════════════════════════════════════════
+Knowledge corpus
+═══════════════════════════════════════════════════════════════════════
+
+The calibration/ directory contains structured summaries derived from
+publicly available CISO-research sources (industry surveys, regulator
+guidance, vendor reports). Citations live alongside each entry. No
+proprietary, paywalled, or licensed-redistribution-only content is
+bundled in this repository.
+
+If you spot something that shouldn't be there, please file a security
+issue via SECURITY.md.
+
+═══════════════════════════════════════════════════════════════════════
+The 1919 plate
+═══════════════════════════════════════════════════════════════════════
+
+The eclipse photograph in apps/principe/public/ depicts the May 29,
+1919 total solar eclipse observed from the island of Príncipe by Arthur
+Eddington's expedition — the observation that proved general relativity.
+The plate is in the public domain.

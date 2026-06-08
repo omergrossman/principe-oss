@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { HTMLAttributes, ReactNode } from "react";
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Three event categories that travel through the same pipe:
  *   - 'business' — purchase, churn, plan-upgrade, usage-meter (the things

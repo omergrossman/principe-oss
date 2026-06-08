@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextResponse } from "next/server";
 
 // Sprint 4 (2026-06-04) — Knowledge sources moved to /api/admin/knowledge.

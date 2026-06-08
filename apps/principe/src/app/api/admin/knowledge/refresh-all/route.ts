@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextResponse } from "next/server";
 import { requireRole } from "@/lib/auth/require-auth";
 import { kickoffRefreshAll, getRefreshStatus } from "@/lib/sources/bulk-fetch";

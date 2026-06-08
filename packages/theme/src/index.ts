@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Static tokens — importable in server components, client components, anywhere
 export * from './tokens'
 export * from './agent-colors'

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Minimal email-send abstraction. V1 wires Resend via their REST API so
  * we avoid a runtime SDK dependency. When `RESEND_API_KEY` (and

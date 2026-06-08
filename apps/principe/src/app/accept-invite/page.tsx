@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { getInviteByToken } from "@/lib/invites/repo";
 import { Card } from "@/components/ui/Card";
 import { AcceptInviteForm } from "./AcceptInviteForm";

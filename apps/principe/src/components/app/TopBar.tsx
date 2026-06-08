@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { initialsFor } from "@/lib/user/display";

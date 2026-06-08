@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { requireAdmin } from "@/lib/auth/require-auth";
 import { prisma } from "@/lib/db/prisma";
 import { listPendingInvites } from "@/lib/invites/repo";

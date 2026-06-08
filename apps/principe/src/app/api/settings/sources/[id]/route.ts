@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextResponse } from "next/server";
 
 // Sprint 4 cutover shim — see /api/settings/sources/route.ts for context.

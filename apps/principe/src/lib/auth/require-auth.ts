@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { redirect } from "next/navigation";
 import { getSession, isReAuthFresh, type Session } from "@/lib/session";
 

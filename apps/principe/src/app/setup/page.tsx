@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db/prisma";
 import { SetupForm } from "./SetupForm";

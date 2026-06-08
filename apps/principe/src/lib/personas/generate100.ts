@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Deterministic generator for the agentic CISO panel — 100 distinct
  * synthesized personas spread across geographies, industries, sizes,

@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { EventCategory, IdentifyTraits, PageContext, TelemetryEvent } from './types'
 import type { Transport } from './transport'
 import { EventBuffer, type BufferConfig } from './buffer'

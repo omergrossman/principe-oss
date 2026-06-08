@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Mirrors services/statistician/app/models.py. Keep these two in sync; if
 // the Pydantic schema changes, regenerate (or hand-update) this file.
 

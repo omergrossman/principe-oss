@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Executive PDF report for a Cycle. Renders via @react-pdf/renderer
 // server-side to a Buffer. Layout favours information density — exec
 // audiences scan, not read.

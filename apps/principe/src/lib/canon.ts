@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Single source of truth for the canonical enum-ish values used across
 // the app: industries (24), regions (7), company sizes (5), threat
 // types (12). These match what ProjectAgent stores so cross-table

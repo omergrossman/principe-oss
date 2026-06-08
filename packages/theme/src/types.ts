@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 import type { ComponentType } from 'react'
 import type { AgentColors } from './agent-colors'
 import type { SeverityConfig, Severity } from './severity'

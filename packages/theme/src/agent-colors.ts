@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 /**
  * Per-agent color tokens for the Fable V2 storybook palette.
  *

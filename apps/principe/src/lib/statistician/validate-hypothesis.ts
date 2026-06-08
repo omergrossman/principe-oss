@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: AGPL-3.0-or-later
 // Sprint 6 — shared Statistician validation logic extracted from
 // /api/hypotheses/[id]/validate/route.ts. Used by both the legacy
 // validate endpoint and the consolidated /api/cycles/create endpoint
