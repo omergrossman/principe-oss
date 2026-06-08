@@ -100,7 +100,22 @@ export default async function AboutPage() {
             </div>
           </section>
 
-          <footer className="mt-16 pt-8 border-t border-ink-100 text-[12px] text-ink-300 font-mono">
+          <section className="mt-16 pt-8 border-t border-ink-100">
+            <h2 className="text-[13px] font-semibold uppercase tracking-wide text-ink-500 mb-2">
+              A note on the panel
+            </h2>
+            <p className="text-[13px] text-ink-500 leading-relaxed max-w-2xl">
+              Príncipe&apos;s CISOs are <strong>synthetic, AI-generated
+              personas</strong> — not real people, customers, or professional
+              advisers, and the statistical checks describe the panel, not the
+              real world. It&apos;s a tool to explore and pressure-test ideas,
+              not a source of advice. Treat the output as one input among many,
+              validate important decisions with real research, and decide for
+              yourself.
+            </p>
+          </section>
+
+          <footer className="mt-12 pt-8 border-t border-ink-100 text-[12px] text-ink-300 font-mono">
             <p>
               Eddington&apos;s 1919 photographic plate is the image you saw on
               the launch screen. The original is in the archive of the Royal

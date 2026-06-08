@@ -135,6 +135,15 @@ export function buildCsv(
 ): string {
   const lines: string[] = [];
 
+  // Disclaimer row (leading, then a blank separator). Príncipe's panel is a
+  // simulation of synthetic AI personas; this travels with the exported data.
+  lines.push(
+    csvCell(
+      "DISCLAIMER: Príncipe's CISOs are synthetic, AI-generated personas — not real people, customers, or professional advice. Output is for exploration only; treat it as one input among many and decide for yourself.",
+    ),
+  );
+  lines.push("");
+
   const completedAt = cycle.completedAt
     ? cycle.completedAt.toISOString()
     : "";

@@ -6,6 +6,14 @@ Príncipe spins up a configurable panel of synthetic CISO personas (regions, ind
 
 The name is a nod to the 1919 Príncipe eclipse expedition, where Eddington's plates proved general relativity by *observing* what theory predicted. Same idea here: prove what's coming before reality runs the experiment.
 
+## Disclaimer
+
+Príncipe's panel is composed of **synthetic, AI-generated personas** — not real CISOs, customers, or professional advisers. Every response is produced by a language model simulating a persona; no human is consulted, and no output represents the views of any real person or organisation.
+
+Príncipe is a **decision-support and hypothesis-exploration tool**, not a source of professional advice. Its output is not legal, security, financial, or business advice, and must not be relied upon as a substitute for real customer research, qualified professionals, or your own due diligence. The statistical-soundness checks describe the *panel*, not the real world — a "valid" panel is still a simulation.
+
+Treat the panel as **one input among many**. You remain solely responsible for any decision you make and its outcomes. The software is provided "as is", without warranty of any kind; accuracy, completeness, and fitness for any purpose are not guaranteed, and the authors accept no liability for decisions made on the basis of its output.
+
 ## Status
 
 **Pre-alpha.** Installable, but not yet polished. Sprint 8 (this sprint) shipped the docker-compose distribution + first-run wizard. Sprint 9 will add signed daily knowledge bundles. v1.0 lands when both sprints are battle-tested and the install story is rock-solid on macOS + Linux.
