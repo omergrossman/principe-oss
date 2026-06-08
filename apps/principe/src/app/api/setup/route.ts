@@ -130,7 +130,10 @@ export async function POST(req: NextRequest) {
     const { user, membership, firm } = await prisma.$transaction(
       async (tx) => {
         const user = await tx.user.create({
-          data: { email: adminEmail, name: adminName },
+          // Completing the wizard IS the first sign-in — stamp
+          // lastSignInAt so the Members admin view shows "last seen
+          // today" instead of "never signed in".
+          data: { email: adminEmail, name: adminName, lastSignInAt: new Date() },
         });
         const firm = await tx.firm.create({
           data: {
