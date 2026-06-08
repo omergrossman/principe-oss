@@ -31,11 +31,11 @@ export const STANCE_KEYS = [
 export type StanceKey = (typeof STANCE_KEYS)[number];
 
 export const SIZE_BANDS = [
-  "150-400 (Series B)",
-  "400-1k (Series C)",
-  "1k-5k (Series D+/pre-IPO)",
-  "5k-20k (mid-market)",
-  "20k+ (enterprise)",
+  "150-400",
+  "400-1k",
+  "1k-5k",
+  "5k-20k",
+  "20k+",
 ] as const;
 export type SizeBand = (typeof SIZE_BANDS)[number];
 
