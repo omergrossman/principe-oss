@@ -68,6 +68,40 @@ rm .env.runtime
 
 ⚠️ Rotating `PRINCIPE_ENCRYPTION_KEY` means any stored API keys can no longer be decrypted. You'll need to re-enter your Anthropic key in Settings after rotation.
 
+## Knowledge updates
+
+By default Príncipe ships in **local mode** — the calibration corpus in `calibration/` is what your panel reasons over, and there's no callout to any update endpoint. You see no "Check for updates" UI; nothing pings home.
+
+If you want signed pull-updates (e.g. Omer's weekly scrape of public CISO sources), set `PRINCIPE_UPDATES_URL` in `.env.runtime`:
+
+```env
+PRINCIPE_UPDATES_URL=https://updates.principe.cloud
+```
+
+Boot the stack. **Settings → Knowledge updates** appears. The flow:
+
+1. Click "Check for updates" — fetches `latest.json` from the URL above.
+2. If a new bundle is available, click "Install".
+3. The app fetches the bundle tarball, verifies the manifest's ed25519 signature against the bundled public key (override via `PRINCIPE_UPDATES_PUBLIC_KEY`), confirms the bundle's sha256 matches the manifest's commitment, then writes the knowledge entries into your local DB.
+
+To opt out entirely (no UI, no checks), set `PRINCIPE_UPDATES_URL=disabled`.
+
+### Publishing your own bundles
+
+Anyone can run their own update endpoint — no permission needed. See `scripts/build-bundle.ts` + `scripts/generate-keypair.ts`. Workflow:
+
+```bash
+# One-time: generate a keypair
+pnpm tsx scripts/generate-keypair.ts
+# Build a bundle from any directory matching the layout
+# (knowledge/, datasets/, personas/)
+PRINCIPE_UPDATES_PRIVATE_KEY_PATH=./updates-private.pem \
+  pnpm tsx scripts/build-bundle.ts 2026-W23 ./bundle-input ./dist/updates
+# Upload ./dist/updates to your static host (S3, R2, GitHub Pages, etc.)
+# Consumers point PRINCIPE_UPDATES_URL at that host + PRINCIPE_UPDATES_PUBLIC_KEY
+# at your generated public key.
+```
+
 ## Putting it behind a reverse proxy
 
 Set `WEBAUTHN_ORIGIN=https://your-domain.example` in `.env.runtime` before booting so passkey ceremonies bind to the right origin. Then point your reverse proxy (nginx / Caddy / Cloudflare Tunnel) at `http://localhost:3000`.
