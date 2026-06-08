@@ -243,11 +243,15 @@ function ProjectCard({
 }) {
   const presetLabel =
     project.composition?.presetKey ?? (project.isDefault ? "global-default" : "custom");
-  // Archived projects can be inspected (history) but not opened in the
-  // workspace; clicking the body links into history rather than selecting.
-  const primaryHref = archived
-    ? `/projects/${project.id}/history`
-    : `/projects/${project.id}/select`;
+  // Archived projects — and read-only ones (an admin viewing another member's
+  // project) — open a read-only VIEW (history) rather than /select. /select
+  // would (correctly) refuse to make someone else's project your active one
+  // and bounce you to your own workspace, which reads as if you'd "entered"
+  // their project. Only your own active projects link to /select.
+  const primaryHref =
+    archived || readOnly
+      ? `/projects/${project.id}/history`
+      : `/projects/${project.id}/select`;
   return (
     <div className={`block group ${archived ? "opacity-60" : ""}`}>
       <Card>
