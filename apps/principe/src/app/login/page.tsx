@@ -69,8 +69,24 @@ export default function LoginPage() {
       }
       router.push(next);
     } catch (e) {
-      const message = e instanceof Error ? e.message : "Sign-in failed";
-      setError(message);
+      // Translate the raw WebAuthn / server errors into plain language. The
+      // browser's NotAllowedError is its catch-all for "cancelled, timed out,
+      // or no matching passkey was offered" — not something a user can act on
+      // as written.
+      const name = e instanceof Error ? e.name : "";
+      const msg = e instanceof Error ? e.message : "";
+      let friendly =
+        "Sign-in didn’t go through. Tap “Sign in with passkey” and try again.";
+      if (name === "NotAllowedError" || name === "AbortError") {
+        friendly =
+          "Sign-in was cancelled or timed out. Tap “Sign in with passkey” again and approve the Touch ID / Face ID prompt.";
+      } else if (/not found|no credential/i.test(msg)) {
+        friendly =
+          "No matching passkey on this device. Use the passkey you created for Príncipe — or, if you don’t have one yet, ask your admin for an invite.";
+      } else if (/expired|challenge/i.test(msg)) {
+        friendly = "That took too long. Tap “Sign in with passkey” and try again.";
+      }
+      setError(friendly);
       setStatus("error");
     }
   }
@@ -119,10 +135,8 @@ export default function LoginPage() {
                 <p className="font-semibold mb-1">Couldn&apos;t sign in</p>
                 <p>{error}</p>
                 <p className="mt-2 text-ink-500 text-[12px]">
-                  Lost your passkey? Reset the admin user via
-                  {" "}
-                  <code className="text-ink-700 font-mono">pnpm prisma studio</code>
-                  {" "}then re-run the setup wizard.
+                  No passkey for Príncipe yet? Ask your workspace admin for an
+                  invite to set one up.
                 </p>
               </div>
             )}
