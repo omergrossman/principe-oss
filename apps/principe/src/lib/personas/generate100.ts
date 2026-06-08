@@ -174,10 +174,10 @@ const BACKGROUNDS: Array<{ label: string; coloring: string }> = [
 const STANCES: AgenticPersona["stance"][] = ["cautious", "balanced", "aggressive", "contrarian"];
 
 const STANCE_COLORING: Record<AgenticPersona["stance"], string> = {
-  cautious: "Risk-averse by default. Demands proof, references, and an exit clause before agreeing to anything. When evidence is weak, you say no — not maybe.",
-  balanced: "Pragmatic. Weighs evidence against operational reality. Will tell you when an idea is 80%-right AND when it's wrong-headed.",
-  aggressive: "Action-oriented. Moves fast when conviction is high. Pushes back hard and publicly when it isn't — including telling founders their question is the wrong question.",
-  contrarian: "Default to skepticism of consensus and security-industry hype. Vote con and call out flawed premises unless the founder's case is genuinely strong. Comfortable saying 'this is foolish', 'you're focused on the wrong problem', or 'the framework you cite doesn't apply here.'",
+  cautious: "Risk-averse by default. Demands proof, references, and an exit clause. When evidence is weak you say no — not maybe. When the evidence and risk story are solid, you commit; safety doesn't mean indecision.",
+  balanced: "Pragmatic. Weighs evidence against operational reality. Says yes when an idea is 80%-right and addresses a real pain; says no when it's wrong-headed or the premise is broken. Neutral only when you genuinely lack information.",
+  aggressive: "Action-oriented. Moves fast when conviction is high — backs strong pitches publicly, pushes back hard when the pitch is weak. Comfortable being the first to commit AND the first to walk away.",
+  contrarian: "Default to skepticism of consensus and security-industry hype. Vote con and call out flawed premises when warranted; vote pro when a pitch genuinely cuts against the consensus narrative in a useful way. Equally allergic to herd 'yes' and reflexive 'no.'",
 };
 
 const CONCERN_POOL = [
@@ -271,8 +271,8 @@ function buildSystemPrompt(p: Omit<AgenticPersona, "markdown" | "systemPrompt">)
     ``,
     `Field meanings:`,
     `- verdict:`,
-    `    pro = you'd commit / agree / buy / champion / endorse the direction`,
-    `    con = you'd push back, refuse to engage, call it foolish, OR you think the premise is wrong, the founder is focused on the wrong problem, the cited framework doesn't apply, or the question itself is wrong-headed`,
+    `    pro = you'd commit / buy / champion / endorse the direction, OR you genuinely think the founder is solving the right problem in a way that beats what's on the market today`,
+    `    con = you'd push back, refuse to engage, call it foolish, OR you think the premise is wrong / the founder is focused on the wrong problem / the cited framework doesn't apply / the question is wrong-headed`,
     `    neutral = directionally interested but won't commit without more evidence, OR the question simply doesn't apply to your context`,
     `- sentiment: your overall enthusiasm. 1 = strongly negative, 5 = ambivalent, 10 = strongly positive`,
     `- headline: punchy one-liner in YOUR voice`,
@@ -280,9 +280,10 @@ function buildSystemPrompt(p: Omit<AgenticPersona, "markdown" | "systemPrompt">)
     ``,
     `Rules:`,
     `- Output JSON ONLY. No code fences. No commentary.`,
-    `- Dissent is valuable feedback. If you'd genuinely push back, vote con — don't soften to neutral to be polite. A founder learns more from one well-reasoned "this is foolish" than from ten "interesting, tell me more."`,
-    `- Neutral means "this doesn't apply to me" or "I'd need more data." It does NOT mean "I disagree but I'm being nice about it" — that's con.`,
-    `- If the founder's premise is wrong, vote con and say why, even if the topic is in your wheelhouse.`,
+    `- Both endorsement AND dissent are calibration. Vote pro when the pitch genuinely addresses your top concerns or beats what you have today — saying yes to a good idea isn't flattery. Vote con when you'd actually push back — don't soften to neutral to be polite.`,
+    `- Neutral means "this doesn't apply to me" or "I'd need more data." It does NOT mean "I disagree but I'm being nice" (that's con) or "I'd buy this but I'm being cautious" (that's pro).`,
+    `- If the founder's premise is wrong, vote con and say why — even if the topic is in your wheelhouse.`,
+    `- If the founder's pitch genuinely cuts your MTTR / consolidates a vendor you'd love to drop / addresses a top concern with credible evidence, vote pro and say why — even if you don't typically buy from early-stage vendors.`,
     `- No corporate-speak. No buzzwords unless you're explicitly mocking them.`,
   ].join("\n");
 }
