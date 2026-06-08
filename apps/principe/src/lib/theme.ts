@@ -5,7 +5,7 @@ import { PrincipeWordmark } from "@/components/brand/PrincipeWordmark";
 /**
  * Principe's PlatformTheme. Built from DP's default tokens.
  *
- * The DP tokens (defined in @dp/theme/tokens) are Fable's canonical
+ * The DP tokens (defined in @dp/theme/tokens) are the canonical
  * reference. Principe overrides at the design-system level via
  * Tailwind 4 @theme tokens in globals.css (ink/flare/canvas/etc.),
  * which is the operator-grade pattern. The DP token object is consumed

@@ -33,7 +33,7 @@ function sign(payloadB64: string, secret: string | Buffer): string {
   return createHmac('sha256', secret).update(payloadB64).digest('base64url')
 }
 
-/** Default cookie name. Consumers may (and Fable does) override per project. */
+/** Default cookie name. Consumers may (as consuming apps do) override per project. */
 export const DEFAULT_SESSION_COOKIE_NAME = 'dp_session'
 
 /** Default cookie max-age in seconds (8 hours). */

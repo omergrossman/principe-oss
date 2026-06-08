@@ -7,7 +7,7 @@
  * authenticator response, the expected challenge, the credential record from
  * the consumer's storage, etc.) and return the verification result.
  *
- * The consumer (e.g. Fable's `api/auth/login` and `api/auth/register` route
+ * The consumer (e.g. the app's `api/auth/login` and `api/auth/register` route
  * handlers) keeps the DB lookups: pull the user's challenge, pull the
  * credential row, then hand both to these helpers.
  *
