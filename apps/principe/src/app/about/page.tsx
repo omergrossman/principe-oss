@@ -86,7 +86,7 @@ export default async function AboutPage() {
                   <HumanPhoto src="/team/omer.png" alt="Omer Grossman" />
                 }
                 name="Omer Grossman"
-                role="Author"
+                role="Builder"
                 accent="#2C7E7D"
                 bio="Two decades in cybersecurity — CyberArk, the IDF, and a handful of advisory roles in between. Príncipe is what happens when that experience gets pointed at the moment before the first hire, when a founder is still trying to figure out whether they're solving a real problem."
               />
