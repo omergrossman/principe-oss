@@ -9,6 +9,7 @@ import {
   ensureDefaultProject,
 } from "@/lib/projects/bootstrap";
 import { listProjects, type ProjectListItem } from "@/lib/projects/repo";
+import { projectDisplayName } from "@/lib/projects/describe";
 import { DeleteProjectControl } from "./DeleteProjectControl";
 import { ArchiveProjectControl } from "./ArchiveProjectControl";
 
@@ -254,7 +255,7 @@ function ProjectCard({
           <div className="flex items-start justify-between gap-3 mb-2">
             <div className="flex-1 min-w-0">
               <h3 className="text-[16px] font-semibold text-ink-900 group-hover:text-flare-600 transition-colors truncate">
-                {project.name}
+                {projectDisplayName(project)}
               </h3>
               <p className="text-[11px] text-ink-300 font-mono uppercase tracking-wide mt-0.5">
                 {presetLabel}
@@ -324,7 +325,7 @@ function ProjectCard({
                 Sources
               </Link>
             )}
-            {!readOnly && (
+            {!readOnly && !project.isDefault && (
               <Link
                 href={`/projects/${project.id}/settings`}
                 className="text-ink-500 hover:text-ink-900"

@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { Pill } from "@/components/ui/Pill";
 import { getProject } from "@/lib/projects/repo";
+import { projectDisplayName } from "@/lib/projects/describe";
 import { ProjectSettingsForm } from "./ProjectSettingsForm";
 
 export const dynamic = "force-dynamic";
@@ -53,7 +54,7 @@ export default async function ProjectSettingsPage({
             href={`/projects/${id}/history`}
             className="hover:text-ink-700"
           >
-            {project.name}
+            {projectDisplayName(project)}
           </Link>
           <span>›</span>
           <span className="text-ink-700">settings</span>
@@ -68,7 +69,7 @@ export default async function ProjectSettingsPage({
             )}
           </div>
           <h1 className="text-[36px] font-bold text-ink-900 tracking-tight">
-            {project.name}
+            {projectDisplayName(project)}
           </h1>
           <p className="text-ink-500 mt-2">
             {project.agentsCount} agents · {project.asksCount} asks
