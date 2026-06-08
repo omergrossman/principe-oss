@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/db/prisma";
 import { getProject } from "@/lib/projects/repo";
+import { projectDisplayName } from "@/lib/projects/describe";
 import { SavedAskDashboard } from "@/app/workspace/SavedAskDashboard";
 import { ReuseActions } from "./ReuseActions";
 
@@ -41,6 +42,11 @@ export default async function SavedAskPage({
       </main>
     );
   }
+
+  // Read-only when viewing someone else's project (admin oversight): no
+  // reuse/re-run affordances, just the saved dashboard.
+  const readOnly = project.ownerUserId !== session.userId;
+  const displayName = projectDisplayName(project);
 
   const ask = await prisma.projectAsk.findFirst({
     where: { id: askId, projectId: id },
@@ -78,7 +84,7 @@ export default async function SavedAskPage({
           className="inline-flex items-center gap-1.5 text-[13px] text-ink-500 hover:text-ink-900 transition-colors mb-3 font-medium"
         >
           <span aria-hidden>←</span>
-          Back to {project.name}
+          Back to {displayName}
         </Link>
         <nav className="flex items-center gap-2 text-[13px] text-ink-300 mb-3 font-mono">
           <Link href="/projects" className="hover:text-ink-700">
@@ -86,7 +92,7 @@ export default async function SavedAskPage({
           </Link>
           <span>›</span>
           <Link href={`/projects/${id}/history`} className="hover:text-ink-700">
-            {project.name}
+            {displayName}
           </Link>
           <span>›</span>
           <span className="text-ink-700">
@@ -157,7 +163,9 @@ export default async function SavedAskPage({
           tokensOut={ask.tokensOut}
           costUsd={Number(ask.costUsd)}
           validation={ask.validation as never}
-          questionActions={<ReuseActions question={ask.question} />}
+          questionActions={
+            readOnly ? null : <ReuseActions question={ask.question} />
+          }
         />
       </main>
     </>
