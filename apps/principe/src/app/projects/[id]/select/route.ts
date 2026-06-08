@@ -16,12 +16,19 @@ const ONE_YEAR_SEC = 60 * 60 * 24 * 365;
  * in one navigation.
  */
 export async function GET(
-  req: Request,
+  _req: Request,
   { params }: { params: Promise<{ id: string }> },
 ) {
   const session = await requireAuth("/projects");
   if (!session.firmId) {
-    return NextResponse.redirect(new URL("/login", req.url), 303);
+    // Relative Location: the browser resolves it against the page's own
+    // origin. Building it from `req.url` is wrong behind Docker port-mapping
+    // (the container listens on :3000 internally) — it would redirect to the
+    // wrong port.
+    return new NextResponse(null, {
+      status: 303,
+      headers: { Location: "/login" },
+    });
   }
   const { id } = await params;
   const project = await prisma.project.findFirst({
@@ -37,7 +44,10 @@ export async function GET(
     select: { id: true },
   });
   if (!project) {
-    return NextResponse.redirect(new URL("/projects", req.url), 303);
+    return new NextResponse(null, {
+      status: 303,
+      headers: { Location: "/projects" },
+    });
   }
   const jar = await cookies();
   jar.set(PROJECT_COOKIE, project.id, {
@@ -46,5 +56,8 @@ export async function GET(
     path: "/",
     maxAge: ONE_YEAR_SEC,
   });
-  return NextResponse.redirect(new URL("/workspace", req.url), 303);
+  return new NextResponse(null, {
+    status: 303,
+    headers: { Location: "/workspace" },
+  });
 }
