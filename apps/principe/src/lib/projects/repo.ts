@@ -75,9 +75,13 @@ export async function listProjects(
 export async function getProject(
   firmId: string,
   projectId: string,
+  // When set, restrict to projects owned by this user. Pass session.userId for
+  // members (so they can't read another member's project by id); pass
+  // undefined for admins (read-only firm-wide oversight).
+  ownerUserId?: string,
 ): Promise<ProjectListItem | null> {
   const r = await prisma.project.findFirst({
-    where: { id: projectId, firmId },
+    where: { id: projectId, firmId, ...(ownerUserId ? { ownerUserId } : {}) },
     select: {
       id: true,
       name: true,

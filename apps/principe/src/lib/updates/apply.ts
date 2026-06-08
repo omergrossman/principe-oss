@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+import { createHash } from "node:crypto";
 import { prisma } from "@/lib/db/prisma";
 import type { BundleManifest, BundleEntry } from "./manifest";
 
@@ -69,6 +70,18 @@ async function applyKnowledgeEntry(
   bytes: Buffer,
   firmId: string,
 ): Promise<"new" | "updated" | "skipped"> {
+  // Verify the unpacked bytes match the per-entry hash committed in the
+  // (signed) manifest. The bundle-level sha256 is already checked before
+  // unpacking, but verifying each entry makes the manifest's per-entry hash
+  // load-bearing — a build/packaging step that diverged file content from its
+  // advertised hash is rejected rather than silently installed.
+  const actualSha = createHash("sha256").update(bytes).digest("hex");
+  if (actualSha !== entry.sha256) {
+    throw new Error(
+      `content hash mismatch for ${entry.path} (expected ${entry.sha256.slice(0, 12)}…, got ${actualSha.slice(0, 12)}…)`,
+    );
+  }
+
   const content = bytes.toString("utf8");
   const title = entry.path.split("/").pop()?.replace(/\.md$/, "") ?? entry.path;
 
