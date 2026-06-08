@@ -274,9 +274,10 @@ function QuestionForm({
           onChange={(e) => setQuestion(e.target.value)}
           rows={4}
           maxLength={2000}
+          wrap="soft"
           placeholder="e.g., Would you replace your current MDR if ours cuts MTTR 40% but takes 6 weeks to integrate?"
           disabled={disabled || submitting}
-          className="w-full p-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20 leading-relaxed resize-none"
+          className="block w-full max-w-full p-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20 leading-relaxed resize-none whitespace-pre-wrap break-words overflow-x-hidden overflow-y-auto"
         />
         <div className="flex items-center justify-between mt-3">
           <span className="text-[11px] text-ink-300 font-mono">
