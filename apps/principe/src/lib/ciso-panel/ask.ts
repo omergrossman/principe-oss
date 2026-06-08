@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import type Anthropic from "@anthropic-ai/sdk";
+import { renderAskHistorySection } from "./ask-history";
 import type { AgenticPersona } from "@/lib/personas/generate100";
 import {
   buildBriefingForAgent,
@@ -19,6 +20,13 @@ import { classifyQuestionThreatTypes } from "@/lib/canon";
 // the 12 most-recent + most-relevant opinions to keep prompt size bounded.
 const MAX_OPINIONS_IN_PROMPT = 12;
 const MAX_VOCAB_IN_PROMPT = 10;
+
+// Sprint 9.1 — Anthropic 429 retry knobs. Without backoff, Tier 1 users
+// hit rate limits at the new Tier 2 defaults and the affected personas
+// silently turn into apiError rows in the panel response. With backoff,
+// Tier 1 just runs slower — every persona still lands.
+const MAX_429_RETRIES = 3;
+const BASE_429_DELAY_MS = 2000;
 
 /**
  * Fan out one natural-language question to all 100 agentic CISO personas
@@ -536,16 +544,16 @@ async function askOne(
   // the briefing so the agent reads "who you are + what you believe"
   // before the situational intelligence for this question.
   const depthSection = buildPersonaDepthSection(persona, questionThreats);
-  const head = depthSection
-    ? `${persona.systemPrompt}\n\n${depthSection}`
-    : persona.systemPrompt;
+  // Sprint 9.1 — recent ask history. Lets the persona stay consistent
+  // across questions AND evolve when new evidence warrants.
+  const historySection = renderAskHistorySection(persona.askHistory);
+
+  const sections = [persona.systemPrompt, depthSection, historySection].filter(
+    (s) => s && s.length > 0,
+  );
+  const head = sections.join("\n\n");
   const system = briefing ? `${head}\n\n${briefing}` : head;
-  const res = await client.messages.create({
-    model: MODEL,
-    max_tokens: 320,
-    system,
-    messages: [{ role: "user", content: question }],
-  });
+  const res = await callAnthropicWithBackoff(client, system, question);
   const text = res.content
     .map((c) => (c.type === "text" ? c.text : ""))
     .join("")
@@ -555,6 +563,39 @@ async function askOne(
     inputTokens: res.usage.input_tokens,
     outputTokens: res.usage.output_tokens,
   };
+}
+
+async function callAnthropicWithBackoff(
+  client: Anthropic,
+  system: string,
+  question: string,
+): Promise<Anthropic.Messages.Message> {
+  let lastErr: unknown = null;
+  for (let attempt = 0; attempt <= MAX_429_RETRIES; attempt++) {
+    try {
+      return await client.messages.create({
+        model: MODEL,
+        max_tokens: 320,
+        system,
+        messages: [{ role: "user", content: question }],
+      });
+    } catch (e) {
+      lastErr = e;
+      // Anthropic SDK exposes .status on its APIError class. 429 is
+      // the only retriable case here — 4xx other than 429 is a client
+      // bug we shouldn't paper over with retries.
+      const status =
+        typeof (e as { status?: unknown })?.status === "number"
+          ? (e as { status: number }).status
+          : 0;
+      if (status !== 429 || attempt === MAX_429_RETRIES) throw e;
+      // Exponential backoff with jitter: 2s, 4s, 8s + up to 1s jitter.
+      const delay =
+        BASE_429_DELAY_MS * Math.pow(2, attempt) + Math.floor(Math.random() * 1000);
+      await new Promise((r) => setTimeout(r, delay));
+    }
+  }
+  throw lastErr;
 }
 
 /**

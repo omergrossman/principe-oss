@@ -1,10 +1,13 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { prisma } from "@/lib/db/prisma";
 import type { AgenticPersona } from "@/lib/personas/generate100";
+import { parseAskHistory, type AskHistoryEntry } from "@/lib/ciso-panel/ask-history";
 
 // Sprint 5 — runtime persona extends AgenticPersona with depth fields
 // so the ask path can build "YOUR ESTABLISHED POSITIONS" + "PHRASES
 // YOU USE" sections without an extra DB join per agent.
+// Sprint 9.1 — also carries askHistory so the ask path can inject
+// the persona's recent panel positions into the runtime prompt.
 
 export interface CoreOpinion {
   topic: string;
@@ -17,6 +20,7 @@ export interface CoreOpinion {
 export interface RuntimePersona extends AgenticPersona {
   coreOpinions: CoreOpinion[];
   signatureVocabulary: string[];
+  askHistory: AskHistoryEntry[];
 }
 
 /**
@@ -69,6 +73,7 @@ export async function loadProjectAgents(projectId: string): Promise<RuntimePerso
       systemPrompt: r.baseMarkdown + intelSection,
       coreOpinions,
       signatureVocabulary: r.signatureVocabulary ?? [],
+      askHistory: parseAskHistory(r.askHistory),
     };
   });
 }
