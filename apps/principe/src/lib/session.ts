@@ -60,7 +60,14 @@ export async function createSession(
   store.set(SESSION_COOKIE, encodeSession(session), {
     httpOnly: true,
     sameSite: "lax",
-    secure: process.env.NODE_ENV === "production",
+    // Secure cookies require HTTPS. The OSS distribution often runs on
+    // plain HTTP localhost (or behind a reverse proxy that does TLS
+    // termination). Tying `secure` to NODE_ENV=production wrongly
+    // assumes "production = HTTPS"; in self-hosted OSS that's false
+    // and browsers silently drop the cookie. Gate on the configured
+    // WEBAUTHN_ORIGIN scheme instead — that's the only origin the app
+    // is reachable from.
+    secure: (process.env.WEBAUTHN_ORIGIN ?? "").startsWith("https://"),
     maxAge: SESSION_MAX_AGE,
     path: "/",
   });
