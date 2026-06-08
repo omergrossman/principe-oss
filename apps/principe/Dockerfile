@@ -1,7 +1,7 @@
 # Principe web app — Next.js 16 + Prisma 7.
 # Built from project root: `docker build -f apps/principe/Dockerfile .`
 
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 RUN apk add --no-cache libc6-compat curl bash openssl \
     && npm install -g pnpm@11.2.2
 WORKDIR /workspace

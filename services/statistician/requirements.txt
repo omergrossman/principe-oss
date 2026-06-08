@@ -1,12 +1,22 @@
 # Principe Statistician — runtime dependencies
-# Pinned to the same floors as services/statistician/pyproject.toml.
+#
+# Floor constraints (>=) rather than tilde-pins so pip can pick the
+# latest compatible release that has prebuilt wheels for every
+# platform Docker supports (linux/amd64, linux/arm64).
+#
+# Tight pins broke aarch64 builds because PyMC 5.16 forced scipy<1.13
+# and scipy 1.12 has no aarch64+py3.12 wheel, falling back to a
+# source build that needed gfortran + openblas-dev + meson + cmake.
 
-fastapi==0.115.*
-pydantic==2.9.*
-uvicorn[standard]==0.32.*
+fastapi>=0.115
+pydantic>=2.9
+uvicorn[standard]>=0.32
 
-# Bayesian stack — requires Python 3.10+
-numpy==1.26.*
-pandas==2.2.*
-pymc==5.16.*
-numpyro==0.15.*
+# Bayesian stack — requires Python 3.10+. The Dockerfile pre-installs
+# numpy/pandas/scipy as binary wheels before this file runs, so PyMC
+# only needs to bring itself + a couple of pure-Python helpers.
+numpy>=1.26
+pandas>=2.2
+scipy>=1.13
+pymc>=5.18
+numpyro>=0.16

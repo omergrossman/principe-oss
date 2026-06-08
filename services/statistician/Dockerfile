@@ -5,17 +5,34 @@ FROM python:3.12-slim AS base
 
 WORKDIR /app
 
-# System deps for PyMC's PyTensor backend (gcc, g++, libgomp for OpenMP).
+# System deps for PyMC's PyTensor backend at runtime (gcc/g++ for PyTensor
+# JIT, libgomp for OpenMP). No Fortran needed because we install the
+# scientific stack as pre-built wheels (no source builds).
 RUN apt-get update && apt-get install -y --no-install-recommends \
       gcc g++ libgomp1 curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Python deps. requirements.txt mirrors the floors in pyproject.toml.
+# Install the heavy scientific stack first using ONLY prebuilt wheels.
+# --only-binary=:all: refuses to compile from source — if a wheel isn't
+# available for the platform, pip fails fast with a clear error instead
+# of dragging us into gfortran/openblas/meson territory. These three
+# have wheels for every Python 3.10+ × {x86_64, aarch64} combo.
+RUN pip install --no-cache-dir --only-binary=:all: \
+      numpy pandas scipy
+
+# Rest of the runtime deps. PyMC + NumPyro install cleanly once scipy
+# is already satisfied by the wheel above.
 COPY services/statistician/requirements.txt ./
 RUN pip install --no-cache-dir -r requirements.txt
 
 # App code.
 COPY services/statistician/app ./app
+
+# Calibration corpus — required at startup by app.main's lifespan hook.
+# Baked into the image so the container is fully self-contained and
+# doesn't depend on volume mounts (which break on Colima/non-default
+# Docker setups that don't mount /tmp or arbitrary host paths).
+COPY calibration /calibration
 
 # Pre-warm PyMC's PyTensor compile cache during image build. First-time
 # `pm.sample()` compiles ~30s of C code; running it once at build time

@@ -30,6 +30,7 @@ services:
     restart: unless-stopped
     environment:
       STATISTICIAN_SHARED_SECRET: ${STATISTICIAN_SHARED_SECRET:?STATISTICIAN_SHARED_SECRET must be set — see bin/start.sh}
+      STATISTICIAN_CALIBRATION_PATH: /calibration/datasets/panorays-2026-ciso.json
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost:8000/healthz || exit 1"]
       interval: 10s
