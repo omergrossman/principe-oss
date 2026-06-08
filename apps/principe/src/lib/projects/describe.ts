@@ -90,14 +90,14 @@ export function workspaceSubtitle(summary: CompositionSummary): string {
 }
 
 /**
- * Sprint 7 — runtime estimate for a panel of N personas. Whole-minute
- * granularity only. Calibrated from observed throughput: ~3-4 min at
- * N=100 with Anthropic Haiku 4.5 + concurrency=4 + token-bucket pacing.
- * Linear fit: ~1.8-2.4s/persona + 15-25s synthesis/validation overhead.
+ * Runtime estimate for a panel of N personas. Whole-minute granularity.
+ * Recalibrated after the run-pipeline acceleration: the default 100-persona
+ * panel now lands ~2-3 min (was ~3-5). Linear fit: ~0.9-0.95s/persona +
+ * ~35s synthesis/validation overhead. Anchors: 30→~1-2, 100→~2-3, 200→~3-4.
  */
 export function estimateRuntime(panelSize: number): string {
   const n = Math.max(1, Math.round(panelSize));
-  const lowMin = Math.max(1, Math.floor((n * 1.8 + 15) / 60));
-  const highMin = Math.max(lowMin + 1, Math.ceil((n * 2.4 + 25) / 60));
+  const lowMin = Math.max(1, Math.floor((n * 0.9 + 35) / 60));
+  const highMin = Math.max(lowMin + 1, Math.ceil((n * 0.95 + 35) / 60));
   return `~${lowMin}-${highMin} minutes`;
 }
