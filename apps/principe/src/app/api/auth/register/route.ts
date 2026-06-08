@@ -22,7 +22,7 @@ import { prisma } from "@/lib/db/prisma";
  *   POST — verifies the attestation and writes the credential to the DB
  *
  * Requires an active session (created by /api/auth/signup or
- * /api/auth/accept-invite). Adapted from Fable's pattern.
+ * /api/auth/accept-invite).
  */
 
 const RP_NAME = process.env.WEBAUTHN_RP_NAME ?? "Príncipe";

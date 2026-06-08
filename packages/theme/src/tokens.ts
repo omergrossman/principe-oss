@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /**
- * Fable V2 design tokens.
+ * Design tokens (shared DP palette).
  *
  * Cream paper canvas, dusty teal primary, warm coral accent, simpsons yellow
  * sun. Storybook + Hilda × Simpsons cartoon energy. NOT a dark dashboard.
@@ -8,11 +8,11 @@
  * The deprecated re-exports at the bottom of this file (GLASS_CARD, GRADIENT_BG,
  * GLOW, TEXT) are intentional — they let existing pages keep compiling while
  * Phases 2–5 migrate call sites to the new tokens. Without them every page
- * would break at once. New code MUST use the FABLE / SHADOW / RADIUS / FONT
+ * would break at once. New code MUST use the PRINCIPE / SHADOW / RADIUS / FONT
  * exports below.
  */
 
-export const FABLE = {
+export const PRINCIPE = {
   // Brand
   primary: '#2C7E7D',
   primaryLight: '#DAEAE7',
@@ -60,25 +60,25 @@ export const FONT = {
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Deprecated re-exports — kept so existing pages compile during the redesign.
-// Phases 2–5 will replace each call site with FABLE / SHADOW directly, then
+// Phases 2–5 will replace each call site with PRINCIPE / SHADOW directly, then
 // these can be deleted.
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** @deprecated Use FABLE.canvas + FABLE.surface + FABLE.ink directly. */
-export const GRADIENT_BG = FABLE.canvas
+/** @deprecated Use PRINCIPE.canvas + PRINCIPE.surface + PRINCIPE.ink directly. */
+export const GRADIENT_BG = PRINCIPE.canvas
 
-/** @deprecated Use FABLE.ink / FABLE.inkSecondary / FABLE.inkTertiary. */
+/** @deprecated Use PRINCIPE.ink / PRINCIPE.inkSecondary / PRINCIPE.inkTertiary. */
 export const TEXT = {
-  primary: FABLE.ink,
-  secondary: FABLE.inkSecondary,
-  muted: FABLE.inkTertiary,
+  primary: PRINCIPE.ink,
+  secondary: PRINCIPE.inkSecondary,
+  muted: PRINCIPE.inkTertiary,
 } as const
 
-/** @deprecated Use new card styling with FABLE.surface + SHADOW.paper. */
+/** @deprecated Use new card styling with PRINCIPE.surface + SHADOW.paper. */
 export const GLASS_CARD = {
-  background: FABLE.surface,
+  background: PRINCIPE.surface,
   backdropFilter: 'none',
-  border: `1px solid ${FABLE.border}`,
+  border: `1px solid ${PRINCIPE.border}`,
   borderRadius: `${RADIUS.lg}px`,
 } as const
 

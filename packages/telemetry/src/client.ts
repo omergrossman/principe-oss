@@ -4,7 +4,7 @@ import type { Transport } from './transport'
 import { EventBuffer, type BufferConfig } from './buffer'
 
 export interface TelemetryClientConfig {
-  /** Stable project identifier, e.g., "fable" / "product-2". */
+  /** Stable project identifier, e.g., "myapp" / "product-2". */
   projectId: string
   /** Transport (Http/Noop/etc). */
   transport: Transport

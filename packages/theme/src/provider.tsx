@@ -20,7 +20,7 @@ export function DPThemeProvider({
  * Read the active theme. Must be called inside a <DPThemeProvider>.
  * Components that pre-render server-side and want theme can either
  * (a) accept the theme as a prop from a client wrapper, or
- * (b) import the static tokens (FABLE / AGENT_COLORS / SEVERITY_CONFIG)
+ * (b) import the static tokens (PRINCIPE / AGENT_COLORS / SEVERITY_CONFIG)
  *     directly from @dp/theme.
  */
 export function useTheme(): PlatformTheme {

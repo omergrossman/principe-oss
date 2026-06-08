@@ -6,14 +6,14 @@ import type { SeverityConfig, Severity } from './severity'
 /**
  * The contract every project's theme must satisfy.
  *
- * Each project (Fable, Product 2, …) provides one of these at mount time
+ * Each project (each consuming app) provides one of these at mount time
  * via `<DPThemeProvider theme={projectTheme}>`. DP-shipped components
  * read from it via `useTheme()`.
  */
 export interface PlatformTheme {
   /** Brand identity */
   brand: {
-    /** Short display name, e.g. "fable". */
+    /** Short display name, e.g. "myapp". */
     name: string
     /** Lowercase wordmark React component (project supplies). */
     Wordmark: ComponentType<{ size?: number }>
@@ -23,7 +23,7 @@ export interface PlatformTheme {
     tagline?: string
   }
   /**
-   * Color palette. The shape mirrors the canonical fable token set; new
+   * Color palette. The shape mirrors the canonical token set; new
    * projects override the values they care about and keep the slot names.
    */
   colors: {
@@ -44,7 +44,7 @@ export interface PlatformTheme {
   }
   /** Severity scale (typically same across projects — semantic, not brand) */
   severity: Record<Severity, SeverityConfig>
-  /** Per-agent palette (relevant for Fable; other projects may omit or override) */
+  /** Per-agent palette (optional per project; apps may omit or override) */
   agents?: AgentColors
   /** Type system */
   fonts: {

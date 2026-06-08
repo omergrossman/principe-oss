@@ -6,7 +6,7 @@ import { PrismaPg } from "@prisma/adapter-pg";
  * Prisma 7 requires a driver adapter on the client constructor. We use
  * the Postgres adapter; DATABASE_URL is read at first-query time.
  *
- * Lifted from Fable's pattern (apps/fable/src/lib/db/prisma.ts). Lazy
+ * Lazy
  * proxy: PrismaClient isn't constructed until first access, so missing
  * DATABASE_URL only throws at query time, not import time.
  */
