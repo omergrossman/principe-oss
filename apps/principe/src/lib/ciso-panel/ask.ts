@@ -552,7 +552,13 @@ async function askOne(
     (s) => s && s.length > 0,
   );
   const head = sections.join("\n\n");
-  const system = briefing ? `${head}\n\n${briefing}` : head;
+  const base = briefing ? `${head}\n\n${briefing}` : head;
+  // Final, emphatic format + brevity rule. Placed LAST so it's the most
+  // salient instruction to the model, and appended at ask time so it applies
+  // to every project — including agents materialised before this rule existed.
+  // Keeps each response short enough to finish valid JSON inside max_tokens
+  // and suppresses prose preambles/refusals that break the parser.
+  const system = `${base}\n\nRESPONSE FORMAT — STRICT: Output ONLY the single JSON object you were instructed to produce — nothing before or after it, no code fences, no preamble. Keep "reasoning" to 2-3 short sentences (~50 words maximum); be decisive, not exhaustive. A response that runs long gets cut off mid-output and discarded, so stay brief.`;
   const res = await callAnthropicWithBackoff(client, system, question);
   const text = res.content
     .map((c) => (c.type === "text" ? c.text : ""))
@@ -575,7 +581,14 @@ async function callAnthropicWithBackoff(
     try {
       return await client.messages.create({
         model: MODEL,
-        max_tokens: 320,
+        // The persona prompt + the ask-time rule ask for a small JSON (verdict
+        // + sentiment + 18-word headline + 2-3 sentences). 320 was too tight:
+        // an overrun cut the JSON off mid-`reasoning`, failed to parse, and
+        // degraded to a neutral "[response was truncated]" fallback. max_tokens
+        // is a CAP, not a target — compliant short responses still stop early
+        // and cost the same; this just buys headroom so the rare overrun still
+        // finishes valid JSON instead of being lost.
+        max_tokens: 700,
         system,
         messages: [{ role: "user", content: question }],
       });
