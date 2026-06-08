@@ -558,12 +558,15 @@ async function askOne(
   // to every project — including agents materialised before this rule existed.
   // Keeps each response short enough to finish valid JSON inside max_tokens
   // and suppresses prose preambles/refusals that break the parser.
-  const system = `${base}\n\nRESPONSE FORMAT — STRICT: Output ONLY the single JSON object you were instructed to produce — nothing before or after it, no code fences, no preamble. Keep "reasoning" to 2-3 short sentences (~50 words maximum); be decisive, not exhaustive. A response that runs long gets cut off mid-output and discarded, so stay brief.`;
+  const system = `${base}\n\nRESPONSE FORMAT — STRICT: Reply AS this persona with ONLY the single JSON object you were instructed to produce (verdict, sentiment, headline, reasoning) — nothing before or after it, no code fences, no preamble, no plain prose. Even if the question is open-ended, vague, a direct query, or not a product pitch, still answer in character with a real verdict and reasoning — NEVER refuse, never reply that you only evaluate pitches, never break format. Keep "reasoning" to 2-3 short sentences (~50 words maximum); be decisive, not exhaustive.`;
   const res = await callAnthropicWithBackoff(client, system, question);
-  const text = res.content
+  // We prefilled the assistant turn with "{" (see callAnthropicWithBackoff) to
+  // force JSON; the API returns only the continuation, so prepend it back to
+  // reconstruct the full object before the parser sees it.
+  const continuation = res.content
     .map((c) => (c.type === "text" ? c.text : ""))
-    .join("")
-    .trim();
+    .join("");
+  const text = `{${continuation}`.trim();
   return {
     text,
     inputTokens: res.usage.input_tokens,
@@ -590,7 +593,14 @@ async function callAnthropicWithBackoff(
         // finishes valid JSON instead of being lost.
         max_tokens: 700,
         system,
-        messages: [{ role: "user", content: question }],
+        // Prefill the assistant turn with "{" so the model MUST continue as
+        // JSON — this hard-blocks the prose refusals ("I only evaluate founder
+        // pitches…") that the defensive parser can only flag as malformed. The
+        // returned text omits the prefilled "{"; the caller prepends it back.
+        messages: [
+          { role: "user", content: question },
+          { role: "assistant", content: "{" },
+        ],
       });
     } catch (e) {
       lastErr = e;
