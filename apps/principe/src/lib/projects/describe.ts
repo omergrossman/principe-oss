@@ -8,6 +8,20 @@ import {
 } from "./composition";
 
 /**
+ * Display name for a project. Each user's per-user Default project carries a
+ * uid-tail suffix in the DB ("Default project · ab12") to satisfy the
+ * @@unique([firmId, name]) constraint when several users each have one — but a
+ * user only ever sees their own, so the UI renders the clean canonical label
+ * instead of leaking that id fragment.
+ */
+export function projectDisplayName(project: {
+  isDefault: boolean;
+  name: string;
+}): string {
+  return project.isDefault ? "Default project" : project.name;
+}
+
+/**
  * Human-readable composition summary for the workspace subtitle.
  *
  * For the Default project (composition === null) we report the

@@ -17,6 +17,7 @@ import {
   describeComposition,
   estimateRuntime,
   workspaceSubtitle,
+  projectDisplayName,
 } from "@/lib/projects/describe";
 import type { PanelComposition } from "@/lib/projects/composition";
 
@@ -93,7 +94,9 @@ export default async function WorkspacePage() {
             <p className="text-[12px] text-ink-300 mt-2 font-mono">
               Signed in as {user?.name ?? user?.email}
               {firm?.name ? ` · ${firm.name}` : ""}
-              {currentProjectMeta ? ` · ${currentProjectMeta.name}` : ""}
+              {currentProjectMeta
+                ? ` · ${projectDisplayName(currentProjectMeta)}`
+                : ""}
             </p>
           </div>
           {currentProject && projects.length > 0 && (

@@ -7,6 +7,7 @@ import { Pill } from "@/components/ui/Pill";
 import { AppTopBar } from "@/components/app/AppTopBar";
 import { AnthropicKeyForm } from "./AnthropicKeyForm";
 import { UpdatesCard } from "./UpdatesCard";
+import { projectDisplayName } from "@/lib/projects/describe";
 
 export const dynamic = "force-dynamic";
 
@@ -159,7 +160,7 @@ async function MonthlyCostCard({ firmId }: { firmId: string }) {
                 className="flex items-center gap-3 text-[12px]"
               >
                 <span className="text-ink-700 font-medium truncate w-44">
-                  {p.name}
+                  {projectDisplayName(p)}
                   {p.isDefault && (
                     <span className="text-ink-300 ml-1 font-mono uppercase text-[10px]">
                       default
