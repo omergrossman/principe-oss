@@ -4,6 +4,7 @@ import { cookies } from "next/headers";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db/prisma";
 import { requireAuth } from "@/lib/auth/require-auth";
+import { checkRateLimit } from "@/lib/rate-limit";
 import { getAnthropicClientForFirm } from "@/lib/anthropic/client";
 import { runPanelAsk } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
@@ -59,6 +60,20 @@ export async function POST(req: Request) {
     return NextResponse.json(
       { error: "Sign in to an organisation to run the panel." },
       { status: 403 },
+    );
+  }
+
+  // Each ask fans out up to ~100-200 paid Anthropic calls. Cap how many an
+  // authenticated user can launch per hour so a single account can't drive
+  // unbounded spend against the firm's key.
+  const rl = checkRateLimit(`ask:${session.userId}`, {
+    limit: 20,
+    windowMs: 60 * 60 * 1000,
+  });
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: "Too many panel runs this hour. Try again shortly." },
+      { status: 429, headers: { "Retry-After": String(rl.retryAfterSec) } },
     );
   }
 

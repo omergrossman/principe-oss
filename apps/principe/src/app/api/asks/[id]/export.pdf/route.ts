@@ -57,10 +57,17 @@ export async function GET(
 
   const ask = await prisma.projectAsk.findUnique({
     where: { id },
-    include: { project: { select: { firmId: true, name: true } } },
+    include: {
+      project: { select: { firmId: true, name: true, ownerUserId: true } },
+    },
   });
   if (!ask) return new Response("Not found", { status: 404 });
-  if (ask.project.firmId !== session.firmId) {
+  const isAdminViewer =
+    session.role === "VC_ADMIN" || session.role === "PRINCIPE_ADMIN";
+  if (
+    ask.project.firmId !== session.firmId ||
+    (!isAdminViewer && ask.project.ownerUserId !== session.userId)
+  ) {
     return new Response("Forbidden", { status: 403 });
   }
 
