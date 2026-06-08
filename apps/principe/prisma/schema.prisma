@@ -23,7 +23,6 @@
 //   CalibrationDataset (global) → BacktestResult
 //
 //   AuditLog (per-tenant scoped, append-only)
-//   ProcessedStripeEvent (global dedupe ledger)
 //   TenantLifecycleAuditLog (DP pattern; survives org purge via SetNull)
 
 generator client {
@@ -93,8 +92,6 @@ model Firm {
   slug                  String         @unique
   status                TenantStatus   @default(ACTIVE)
   region                String         @default("us")  // us / eu-west / eu-central / uk / apac / anz
-  stripeCustomerId      String?        @unique
-  stripeSubscriptionId  String?
   // BYO Anthropic key — AES-256-GCM ciphertext (base64), iv:ct:tag tuple.
   // Last 4 chars of the plaintext stored separately for UI display only.
   anthropicKeyCiphertext String?
@@ -116,7 +113,6 @@ model Firm {
   memberships           Membership[]
   invitations           Invitation[]
   auditLogs             TenantLifecycleAuditLog[]
-  processedEvents       ProcessedStripeEvent[]
 
   @@index([status, purgeScheduledAt])
   @@index([region])
@@ -503,17 +499,6 @@ model TenantLifecycleAuditLog {
   @@index([createdAt])
 }
 
-// Stripe webhook idempotency — global dedupe ledger
-model ProcessedStripeEvent {
-  id              String   @id                                // Stripe event id (e.g. "evt_1Nj...")
-  eventType       String
-  firmId        String? @map("vcFirmId")
-  processedAt     DateTime @default(now())
-
-  firm          Firm?  @relation(fields: [firmId], references: [id], onDelete: SetNull)
-
-  @@index([processedAt])
-}
 
 // ─── Knowledge sources ───────────────────────────────────────────────
 //
@@ -768,13 +753,6 @@ model Transcript {
 // Per-instance sync cursor. Tracks the DP master baseline version
 // this Principe instance last applied so the cheap-check on /version
 // can short-circuit when nothing has changed.
-model BaselineSyncState {
-  id                  Int        @id @default(1)
-  lastAppliedVersion  DateTime?
-  lastSyncAt          DateTime?
-  lastSyncStatus      String?    @db.Text  // "ok" / "version-match" / error message
-  syncCount           Int        @default(0)
-}
 
 enum InsightKind {
   VENDOR_OPINION
