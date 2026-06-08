@@ -30,6 +30,11 @@ export interface UpdatesCheckResponse {
   mode: "remote" | "local" | "disabled";
   installedVersion: string | null;
   installedAt: string | null;
+  // When no bundle has been pulled yet, this is the workspace's
+  // creation date — i.e. when the bundled-with-install knowledge
+  // baseline first landed. UI shows "Last update: <date>" in that
+  // case instead of "none yet."
+  workspaceCreatedAt: string | null;
   latestVersion: string | null;
   latestPublishedAt: string | null;
   changelog: string | null;
@@ -47,10 +52,16 @@ export async function GET() {
     select: { version: true, installedAt: true },
   });
 
+  const workspace = await prisma.firm.findFirst({
+    orderBy: { createdAt: "asc" },
+    select: { createdAt: true },
+  });
+
   const base: UpdatesCheckResponse = {
     mode,
     installedVersion: lastInstall?.version ?? null,
     installedAt: lastInstall?.installedAt.toISOString() ?? null,
+    workspaceCreatedAt: workspace?.createdAt.toISOString() ?? null,
     latestVersion: null,
     latestPublishedAt: null,
     changelog: null,

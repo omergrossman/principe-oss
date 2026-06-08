@@ -10,6 +10,7 @@ interface CheckResponse {
   mode: "remote" | "local" | "disabled";
   installedVersion: string | null;
   installedAt: string | null;
+  workspaceCreatedAt: string | null;
   latestVersion: string | null;
   latestPublishedAt: string | null;
   changelog: string | null;
@@ -99,16 +100,18 @@ export function UpdatesCard() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4 text-[13px]">
             <div>
               <p className="text-[11px] uppercase tracking-wide text-ink-300 font-medium mb-1">
-                Installed
+                Last update
               </p>
               <p className="text-ink-900 font-mono">
-                {check.installedVersion ?? "none yet"}
+                {check.installedVersion ?? "Shipped with install"}
               </p>
-              {check.installedAt && (
-                <p className="text-[11px] text-ink-300 font-mono mt-0.5">
-                  {new Date(check.installedAt).toLocaleDateString()}
-                </p>
-              )}
+              <p className="text-[11px] text-ink-300 font-mono mt-0.5">
+                {check.installedAt
+                  ? new Date(check.installedAt).toLocaleDateString()
+                  : check.workspaceCreatedAt
+                    ? new Date(check.workspaceCreatedAt).toLocaleDateString()
+                    : ""}
+              </p>
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wide text-ink-300 font-medium mb-1">

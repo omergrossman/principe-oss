@@ -63,7 +63,7 @@ export default async function SettingsPage() {
           </Card>
         </Link>
 
-        <Card>
+        <Card className="mb-6">
           <div className="flex items-start justify-between mb-2">
             <div>
               <h2 className="text-[18px] font-semibold text-ink-900 mb-1">
