@@ -274,7 +274,7 @@ function QuestionForm({
           onChange={(e) => setQuestion(e.target.value)}
           rows={4}
           maxLength={2000}
-          placeholder="e.g., I'm building an AI-powered MDR for mid-market fintechs. Would you replace your current MDR if our detection MTTR is 40% faster than yours and integration takes 6 weeks?"
+          placeholder="e.g., Would you replace your current MDR if ours cuts MTTR 40% but takes 6 weeks to integrate?"
           disabled={disabled || submitting}
           className="w-full p-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20 leading-relaxed resize-none"
         />
