@@ -34,6 +34,13 @@ COPY services/statistician/app ./app
 # Docker setups that don't mount /tmp or arbitrary host paths).
 COPY calibration /calibration
 
+# Shared, sticky-world-writable PyTensor compile cache so the build-time
+# pre-warm (runs as root, below) and the runtime container (runs as the
+# unprivileged user, below) share the SAME cache — the non-root switch keeps
+# the warm cache instead of recompiling on the first /verdict request.
+ENV PYTENSOR_FLAGS="base_compiledir=/var/cache/pytensor"
+RUN mkdir -p /var/cache/pytensor && chmod 1777 /var/cache/pytensor
+
 # Pre-warm PyMC's PyTensor compile cache during image build. First-time
 # `pm.sample()` compiles ~30s of C code; running it once at build time
 # means the runtime container's first /verdict request is fast.
@@ -48,6 +55,12 @@ with m: \
     pm.sample(draws=20, tune=20, chains=1, progressbar=False, return_inferencedata=False); \
 print('PyMC cache warmed.')" \
     || echo "WARN: PyMC pre-warm failed; first /verdict will be slower."
+
+# Drop to an unprivileged user for runtime. The service only reads /app +
+# /calibration and writes to the shared compile cache above; no root needed.
+RUN useradd --create-home --uid 10001 appuser \
+    && chown -R appuser /app
+USER appuser
 
 EXPOSE 8000
 

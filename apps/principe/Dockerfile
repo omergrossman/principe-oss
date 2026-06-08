@@ -31,9 +31,14 @@ RUN pnpm --filter principe build
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
-COPY --from=builder /workspace ./
-COPY apps/principe/entrypoint.sh /entrypoint.sh
+# Run as the unprivileged `node` user (uid 1000, ships in node:alpine). The
+# `--chown` on COPY sets ownership during the copy (no extra fat layer), so the
+# app dir — including .next/cache that `next start` writes for image
+# optimization — is writable by node. Reduces the blast radius of any RCE.
+COPY --chown=node:node --from=builder /workspace ./
+COPY --chown=node:node apps/principe/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
+USER node
 
 EXPOSE 3000
 
