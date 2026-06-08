@@ -130,3 +130,23 @@ export async function updatePasskeyCounter(
 export async function totalPasskeyCount(): Promise<number> {
   return prisma.passkey.count();
 }
+
+/**
+ * All registered credentials (across users), for the login flow's
+ * `allowCredentials`. Listing them means the browser only ever offers
+ * credentials the server actually knows — so orphaned keychain entries from
+ * abandoned enrolments aren't presented (those fail "credential not found"
+ * and confuse the user). Fine for a single-instance self-host; if user counts
+ * ever grow large, switch to a true discoverable/usernameless flow.
+ */
+export async function listAllCredentials(): Promise<
+  { credentialId: string; transports: AuthenticatorTransportFuture[] }[]
+> {
+  const rows = await prisma.passkey.findMany({
+    select: { credentialId: true, transports: true },
+  });
+  return rows.map((r) => ({
+    credentialId: r.credentialId,
+    transports: r.transports as AuthenticatorTransportFuture[],
+  }));
+}
