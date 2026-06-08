@@ -91,15 +91,18 @@ const MODEL = ANTHROPIC_MODELS.panel;
 //      enough — fast returns would burst above 50 RPM. 1500ms ⇒ ~40 starts
 //      per minute, comfortably under Tier 1.
 //
-// For Tier 2 (1000 RPM) bump concurrency to 12 and interval to 100ms; for
-// Tier 3+ disable the interval entirely with =0.
+// Defaults tuned for Anthropic Tier 2 (1000 RPM) — the standard ceiling
+// for any account that's had real spend. Tier 1 (50 RPM, fresh accounts)
+// users should override via env to PRINCIPE_PANEL_CONCURRENCY=4 +
+// PRINCIPE_PANEL_MIN_DISPATCH_INTERVAL_MS=1500 to avoid 429s. Tier 3+
+// can go faster (concurrency=24, interval=0).
 const PANEL_CONCURRENCY = Math.max(
   1,
-  Number(process.env.PRINCIPE_PANEL_CONCURRENCY) || 4,
+  Number(process.env.PRINCIPE_PANEL_CONCURRENCY) || 12,
 );
 const PANEL_MIN_DISPATCH_INTERVAL_MS = Math.max(
   0,
-  Number(process.env.PRINCIPE_PANEL_MIN_DISPATCH_INTERVAL_MS) || 1500,
+  Number(process.env.PRINCIPE_PANEL_MIN_DISPATCH_INTERVAL_MS) || 250,
 );
 
 export async function runPanelAsk(

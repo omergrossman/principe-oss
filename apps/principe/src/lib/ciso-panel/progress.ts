@@ -29,6 +29,25 @@ export interface PanelProgress {
 
 const store = new Map<string, PanelProgress>();
 
+// Tracks which firm IDs currently have a panel run in flight. Used to
+// reject concurrent asks from the same firm — the previous run's
+// progress counters would otherwise stack with the new run's, surfacing
+// nonsense like "115% complete" in the UI and triggering hard-to-debug
+// Anthropic rate-limit failures when 200 parallel calls fan out at once.
+const inFlight = new Set<string>();
+
+export function isRunActive(firmId: string): boolean {
+  return inFlight.has(firmId);
+}
+
+export function markRunStart(firmId: string): void {
+  inFlight.add(firmId);
+}
+
+export function markRunEnd(firmId: string): void {
+  inFlight.delete(firmId);
+}
+
 export function startProgress(firmId: string, total: number): void {
   store.set(firmId, {
     startedAt: Date.now(),
@@ -45,7 +64,11 @@ export function startProgress(firmId: string, total: number): void {
 export function incrementPersona(firmId: string, failed: boolean): void {
   const s = store.get(firmId);
   if (!s) return;
-  s.personasDone += 1;
+  // Cap at personasTotal so an orphaned previous run's late callbacks
+  // can't push the counter above 100% on a fresh subsequent run.
+  if (s.personasDone < s.personasTotal) {
+    s.personasDone += 1;
+  }
   if (failed) s.personasFailed += 1;
 }
 

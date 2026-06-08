@@ -78,7 +78,7 @@ export default async function AboutPage() {
 
           <section className="mt-16">
             <h2 className="text-[14px] uppercase tracking-wide font-semibold text-ink-500 mb-6">
-              The two people behind it
+              The author and the agent behind it
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <HumanCard
