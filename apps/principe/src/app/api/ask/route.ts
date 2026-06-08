@@ -9,6 +9,9 @@ import { runPanelAsk } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
 import {
   clearProgress,
+  isRunActive,
+  markRunEnd,
+  markRunStart,
   markSynthesisDone,
   markSynthesisStarted,
   markValidationStarted,
@@ -57,6 +60,26 @@ export async function POST(req: Request) {
       { status: 403 },
     );
   }
+
+  // Concurrent-run guard. A previous panel run for this firm might
+  // still be fanning out 100 Anthropic calls. Allowing a second one
+  // to start would (a) double the Anthropic rate-limit pressure, (b)
+  // race on the in-process progress counters (surfacing as ">100%"
+  // in the UI), and (c) leave the user staring at the orphaned older
+  // result if they hit the back button. Reject fast with 409.
+  if (isRunActive(session.firmId)) {
+    return NextResponse.json(
+      {
+        error:
+          "A previous question is still running for this workspace. Wait for it to finish, or refresh the page if you closed the previous tab.",
+      },
+      { status: 409 },
+    );
+  }
+  markRunStart(session.firmId);
+  // Reset any stale progress state from a previous run that ended
+  // abnormally (server restart, browser closed mid-run, etc.).
+  clearProgress(session.firmId);
 
   const cookieStore = await cookies();
   const requestedProjectId = cookieStore.get(PROJECT_COOKIE)?.value ?? null;
@@ -192,6 +215,11 @@ export async function POST(req: Request) {
     const msg = e instanceof Error ? e.message : "Unknown error";
     return NextResponse.json({ error: msg }, { status: 500 });
   } finally {
+    // Release the concurrent-run lock immediately so the user can
+    // submit a follow-up question right away. Defer progress cleanup
+    // by 2s so the polling client gets one final "100%" frame before
+    // the progress state disappears.
+    markRunEnd(session.firmId!);
     setTimeout(() => clearProgress(session.firmId!), 2000);
   }
 }

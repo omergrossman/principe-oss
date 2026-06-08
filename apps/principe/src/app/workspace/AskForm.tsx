@@ -71,6 +71,21 @@ export function AskForm({ disabled }: { disabled: boolean }) {
 
   const current = history[history.length - 1]?.result ?? null;
 
+  // Tracks the in-flight ask so we can cancel it cleanly when the user
+  // submits a follow-up question or navigates away mid-run. Without
+  // this, an orphaned fetch keeps the server's progress counter ticking
+  // and surfaces nonsense (e.g. "115%") on the next ask. The server-side
+  // concurrent-run guard rejects fresh asks while one is pending, so we
+  // ALSO need to drop the previous fetch on the client to actually
+  // make progress.
+  const inFlightAbort = useRef<AbortController | null>(null);
+  useEffect(() => {
+    return () => {
+      // Component unmounts (user navigated away). Abort whatever's pending.
+      inFlightAbort.current?.abort();
+    };
+  }, []);
+
   // Sprint 6 — reuse from the past-asks page. `?q=<question>` prefills
   // the editor; `?run=1` auto-fires it without waiting for a submit
   // click. The router.replace strips the params after consumption so a
@@ -93,12 +108,20 @@ export function AskForm({ disabled }: { disabled: boolean }) {
   }, []);
 
   async function runQuestion(q: string) {
+    // Cancel any in-flight previous ask so we don't end up with two
+    // fetches in parallel (and the server's concurrent-run lock would
+    // 409 the new one anyway).
+    inFlightAbort.current?.abort();
+    const controller = new AbortController();
+    inFlightAbort.current = controller;
+
     setFlow({ kind: "running", question: q, startedAt: Date.now() });
     try {
       const res = await fetch("/api/ask", {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ question: q }),
+        signal: controller.signal,
       });
       const data = await res.json();
       if (!res.ok) {
@@ -108,10 +131,16 @@ export function AskForm({ disabled }: { disabled: boolean }) {
       setHistory((h) => [...h, { result: data as AskResult, ranAt: Date.now() }]);
       setFlow({ kind: "idle", editing: false });
     } catch (err) {
+      // Aborts surface as DOMException("AbortError"). They're triggered
+      // by us (user submitting again, component unmounting) — don't
+      // show them as errors.
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setFlow({
         kind: "error",
         message: err instanceof Error ? err.message : "Network error.",
       });
+    } finally {
+      if (inFlightAbort.current === controller) inFlightAbort.current = null;
     }
   }
 
