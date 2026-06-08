@@ -21,7 +21,13 @@ export default async function ProjectHistoryPage({
     return <p className="p-8 text-ink-500">Organisation required.</p>;
   }
 
-  const project = await getProject(session.firmId, id);
+  const isAdminViewer =
+    session.role === "VC_ADMIN" || session.role === "PRINCIPE_ADMIN";
+  const project = await getProject(
+    session.firmId,
+    id,
+    isAdminViewer ? undefined : session.userId,
+  );
   if (!project) {
     return (
       <main className="max-w-3xl mx-auto px-8 py-16 text-center">

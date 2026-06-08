@@ -60,6 +60,12 @@ export async function POST(req: NextRequest) {
 
   try {
     const body = await req.json();
+    if (typeof body?.id !== "string") {
+      return NextResponse.json(
+        { error: "Malformed assertion" },
+        { status: 400 },
+      );
+    }
     const passkey = await getPasskey(body.id);
     if (!passkey || passkey.userId !== session.userId) {
       return NextResponse.json(

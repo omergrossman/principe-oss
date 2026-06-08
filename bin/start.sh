@@ -19,13 +19,17 @@ if [[ ! -f "$ENV_FILE" ]]; then
   # docker supports; if you're missing it, install openssl first.
   STATISTICIAN_SHARED_SECRET=$(openssl rand -hex 32)
   PRINCIPE_ENCRYPTION_KEY=$(openssl rand -hex 32)
+  # Randomise the DB password too. Postgres is only reachable on the docker
+  # network (never published to the host), but a random password avoids a
+  # well-known default if anyone later exposes it or shares the network.
+  POSTGRES_PASSWORD=$(openssl rand -hex 16)
 
   cat > "$ENV_FILE" <<EOF
 # Principe runtime secrets — generated $(date -u +%Y-%m-%dT%H:%M:%SZ).
 # Do NOT commit this file. Rotate by deleting it and re-running bin/start.sh.
 STATISTICIAN_SHARED_SECRET=${STATISTICIAN_SHARED_SECRET}
 PRINCIPE_ENCRYPTION_KEY=${PRINCIPE_ENCRYPTION_KEY}
-POSTGRES_PASSWORD=principe
+POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
 WEB_PORT=3000
 WEBAUTHN_ORIGIN=http://localhost:3000
 EOF
