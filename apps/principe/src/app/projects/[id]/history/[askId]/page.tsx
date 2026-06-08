@@ -7,6 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { prisma } from "@/lib/db/prisma";
 import { getProject } from "@/lib/projects/repo";
 import { projectDisplayName } from "@/lib/projects/describe";
+import { PanelDisclaimer } from "@/components/app/PanelDisclaimer";
 import { SavedAskDashboard } from "@/app/workspace/SavedAskDashboard";
 import { ReuseActions } from "./ReuseActions";
 
@@ -167,6 +168,7 @@ export default async function SavedAskPage({
             readOnly ? null : <ReuseActions question={ask.question} />
           }
         />
+        <PanelDisclaimer className="mt-8 max-w-2xl" />
       </main>
     </>
   );

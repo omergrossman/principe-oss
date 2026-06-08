@@ -6,6 +6,7 @@ import { requireAuth } from "@/lib/auth/require-auth";
 import { Pill } from "@/components/ui/Pill";
 import { Button } from "@/components/ui/Button";
 import { AppTopBar } from "@/components/app/AppTopBar";
+import { PanelDisclaimer } from "@/components/app/PanelDisclaimer";
 import { AskForm } from "./AskForm";
 import { ProjectSwitcher } from "./ProjectSwitcher";
 import {
@@ -134,6 +135,7 @@ export default async function WorkspacePage() {
               </Link>
             )}
           </p>
+          <PanelDisclaimer className="mt-4 max-w-2xl" />
         </div>
       </main>
     </>

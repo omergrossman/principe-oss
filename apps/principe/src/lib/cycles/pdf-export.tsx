@@ -197,6 +197,16 @@ const styles = StyleSheet.create({
     color: PALETTE.ink700,
     lineHeight: 1.4,
   },
+  disclaimer: {
+    marginTop: 20,
+    paddingTop: 8,
+    borderTopWidth: 0.5,
+    borderTopColor: PALETTE.ink100,
+    fontSize: 8,
+    color: PALETTE.ink500,
+    lineHeight: 1.4,
+  },
+  disclaimerLabel: { fontWeight: 700, color: PALETTE.ink700 },
 });
 
 function verdictColour(verdict: string | null): string {
@@ -634,6 +644,20 @@ function CycleReport({ data }: { data: PdfCycleData }) {
             ))}
           </View>
         )}
+
+        <View style={styles.disclaimer} wrap={false}>
+          <Text>
+            <Text style={styles.disclaimerLabel}>Disclaimer. </Text>
+            This report summarises responses from Príncipe&apos;s synthetic,
+            AI-generated CISO panel — not real people, customers, or
+            professional advisers. Every response is a model-generated
+            simulation, provided for exploration and decision support only. It
+            is not professional, legal, security, or financial advice and must
+            not be relied upon as a substitute for real research or qualified
+            professionals. Treat it as one input among many; you remain
+            responsible for your decisions and their outcomes.
+          </Text>
+        </View>
 
         <Text
           style={styles.footer}
