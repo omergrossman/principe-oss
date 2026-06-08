@@ -19,7 +19,7 @@ export default async function MembersAdminPage() {
   const [firm, memberships, pendingInvites, quota] = await Promise.all([
     prisma.firm.findUnique({
       where: { id: session.firmId },
-      select: { name: true },
+      select: { name: true, anthropicKeyLast4: true },
     }),
     prisma.membership.findMany({
       where: { firmId: session.firmId },
@@ -85,6 +85,7 @@ export default async function MembersAdminPage() {
             members={members}
             invites={invites}
             adminQuota={quota}
+            keyConnected={Boolean(firm?.anthropicKeyLast4)}
           />
         </Card>
       </main>
