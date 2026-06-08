@@ -118,14 +118,11 @@ export default function LoginPage() {
               >
                 <p className="font-semibold mb-1">Couldn&apos;t sign in</p>
                 <p>{error}</p>
-                <p className="mt-2 text-ink-500">
-                  Lost your passkey?{" "}
-                  <Link
-                    href="/recover"
-                    className="underline text-ink-700 hover:text-ink-900"
-                  >
-                    Recover by email
-                  </Link>
+                <p className="mt-2 text-ink-500 text-[12px]">
+                  Lost your passkey? Reset the admin user via
+                  {" "}
+                  <code className="text-ink-700 font-mono">pnpm prisma studio</code>
+                  {" "}then re-run the setup wizard.
                 </p>
               </div>
             )}

@@ -31,7 +31,6 @@ When healthy (≈3-5 min on first boot, seconds on subsequent boots), open **htt
 - **Workspace name** (your org name)
 - **Admin email + display name**
 - **Anthropic API key** (validated against `api.anthropic.com` before being persisted — AES-256-GCM encrypted at rest)
-- *Optional:* **Resend API key** (only needed if you want passkey-reset emails)
 - **Register a passkey** (Touch ID, Face ID, or a security key)
 
 Then ask the panel a question and you're running.
@@ -49,9 +48,8 @@ Three containers, one compose file:
 No traffic leaves your box except calls to:
 
 - `api.anthropic.com` (the panel uses your Anthropic key)
-- `api.resend.com` (only if you configured a Resend key)
 
-Telemetry, update checks, and central knowledge sync are **opt-in only**. Sprint 9's signed-bundle update mechanism will be pull-based, never push.
+Telemetry, update checks, and central knowledge sync are **opt-in only**. Sprint 9's signed-bundle update mechanism is pull-based, never push.
 
 ## Stopping / restarting
 
