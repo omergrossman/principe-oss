@@ -1,0 +1,119 @@
+[
+  {
+    "speakerName": "RSAC 2025 Panel",
+    "speakerRole": "Industry Keynote Speakers",
+    "speakerIndustry": "Government, Public Sector & Education",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "RSAC 2025 — Agentic AI and International Cyber Strategy",
+    "rawTranscript": "Agentic AI was a central theme at RSAC 2025. AI systems are now being given agency to make decisions and act independently to achieve objectives. Future enterprise environments will see organizations onboarding and authorizing AI bots with the same rigor used for human employees — identity proofing, access reviews, off-boarding, behavioral monitoring.\n\nOn government reorganization: despite administration changes, the Cybersecurity and Infrastructure Security Agency (CISA) is being modernized rather than abandoned. The focus is shifting toward empowering industry as an active participant in ecosystem defense rather than a passive recipient of guidance.\n\nOn international collaboration: cybersecurity is increasingly viewed through a national security lens, particularly concerning threats from China like Volt Typhoon and Salt Typhoon. Collaborative networks among allies — Australia supporting smaller Asia-Pacific nations, Five Eyes intelligence sharing — are vital for collective resilience against state-aligned actors that out-resource any single nation's defensive capacity.\n\nThe defender's advantage in AI: while attackers use AI to scale offense, AI also offers a defender's advantage by scaling defense to match every attacker one-on-one. This is particularly valuable for 'cyber-poor' organizations like hospitals, water facilities, and local government — historically the hardest hit because they lack security staffing, but now potentially the biggest beneficiaries of AI-driven defense automation."
+  },
+  {
+    "speakerName": "Wendy Nather",
+    "speakerRole": "Head of Advisory CISOs, Cisco / Distinguished Engineer",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "BSidesSF 2025 — Fire, Brimstone, and Bad Security Decisions",
+    "rawTranscript": "The original sin of security: separating security from the product it protects — antivirus as separate software, firewalls as separate boxes, identity as a separate layer — created a multibillion-dollar industry built on a flawed foundation. The market succeeded because products were broken by default and the industry profited from bolting on protection. Secure-by-default would have destroyed half the security industry's revenue.\n\nOn blame: the industry must stop 'scanning and scolding' users. Security awareness training largely fails because it attempts to deploy 'dynamic block lists' into human brains — an unrealistic expectation. Users were never the threat model the systems were designed against; treating them as the failure point is misdirected.\n\nSecurity as a service, not a control: security should be a service function that supports user autonomy rather than just a control function for authorities. The best example is parental controls being used by teens themselves to manage their study time — when security tools genuinely help users achieve their goals, adoption is voluntary and high.\n\nNather's Law: for every security policy, there is an equal and opposite exception. An accumulation of exceptions is a clear indicator that a policy is not working — not that users are non-compliant, but that the policy is misaligned with how work actually happens."
+  },
+  {
+    "speakerName": "Mikko Hypponen",
+    "speakerRole": "Chief Research Officer (former), WithSecure",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "eu-central",
+    "speakerCompanySize": "1k-5k (Series D+/pre-IPO)",
+    "sourceTitle": "Black Hat USA 2025 — Three Decades in Cybersecurity",
+    "rawTranscript": "From pranks to profits: cyber threats have evolved from teenage boys writing prank viruses in the 1990s to well-funded criminal unicorns and nation-state actors seeking financial gain or strategic sabotage. The modern threat landscape has more in common with traditional organized crime than with the hobbyist scene that birthed the field.\n\nHypponen's Law: 'If it's smart, it's vulnerable.' Adding connectivity to everyday devices — watches, cars, appliances, cities, medical implants — inherently introduces hackable bugs. Every new smart product is a new attack surface, and the security investment usually lags the connectivity investment by years.\n\nThe success paradox: cybersecurity is like Tetris. Successes — disasters prevented, attacks blocked, breaches contained — disappear without trace. Failures pile up visibly. This makes the field hard to justify to executives who see only the failures and never the silent wins. CISO programs that don't deliberately surface their successes are systemically undervalued.\n\nOn platform security: modern restricted operating systems like iOS, Android, and Xbox represent a major security success. They have made physical access no longer synonymous with total compromise. The shift from 'physical access wins' to 'platform integrity holds even with physical access' is one of the most underappreciated wins of the last two decades."
+  },
+  {
+    "speakerName": "Nicole Perlroth",
+    "speakerRole": "Cybersecurity Journalist (former NYT), Author",
+    "speakerIndustry": "Media & Entertainment",
+    "speakerRegion": "us",
+    "speakerCompanySize": "1k-5k (Series D+/pre-IPO)",
+    "sourceTitle": "Black Hat USA 2025 — The New Frontline: Cyber on the Precipice",
+    "rawTranscript": "Critical infrastructure pre-positioning: adversaries like China (Volt Typhoon) are pre-positioning in American water, power, and telecommunications systems. The goal is not to extract information but to create chaos and operational disruption in the event of a conflict — particularly a Taiwan contingency. This is qualitatively different from intelligence collection and demands different defensive priorities.\n\nThe disinformation threat: narrative-based attacks can be more damaging than technical ones. A $2.4 billion disinformation campaign halted a major lithium mine project in Serbia without compromising a single computer. CISOs need to expand their threat models beyond IT systems to include the information environment their company operates in.\n\nWorkforce shortage and culture: the U.S. faces a shortage of 500,000 cybersecurity workers. The industry must stop the targeted harassment of public servants and government cybersecurity leaders — this culture problem actively discourages the next generation from entering the field, compounding the staffing crisis.\n\nReflections on trusting trust: as we move toward 'vibe coding' with AI — generating code from natural-language descriptions without deep review — we risk losing a deep understanding of the machines we are empowering. Ken Thompson's classic trust problem returns with new force when the developer trusts the AI and the AI trusts its training data and its provenance is unverifiable."
+  },
+  {
+    "speakerName": "Sega App",
+    "speakerRole": "Security Researcher",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "us",
+    "speakerCompanySize": "150-400 (Series B)",
+    "sourceTitle": "AI & Cloud Threats 2026 — Cyber Verifier's Law",
+    "rawTranscript": "The Verifier's Law: 'The team with the cheapest verifiers wins.' Offense currently wins the AI race because binary exploitation results are easy and cheap to verify for AI — did the exploit work, yes or no. Defense's verifiers are slower, more contextual, and require human judgment about acceptable behavior.\n\nEnvironmental advantage for defenders: defenders have the advantage of 'environmental verifiers' — unique knowledge of internal naming conventions, identity patterns, expected operational baselines, and what 'normal' looks like in their specific environment. AI attackers operating from outside don't have this context. CISOs who codify their environmental verifiers into automated detection rules turn an information asymmetry into a defensive moat.\n\nCollapsing exploitation windows: the time from public vulnerability disclosure to active exploitation has collapsed from years (2018 baseline) to mere hours. Mean time to patch must compress to match. This forces a re-architecture of vulnerability management away from quarterly cycles and toward continuous exploitability-aware prioritization.\n\nAutonomous defense playbooks: to win, defense must remove humans from the loop in repetitive areas — vulnerability reachability analysis, automated patch deployment for known-safe categories, identity anomaly response, log correlation. Humans should be reserved for novel-judgment work. The defenders that automate the boring 80% will free their humans to win the contested 20%."
+  },
+  {
+    "speakerName": "Rob T. Lee",
+    "speakerRole": "Chief Curriculum Director, SANS Institute",
+    "speakerIndustry": "Government, Public Sector & Education",
+    "speakerRegion": "us",
+    "speakerCompanySize": "1k-5k (Series D+/pre-IPO)",
+    "sourceTitle": "RSA 2025 — From DFIR Godfather to AI Risk Advocate",
+    "rawTranscript": "The toxic CISO environment: the CISO role is often a zero-sum game where success goes unacknowledged but any intrusion leads to blame. The job structurally produces burnout — quiet wins, loud losses, personal liability rising with regulation, and a board that demands certainty in a fundamentally uncertain field. The honest measure of a CISO's performance is invisible by definition.\n\nThe AI safe harbor: Lee advocates for a 'Cybersecurity Safe Harbor' — modeled after HIPAA's protections for sharing PHI under specific conditions — to allow defenders to share critical incident data with AI models and across organizations without fear of regulatory reprisal. Without this, the defenders' AI is starved of the real incident data it needs to be useful.\n\nMantra for security professionals: 'Sleep, Diet, Exercise, AI' — adopt the daily routine of physical health practices plus active AI engagement to remain healthy and relevant. Burnout is a security problem; tired CISOs make bad decisions. Defenders who don't engage with AI tooling are operating with one hand tied while the attackers use both."
+  },
+  {
+    "speakerName": "Google Cloud Security Team",
+    "speakerRole": "Cloud Security Keynote Speakers",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "Google Cloud Keynote — Avoid Mistakes in a Dynamic Landscape",
+    "rawTranscript": "Identity is the new perimeter: in the cloud, everything has an identity — services, objects, users, machine workloads, ephemeral tasks. Identity management is the most critical pillar of Zero Trust but consistently the most poorly executed. Permissions sprawl, service accounts accumulate excess privilege, and offboarding lags. The orgs that win at cloud security are the ones that treat identity governance as continuous engineering, not periodic compliance.\n\nFirewalls vs firewalling: traditional firewall boxes — virtual appliances lifted-and-shifted into cloud — are outdated. The focus should shift to 'firewalling' as a cloud-native function integrated into the fabric of the network. Security as configuration in the platform, not as a separate box in the traffic path.\n\nSolved problems: encryption is largely a solved problem in the cloud. It is often universal and enabled by default. Customers spending time on encryption configuration are typically not spending time on the actually-hard problems — identity, configuration drift, supply-chain attestation, runtime policy. Refocus security budgets accordingly."
+  },
+  {
+    "speakerName": "Jen Easterly",
+    "speakerRole": "Former Director, CISA",
+    "speakerIndustry": "Government, Public Sector & Education",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "SPHERE25 — Secure by Design",
+    "rawTranscript": "A software quality problem: cybersecurity is fundamentally a software quality issue, not a security-add-on problem. The industry needs 'secure products' not more 'security products' bolted on top. Every breach traceable to a class of preventable defects represents a market failure that selling more EDR cannot fix.\n\nUnforgivable vulnerabilities: classes of defects like memory safety violations in C/C++ and SQL injection have persisted for decades despite known solutions — memory-safe languages, parameterized queries, input validation frameworks. Their continued presence in shipped software in 2026 is unforgivable. Vendors who keep shipping these belong on a Hall of Shame, not a Magic Quadrant.\n\nThe credence good problem: software is a 'credence good' meaning customers cannot reliably judge its security quality before or even after purchase. This is a market failure that requires intervention — either government regulation, shifts in procurement power (as when JPMorgan Chase started demanding better security from its vendors), or insurance-driven incentives. The market on its own does not produce secure-by-default software."
+  },
+  {
+    "speakerName": "Ross Young",
+    "speakerRole": "CISO Educator (former Capital One, Caterpillar)",
+    "speakerIndustry": "Financial Services",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "SANS — How to Become a CISO",
+    "rawTranscript": "Four essential skills: aspiring CISOs must master Technical, Management, Leadership, and Political skills. The mistake most aspirants make is over-investing in technical and under-investing in political — but a CISO who cannot navigate organizational politics will lose every budget fight regardless of their threat modeling chops.\n\nProcess improvement is the real work: a CISO's job is to fix broken processes (e.g., streamlining 15 steps of patch management into 5) rather than just managing individual technical alerts. The technical alerts are symptoms; the broken processes are the disease. Programs that scale are the ones where the CISO can stop firefighting and start re-architecting how work flows.\n\nGamification works better than enforcement: use positive reinforcement — 'fishing champion' trophies for catching phishing, 'brisket parties' for development teams hitting security milestones — to incentivize developers and employees, rather than acting like a traffic cop. Security teams that operate as service providers earn cooperation; security teams that operate as enforcement bodies get malicious compliance."
+  },
+  {
+    "speakerName": "Sandra Joyce",
+    "speakerRole": "VP, Mandiant Intelligence (Google Cloud)",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "Navigating the Evolving Threat Landscape — Mandiant",
+    "rawTranscript": "Advanced persistent teenagers: groups like Lapsus$ use aggressive social engineering and info-stealer malware to bypass help desks. The technique is simple — impersonate an employee well enough to get a password reset or MFA bypass — but the social-engineering polish has reached professional levels. Mature programs are now training help-desk staff to verify out-of-band, not just to follow the script.\n\nNorth Korean IT workers: North Korea is successfully placing remote IT workers in Fortune 500 companies, often with falsified identities. Two threats: funding the regime via legitimate-looking salaries, and gaining privileged network access from inside trusted developer environments. The detection signal is rarely technical at first — it shows up in HR data (mismatched location pings, suspicious payroll banking) before it shows up in security telemetry.\n\nRansomware ethical lows: attackers have reached new ethical lows, targeting NICUs and critical pediatric care facilities to maximize extortion pressure. The market has selected for cruelty because cruelty pays. Defensive priority for healthcare CISOs has shifted from data protection to operational continuity — if the ransomware hits, the question is no longer 'do we pay' but 'can we keep the babies alive while we negotiate.'"
+  },
+  {
+    "speakerName": "Wendy Nather",
+    "speakerRole": "Head of Advisory CISOs, Cisco",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "NorthSec 2025 — A Tabletop As Big As the World",
+    "rawTranscript": "Decision frameworks during incidents: organizations need a decision framework to determine who has the ball during an incident. The default of 'CISO handles everything' breaks when the CISO is asleep, on vacation, or has been removed by the attacker (account compromise). Pre-defined escalation trees with named alternates by time-of-day and impact-class are the difference between coherent response and chaos.\n\nOperational resilience definition: resilience means knowing how to operate in a 'degraded state' (e.g., rebuilding a production backbone in a flood, processing transactions on paper because the systems are offline). The question is not 'how do we prevent the disaster' but 'when the disaster happens, can we keep operating well enough that the business survives'. Most BC/DR plans optimize for full recovery and miss the messy middle.\n\nSecure ad hoc comm: practice how you will communicate securely with outsiders — law enforcement, insurance, service providers — when your primary internal systems are down. The CISO who doesn't have pre-staged out-of-band contacts (personal phones to FBI field office, encrypted-app channels to incident response retainers) discovers them at 3am after Slack and email are both compromised."
+  },
+  {
+    "speakerName": "Phil Venables",
+    "speakerRole": "Former CISO (Goldman Sachs, Google Cloud)",
+    "speakerIndustry": "Banks",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "NHIcon 2026 — The Future of Agentic Risk",
+    "rawTranscript": "Emergent behaviors at scale: trillions of interacting AI agents may exhibit emergent intelligence or unpredictable 'agentic flash crashes' — cascading failures across AI-coordinated systems analogous to algorithmic-trading flash crashes. Risk frameworks built for human-paced decisions don't model what happens when 10,000 agents react to each other in milliseconds.\n\nDeskilling risks: over-reliance on AI may prevent novices from developing the judgment necessary to become experts. The pipeline problem is structural — if junior analysts never investigate a real incident because AI handles it, they never become senior analysts who can override the AI when it's wrong. Organizations need to deliberately design 'judgment-building' assignments even when AI could do them faster.\n\nThe authenticity quest: AI makes determining the authenticity of workers, content, and communications the central challenge of future security processes. Voice-cloned executives, deepfake video meetings, AI-generated phishing indistinguishable from real correspondence — the new perimeter is not network or identity but provenance. Cryptographic provenance and verifiable attestation chains become foundational, not optional."
+  },
+  {
+    "speakerName": "Wendi Whitmore",
+    "speakerRole": "SVP, Unit 42 (Palo Alto Networks)",
+    "speakerIndustry": "B2B SaaS",
+    "speakerRegion": "us",
+    "speakerCompanySize": "20k+ (enterprise)",
+    "sourceTitle": "Evolving Threats and AI Strides — Palo Alto Networks Unit 42",
+    "rawTranscript": "The disruption trend: 86% of Unit 42 investigations now involve operational disruption — destructive intent, encryption, denial of service — rather than just data theft. The threat model has shifted from confidentiality compromise to availability compromise. CISOs whose backup architecture is the weak link face an existential issue, not a recoverable inconvenience.\n\nFraudulent employment scams: nation-states (notably North Korea) are using sophisticated LinkedIn personas to lure developers into downloading infected software packages under the guise of job interviews or coding challenges. The vector bypasses email security entirely — developers click links on LinkedIn from what looks like a genuine recruiter, then run code from what looks like a takehome assignment. Defense requires developer education plus EDR on developer endpoints, including personal devices when corporate work happens there.\n\nAI speed for defenders: AI has the potential to transform mean-time-to-contain from 19 days to less than 20 minutes. The leverage is in the repetitive triage and containment steps — ticket creation, identity isolation, network segmentation pushes, indicator-of-compromise sweep. Programs that wire AI into the SOAR playbook compress the dwell-time math by orders of magnitude; programs that keep the human in the loop for every step stay at 19 days."
+  }
+]

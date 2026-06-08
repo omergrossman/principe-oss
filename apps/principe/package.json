@@ -1,0 +1,44 @@
+{
+  "name": "principe",
+  "version": "0.1.0-pre",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "description": "Self-hosted CISO panel simulator (Next.js app)",
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.100.1",
+    "@dp/rbac": "workspace:*",
+    "@dp/telemetry": "workspace:*",
+    "@dp/theme": "workspace:*",
+    "@monaco-editor/react": "^4.7.0",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@react-pdf/renderer": "^4.5.1",
+    "@simplewebauthn/browser": "^13.3.0",
+    "next": "16.2.6",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.21.0",
+    "react": "19.2.4",
+    "react-dom": "19.2.4"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/pg": "^8.20.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "dotenv": "^17.4.2",
+    "eslint": "^9",
+    "eslint-config-next": "16.2.6",
+    "prisma": "^7.8.0",
+    "tailwindcss": "^4",
+    "tsx": "^4.22.4",
+    "typescript": "^5"
+  }
+}

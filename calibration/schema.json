@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema",
+  "$id": "https://principe.app/calibration/schema.json",
+  "title": "Principe Calibration Dataset",
+  "description": "Schema for a single calibration dataset ingested by EP-09 (Calibration Registry). Aggregate distributions only — never individual respondent rows.",
+  "type": "object",
+  "required": ["dataset_id", "source", "year", "sample_size", "region_coverage", "license_status", "distributions"],
+  "properties": {
+    "dataset_id": {
+      "type": "string",
+      "description": "Stable identifier, e.g. 'verizon-2026-dbir'",
+      "pattern": "^[a-z0-9-]+$"
+    },
+    "source": {
+      "type": "object",
+      "required": ["name", "publisher", "publication_date"],
+      "properties": {
+        "name": { "type": "string" },
+        "publisher": { "type": "string" },
+        "publication_date": { "type": "string", "format": "date" },
+        "url": { "type": "string" },
+        "doc_id": { "type": "string" }
+      }
+    },
+    "year": { "type": "integer", "minimum": 2000, "maximum": 2100 },
+    "sample_size": {
+      "type": "integer",
+      "description": "Total respondents or observations in the underlying study"
+    },
+    "region_coverage": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["us", "eu-west", "eu-central", "uk", "apac", "anz", "latam", "global"]
+      },
+      "description": "Which Principe regional strata this dataset informs"
+    },
+    "license_status": {
+      "type": "string",
+      "enum": ["public", "licensed-fair-use", "licensed-pending-confirmation", "restricted"],
+      "description": "Compliance posture for use in Principe's calibration registry"
+    },
+    "methodology_notes": {
+      "type": "string",
+      "description": "How the underlying study was conducted; relevant biases or scope notes"
+    },
+    "distributions": {
+      "type": "array",
+      "description": "One entry per question category this dataset informs",
+      "items": {
+        "type": "object",
+        "required": ["question_category", "kind"],
+        "properties": {
+          "question_category": {
+            "type": "string",
+            "description": "Stable category key. Used by Statistician to map a hypothesis to reference distributions.",
+            "pattern": "^[a-z0-9_]+$"
+          },
+          "kind": {
+            "type": "string",
+            "enum": ["distribution", "scalar"],
+            "description": "Distribution = multi-bucket; scalar = single percentage / value"
+          },
+          "value": {
+            "type": "number",
+            "description": "For scalar kind: the value (0-1 for percentages or absolute number for counts)"
+          },
+          "distribution": {
+            "type": "object",
+            "description": "For distribution kind: bucket name → proportion (must sum to ≤ 1.0)",
+            "additionalProperties": { "type": "number" }
+          },
+          "unit": {
+            "type": "string",
+            "enum": ["percentage", "count", "days", "currency_usd", "currency_local"]
+          },
+          "delta_yoy": {
+            "type": "number",
+            "description": "Year-over-year change, if reported. Positive = increase."
+          },
+          "context": {
+            "type": "string",
+            "description": "Source-quoted context: the exact phrasing or framing from the underlying report"
+          },
+          "page_reference": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

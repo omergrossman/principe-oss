@@ -1,0 +1,23 @@
+{
+  "dataset_id": "wakefield-2026-ciso-ai",
+  "source": {
+    "name": "CISO + AI Procurement Survey",
+    "publisher": "Wakefield Research",
+    "publication_date": "2026-03-01",
+    "doc_id": "wakefield-ciso-ai-2026"
+  },
+  "year": 2026,
+  "sample_size": 200,
+  "region_coverage": ["us"],
+  "license_status": "public",
+  "methodology_notes": "200 CISOs at companies with $500M or more in revenue, US-focused. Published summary findings via secondary channels (vendor blogs, industry press); aggregate stats citable.",
+  "distributions": [
+    {
+      "question_category": "ai_strategy_in_procurement",
+      "kind": "scalar",
+      "value": 0.82,
+      "unit": "percentage",
+      "context": "82% of CISOs rate vendor AI strategy as very or critically important in procurement decisions"
+    }
+  ]
+}

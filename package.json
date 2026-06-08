@@ -1,0 +1,13 @@
+{
+  "name": "principe-oss",
+  "private": true,
+  "license": "AGPL-3.0-or-later",
+  "packageManager": "pnpm@11.2.2",
+  "scripts": {
+    "dev": "pnpm --filter principe dev",
+    "build": "pnpm --filter principe build",
+    "start": "pnpm --filter principe start",
+    "lint": "pnpm --filter principe lint",
+    "typecheck": "pnpm --filter principe exec tsc --noEmit"
+  }
+}
