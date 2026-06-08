@@ -1,0 +1,848 @@
+// Principe — Prisma schema
+// Docs: https://pris.ly/d/prisma-schema
+// Story 01.3 — Sprint 1 Day 1-2
+//
+// Data model architecture (see docs/02-adr.md):
+//
+//   Firm (top-level tenant; backed by @dp/tenant-lifecycle Tenant abstraction)
+//     ├── Portco (sub-workspace per portfolio company)
+//     │     ├── User memberships (via Membership)
+//     │     ├── Hypothesis (markdown content)
+//     │     │     └── Cycle (one execution against a CISOPanel)
+//     │     │           ├── StatisticianVerdict (Bayesian credible interval + KL)
+//     │     │           ├── SyntheticTranscript[] (~30 per cycle)
+//     │     │           ├── ThemeCluster[] (LLM-extracted)
+//     │     │           └── parent cycle ref (for iteration lineage)
+//     │     └── PanelConfiguration (V1.1 — saved presets)
+//     └── VC admin users
+//
+//   CISOPanel (global, principe-admin-scoped; not per-tenant)
+//     ├── PersonaDefinition[] (markdown personas)
+//     └── PanelVersion (immutable snapshot per cycle ref)
+//
+//   CalibrationDataset (global) → BacktestResult
+//
+//   AuditLog (per-tenant scoped, append-only)
+//   ProcessedStripeEvent (global dedupe ledger)
+//   TenantLifecycleAuditLog (DP pattern; survives org purge via SetNull)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Identity ───────────────────────────────────────────────────────────────
+
+model User {
+  id              String           @id @default(cuid())
+  email           String           @unique
+  name            String?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  lastSignInAt    DateTime?
+  passkeys        Passkey[]
+  memberships     Membership[]
+  invitationsSent Invitation[]     @relation("InvitedBy")
+  cycles          Cycle[]          @relation("CycleCreator")
+  // Phase E (2026-06-06) — projects owned by this user. Per-user
+  // Defaults + admin sees-everything are derived from this relation.
+  ownedProjects   Project[]        @relation("ProjectOwner")
+
+  @@index([email])
+}
+
+model Passkey {
+  id                  String   @id @default(cuid())
+  userId              String
+  credentialId        String   @unique
+  publicKey           Bytes
+  counter             BigInt   @default(0)
+  transports          String[] @default([])
+  deviceType          String?
+  backedUp            Boolean  @default(false)
+  nickname            String?
+  createdAt           DateTime @default(now())
+  lastUsedAt          DateTime?
+
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// ─── Tenancy ───────────────────────────────────────────────────────────────
+
+enum WorkspaceRole {
+  VC_ADMIN          // Member of the VC firm; sees aggregate portfolio activity
+  PORTCO_FOUNDER    // Member of a portco workspace; full access within that portco
+  PRINCIPE_ADMIN    // Internal Principe operator (calibration, panel mgmt)
+}
+
+enum TenantStatus {
+  ACTIVE
+  SUSPENDED         // Billing failure or admin action; data preserved
+  ARCHIVED          // Soft-deleted, in grace period; restorable
+  PURGED            // PII redacted; tombstone for audit log FK
+}
+
+model Firm {
+  id                    String         @id @default(cuid())
+  name                  String
+  slug                  String         @unique
+  status                TenantStatus   @default(ACTIVE)
+  region                String         @default("us")  // us / eu-west / eu-central / uk / apac / anz
+  stripeCustomerId      String?        @unique
+  stripeSubscriptionId  String?
+  // BYO Anthropic key — AES-256-GCM ciphertext (base64), iv:ct:tag tuple.
+  // Last 4 chars of the plaintext stored separately for UI display only.
+  anthropicKeyCiphertext String?
+  anthropicKeyLast4      String?
+
+  // Knowledge sources (curated + user-added) used as briefing material
+  // for the CISO panel.
+  knowledgeSources       KnowledgeSource[]
+  // Sprint 5 — curated CISO talk transcripts (the moat content).
+  transcripts            Transcript[]
+  projects              Project[]
+  archivedAt            DateTime?
+  purgeScheduledAt      DateTime?
+  purgedAt              DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  // ─── Free trial (2026-06-07) ─────────────────────────────────
+  // Set true by `ensureInstanceBootstrap` when DP master seeds the
+  // tenant with `INSTANCE_IS_TRIAL=true`. trialQuestionsRemaining
+  // decrements on every successful ask; when it hits 0 the
+  // /api/ask path returns 402 and the workspace shows the
+  // "trial ended" state. NULL = not a trial (unlimited).
+  isTrial                 Boolean        @default(false)
+  trialQuestionsRemaining Int?
+
+  portcos               Portco[]
+  memberships           Membership[]
+  invitations           Invitation[]
+  auditLogs             TenantLifecycleAuditLog[]
+  processedEvents       ProcessedStripeEvent[]
+
+  @@index([status, purgeScheduledAt])
+  @@index([region])
+  @@index([isTrial, trialQuestionsRemaining])
+
+  @@map("VCFirm")
+}
+
+model Portco {
+  id                    String         @id @default(cuid())
+  firmId              String @map("vcFirmId")
+  name                  String
+  slug                  String
+  status                TenantStatus   @default(ACTIVE)
+  archivedAt            DateTime?
+  purgeScheduledAt      DateTime?
+  purgedAt              DateTime?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+
+  firm                Firm         @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  memberships           Membership[]
+  hypotheses            Hypothesis[]
+  // Cycle.portcoId dropped in Sprint 3; Portco model itself kept for
+  // session-shape compat during the V1 transition.
+  panelConfigurations   PanelConfiguration[]
+  auditEntries          AuditLog[]
+
+  @@unique([firmId, slug])
+  @@index([firmId, status])
+}
+
+model Membership {
+  id          String         @id @default(cuid())
+  userId      String
+  firmId    String? @map("vcFirmId") // set if VC admin
+  portcoId    String?        // set if portco member
+  role        WorkspaceRole
+  createdAt   DateTime       @default(now())
+
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  firm      Firm?        @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  portco      Portco?        @relation(fields: [portcoId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, firmId, portcoId])
+  @@index([userId])
+  @@index([firmId])
+  @@index([portcoId])
+}
+
+model Invitation {
+  id          String         @id @default(cuid())
+  firmId    String @map("vcFirmId")
+  portcoId    String?        // null for VC-admin invites; set for portco-founder invites
+  email       String
+  role        WorkspaceRole
+  invitedById String
+  token       String         @unique
+  expiresAt   DateTime
+  acceptedAt  DateTime?
+  createdAt   DateTime       @default(now())
+
+  firm      Firm         @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  invitedBy   User           @relation("InvitedBy", fields: [invitedById], references: [id])
+
+  @@index([token])
+  @@index([email])
+  @@index([firmId, acceptedAt])
+}
+
+// ─── Product domain — Cycles, Hypotheses, Themes ─────────────────────────────
+
+enum HypothesisMode {
+  TEST              // Claim + variants + target outcome
+  DISCOVERY         // Open question for the panel
+}
+
+enum CycleStatus {
+  DRAFT
+  VALIDATING        // Statistician running
+  QUEUED            // Statistician PASS; LLM cycle queued
+  RUNNING           // LLM cycle in progress
+  COMPLETE
+  FAILED
+  CANCELLED
+}
+
+enum VerdictKind {
+  PASS
+  WARN
+  FAIL
+  DIRECTIONAL
+}
+
+enum SentimentLabel {
+  POSITIVE
+  NEUTRAL
+  NEGATIVE
+}
+
+model Hypothesis {
+  id            String       @id @default(cuid())
+  // Sprint 1 used portcoId for tenancy; portco model is dead but the FK
+  // remains nullable for migration safety. Sprint 2: drafts scope by
+  // projectId instead.
+  portcoId      String?
+  projectId     String?
+  createdById   String
+  mode          HypothesisMode
+  content       String       @db.Text       // markdown body
+  draftSavedAt  DateTime?                   // last auto-save
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  portco        Portco?      @relation(fields: [portcoId], references: [id], onDelete: SetNull)
+  cycles        Cycle[]
+  validations   HypothesisValidation[]
+
+  @@index([projectId, updatedAt])
+  @@index([portcoId, updatedAt])
+  @@index([createdById])
+}
+
+// Sprint 2 — pre-cycle Statistician verdicts. Cycle creation still depends
+// on the Sprint 1 portcoId chain (dead in V1; reshape pending in Sprint 3
+// when EP-06 wires Run end-to-end), so we attach Validate-time verdicts
+// to the Hypothesis instead of the Cycle. One Hypothesis can have many
+// validations (founders iterate). Sprint 3 will promote the most recent
+// PASS to the canonical StatisticianVerdict row when the cycle is run.
+model HypothesisValidation {
+  id                    String      @id @default(cuid())
+  hypothesisId          String
+  createdById           String
+  kind                  VerdictKind
+  confidenceScore       Int                                   // 0-100 headline
+  klDivergence          Float?
+  bciLow                Float?
+  bciHigh               Float?
+  recommendedN          Int?
+  reasoning             Json                                  // full trace (strata, recommended N, prose)
+  stubMode              Boolean     @default(true)            // Sprint 2 ships true; Sprint 3 flips false
+  serviceVersion        String?                               // GIT_SHA from /healthz at call time, for audit
+  forceOverridden       Boolean     @default(false)
+  forceOverrideReason   String?
+  createdAt             DateTime    @default(now())
+
+  hypothesis            Hypothesis  @relation(fields: [hypothesisId], references: [id], onDelete: Cascade)
+  // Sprint 3 — when a Cycle is created from this validation it sets
+  // Cycle.validationId, which gives us the inverse relation. Optional
+  // because not every validation creates a Cycle.
+  cycle                 Cycle?
+
+  @@index([hypothesisId, createdAt])
+  @@index([kind])
+}
+
+model Cycle {
+  id              String           @id @default(cuid())
+  // Sprint 3 dropped portcoId — V1 architecture has no portco. Ownership
+  // is now via createdById; project linkage flows through hypothesisId.
+  hypothesisId    String
+  panelVersion    String                       // FK-style ref to CISOPanel.version
+  createdById     String
+  // The validation that gated this Cycle (PASS / acknowledged WARN /
+  // force-overridden FAIL). Unique so we can't create two Cycles for the
+  // same validation; idempotent retries return the existing cycleId.
+  validationId    String?          @unique
+  parentCycleId   String?                      // for iterations / mini-cycles
+  status          CycleStatus      @default(DRAFT)
+  totalPersonas   Int              @default(30)
+  llmCostUsd      Decimal?         @db.Decimal(10, 4)
+  durationSec     Int?
+  completedAt     DateTime?
+  failedReason    String?
+  // Sprint 3 — exec-summary fields populated by synthesize() after the
+  // panel run completes. JSON shapes match ExecSummary in synthesize.ts.
+  summaryText     String?          @db.Text
+  topPros         Json?
+  topCons         Json?
+  insights        Json?
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+
+  hypothesis      Hypothesis       @relation(fields: [hypothesisId], references: [id], onDelete: Cascade)
+  createdBy       User             @relation("CycleCreator", fields: [createdById], references: [id])
+  validation      HypothesisValidation? @relation(fields: [validationId], references: [id], onDelete: SetNull)
+  parentCycle     Cycle?           @relation("CycleLineage", fields: [parentCycleId], references: [id])
+  childCycles     Cycle[]          @relation("CycleLineage")
+  verdict         StatisticianVerdict?
+  transcripts     SyntheticTranscript[]
+  themes          ThemeCluster[]
+
+  @@index([createdById, status, createdAt])
+  @@index([hypothesisId])
+  @@index([parentCycleId])
+}
+
+model StatisticianVerdict {
+  id                    String      @id @default(cuid())
+  cycleId               String      @unique
+  kind                  VerdictKind
+  confidenceScore       Int                                   // 0-100 headline
+  klDivergence          Float?
+  bciLow                Float?
+  bciHigh               Float?
+  reasoning             Json                                  // full trace (strata, MOE, recommended N)
+  forceOverridden       Boolean     @default(false)
+  forceOverrideUserId   String?
+  forceOverrideReason   String?
+  createdAt             DateTime    @default(now())
+
+  cycle                 Cycle       @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  @@index([kind])
+}
+
+model SyntheticTranscript {
+  id              String   @id @default(cuid())
+  cycleId         String
+  personaKey      String                                      // ref to PersonaDefinition.key
+  personaName     String                                      // denormalized for display
+  personaRegion   String                                      // denormalized for filtering
+  paragraphs      String[] @default([])
+  themeIds        String[] @default([])                       // themes this transcript contributed to
+  rawResponse     Json                                        // full LLM output for audit
+  createdAt       DateTime @default(now())
+
+  cycle           Cycle    @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  @@index([cycleId])
+  @@index([cycleId, personaRegion])
+}
+
+model ThemeCluster {
+  id                String           @id @default(cuid())
+  cycleId           String
+  name              String
+  frequency         Int                                       // count of personas raising this theme
+  sentiment         SentimentLabel
+  posCount          Int              @default(0)
+  neuCount          Int              @default(0)
+  negCount          Int              @default(0)
+  strataAttribution Json                                      // { mid-market: "5/8", fintech: "3/4", ... }
+  quotes            Json                                      // [{ text, personaName }, ...]
+  isObjection       Boolean          @default(false)          // surfaced in "Strongest signals"
+  isEndorsement     Boolean          @default(false)
+  isSurprise        Boolean          @default(false)
+  createdAt         DateTime         @default(now())
+
+  cycle             Cycle            @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+
+  @@index([cycleId, frequency])
+}
+
+model PanelConfiguration {
+  id          String   @id @default(cuid())
+  portcoId    String
+  name        String
+  config      Json                                            // demographic mix adjustments
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  portco      Portco   @relation(fields: [portcoId], references: [id], onDelete: Cascade)
+
+  @@unique([portcoId, name])
+}
+
+// ─── Panels + Calibration (global, principe-admin-scoped) ───────────────────
+
+model CISOPanel {
+  id                String                @id @default(cuid())
+  version           String                @unique             // e.g. "ciso-v1.2"
+  publishedAt       DateTime              @default(now())
+  isActive          Boolean               @default(false)     // exactly one active panel at a time
+  diversitySpec     Json                                      // dimensions + minimum strata floors
+  populationFrame   String                                    // descriptive: "Global CISOs at orgs 100+"
+  defaultPanelSize  Int                   @default(30)
+  maxPanelSize      Int                   @default(50)
+  createdAt         DateTime              @default(now())
+
+  personas          PersonaDefinition[]
+
+  @@index([isActive])
+}
+
+model PersonaDefinition {
+  id          String      @id @default(cuid())
+  panelId     String
+  key         String                                          // stable id within the panel
+  name        String
+  region      String
+  industry    String
+  companySize String
+  tenure      String
+  background  String?
+  reportsTo   String?
+  budget      String?
+  markdown    String      @db.Text                            // full persona body
+  createdAt   DateTime    @default(now())
+
+  panel       CISOPanel   @relation(fields: [panelId], references: [id], onDelete: Cascade)
+
+  @@unique([panelId, key])
+  @@index([panelId])
+}
+
+model CalibrationDataset {
+  id                String              @id @default(cuid())
+  datasetId         String              @unique               // matches the JSON file's dataset_id
+  name              String
+  publisher         String
+  year              Int
+  publicationDate   DateTime?
+  sampleSize        Int
+  regionCoverage    String[]            @default([])
+  licenseStatus     String                                    // public / licensed-fair-use / licensed-pending-confirmation / restricted
+  methodologyNotes  String?             @db.Text
+  distributions     Json                                      // array of question_category × distribution
+  uploadedAt        DateTime            @default(now())
+
+  backtestResults   BacktestResult[]
+
+  @@index([publisher, year])
+}
+
+model BacktestResult {
+  id                String                @id @default(cuid())
+  datasetId         String
+  panelVersion      String                                    // ref to CISOPanel.version
+  questionCategory  String
+  correlation       Float?
+  klDivergence      Float?
+  passed            Boolean
+  notes             String?               @db.Text
+  ranAt             DateTime              @default(now())
+
+  dataset           CalibrationDataset    @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+
+  @@index([datasetId, panelVersion])
+  @@index([panelVersion, passed])
+}
+
+// ─── Audit + governance ────────────────────────────────────────────────────
+
+enum AuditActorType {
+  USER
+  STRIPE_WEBHOOK
+  SYSTEM
+  CRON
+  API
+}
+
+model AuditLog {
+  id              String           @id @default(cuid())
+  portcoId        String?
+  actorType       AuditActorType
+  actorId         String?                                     // user id, webhook event id, cron name
+  action          String                                      // e.g. "cycle.force_override", "tenant.access_denied"
+  resourceType    String?
+  resourceId      String?
+  metadata        Json
+  createdAt       DateTime         @default(now())
+
+  portco          Portco?          @relation(fields: [portcoId], references: [id], onDelete: SetNull)
+
+  @@index([portcoId, createdAt])
+  @@index([action, createdAt])
+  @@index([createdAt])
+}
+
+// Tenant lifecycle audit — survives tenant purge via SetNull (GDPR pattern from Fable Phase 1)
+model TenantLifecycleAuditLog {
+  id          String   @id @default(cuid())
+  firmId    String @map("vcFirmId")
+  eventType   String                                          // 'tenant.created' | 'tenant.activated' | ...
+  actorType   String                                          // 'stripe-webhook' | 'admin-manual' | 'api' | 'system' | 'cron'
+  actorId     String?
+  payload     Json
+  createdAt   DateTime @default(now())
+
+  firm      Firm?  @relation(fields: [firmId], references: [id], onDelete: SetNull)
+
+  @@index([firmId, createdAt])
+  @@index([eventType, createdAt])
+  @@index([createdAt])
+}
+
+// Stripe webhook idempotency — global dedupe ledger
+model ProcessedStripeEvent {
+  id              String   @id                                // Stripe event id (e.g. "evt_1Nj...")
+  eventType       String
+  firmId        String? @map("vcFirmId")
+  processedAt     DateTime @default(now())
+
+  firm          Firm?  @relation(fields: [firmId], references: [id], onDelete: SetNull)
+
+  @@index([processedAt])
+}
+
+// ─── Knowledge sources ───────────────────────────────────────────────
+//
+// Per-firm bibliography that gets injected into persona prompts as a
+// briefing. Two kinds: URL sources (scraped) and FILE sources (uploaded
+// and parsed). Curated sources are seeded on first load; users can
+// toggle them off and/or add their own.
+
+enum KnowledgeSourceKind {
+  URL
+  FILE
+  // Sprint 4 — handcrafted admin uploads (vendor metadata, etc.) that
+  // don't have a URL or file backing. Distilled via the vendor-card
+  // prompt; treated as authoritative for vendor-positioning questions.
+  VENDOR_CARD
+  // Phase 5+ baseline-KB pushdown — plain text snippet shipped by DP
+  // master's /admin/baseline. No URL, no file, content stored inline.
+  TEXT
+}
+
+// Sprint 5 extension — license posture drives how source text is
+// handled. OPEN = public-domain/open-licensed (full content stored).
+// PUBLIC_PAGE = publicly accessible web page (stored, attributed).
+// LICENSED_REPORT = paid analyst content (NO source text stored;
+// only our own summary). VENDOR_REPRINT = vendor-distributed copy
+// of an analyst report (same restrictions as LICENSED_REPORT).
+enum LicensePosture {
+  OPEN
+  PUBLIC_PAGE
+  LICENSED_REPORT
+  VENDOR_REPRINT
+}
+
+model KnowledgeSource {
+  id              String              @id @default(cuid())
+  firmId        String @map("vcFirmId")
+  // Nullable project scope. NULL = firm-wide (applies to every project).
+  // Non-null = project-scoped (applies only to that project's panel).
+  projectId       String?
+  kind            KnowledgeSourceKind
+  url             String?
+  filename        String?
+  mimeType        String?
+  title           String
+  description     String?
+  category        String?                                     // analyst / threat-intel / framework / news / regulator / cert / custom
+  region          String?                                     // global / us / eu-west / uk / eu-central / apac / anz / mea
+  isCurated       Boolean             @default(false)
+  enabled         Boolean             @default(true)
+  content         String?             @db.Text                // extracted text content (briefing material)
+  contentHash     String?                                     // sha256 for change detection
+  publishedAt     DateTime?                                   // self-reported publication date if known
+  lastFetchedAt   DateTime?                                   // null until first successful scrape
+  lastFetchError  String?             @db.Text
+  fetchEnabled    Boolean             @default(true)          // false for sources that fail repeatedly
+  // True when the firm has explicitly removed this source. We keep the
+  // row (rather than hard-deleting) so the curated seeder doesn't
+  // recreate it on every /settings load. Filtered out of every read.
+  removedByFirm   Boolean             @default(false)
+  // Distillation — Phase 1 (Sprint 2 add-on). One-shot LLM pass on
+  // upload extracts a structured card (problem/solution/ICP for project
+  // sources; tldr/findings/regions for firm-wide). Briefing builder
+  // prefers the card over raw `content`. `distilledContentHash` lets
+  // us skip re-distilling unchanged content.
+  distilled              Json?
+  distilledAt            DateTime?
+  distilledContentHash   String?
+  // Sprint 4 — knowledge-moat routing fields. Both nullable; presence
+  // means "this source is relevant to these contexts". scoreSource adds
+  // +4 when source.applicableIndustries matches persona.industry and
+  // +3 when source.applicableFrameworks matches the persona's industry-
+  // typical framework set. Absence is not a penalty — sources without
+  // these tags route via region/category alone as in Sprint 2.
+  applicableIndustries   Json?
+  applicableFrameworks   Json?
+  // Sprint 5 KB expansion — license posture + structured metadata.
+  // richMetadata holds source_org, primary_domain, key_concepts,
+  // control_or_capability_taxonomy, representative_vendors,
+  // threats_or_risks, defensive_controls, and cross-framework mappings.
+  licensePosture         LicensePosture      @default(OPEN)
+  richMetadata           Json?
+  addedAt         DateTime            @default(now())
+  updatedAt       DateTime            @updatedAt
+
+  // Baseline link — when this row was pushed down by DP master's
+  // baseline-KB sync, baselineId carries the DP master's source id.
+  // Tenant-added rows (user uploads, per-project sources) leave it
+  // NULL. baselineRemovedAt is stamped when DP master removed the
+  // baseline entry; the row stays for ProjectAsk history references
+  // but is filtered out of every panel briefing.
+  baselineId            String?
+  baselineRemovedAt     DateTime?
+  firm          Firm              @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  project         Project?            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([firmId, url, projectId])
+  @@unique([firmId, baselineId])
+  @@index([firmId, enabled])
+  @@index([firmId, isCurated])
+  @@index([firmId, projectId, enabled])
+  @@index([publishedAt])
+}
+
+// ─── Projects ───────────────────────────────────────────────────────
+//
+// A Project owns a panel composition + 100 persisted agent profiles +
+// project-scoped knowledge sources + an auto-saved ask history.
+//
+// The first project for each firm is auto-created as the "Default"
+// project on first sign-in; it uses the deterministic generator's
+// global composition (no PanelComposition row, agents materialised
+// from generate100Personas()'s default seed).
+
+enum ProjectStatus {
+  ACTIVE
+  ARCHIVED
+}
+
+model Project {
+  id              String          @id @default(cuid())
+  firmId        String @map("vcFirmId")
+  // Owning user. Phase E (2026-06-06) — multi-user organisations: every
+  // project is owned by exactly one user. Admins read all projects in
+  // the firm; members only see + edit their own. Nullable for migration
+  // safety on legacy rows (backfilled to the bootstrap admin); new rows
+  // always set this.
+  ownerUserId     String?
+  name            String
+  // True for the auto-created Default project. With per-user defaults
+  // there's one Default per (firm, owner). Cannot be archived or renamed.
+  isDefault       Boolean         @default(false)
+  status          ProjectStatus   @default(ACTIVE)
+  // JSON snapshot of the panel composition used at agent materialisation.
+  // NULL means "deterministic default" (the Sprint 1 100-agent setup).
+  // Shape: { regions: { [key]: number }, industries: string[], stance:
+  // { cautious: number, balanced: number, aggressive: number, contrarian: number },
+  // sizeRange: { min: string, max: string }, presetKey: string|null }.
+  composition     Json?
+  // Sprint 7 — variable panel size, chosen at create time. Range 30-200,
+  // default 100. Fixed after create (resizing would invalidate accumulated
+  // persona depth from transcripts). Read by materialiseProjectAgents.
+  panelSize       Int             @default(100)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+  archivedAt      DateTime?
+
+  firm          Firm          @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  owner           User?           @relation("ProjectOwner", fields: [ownerUserId], references: [id], onDelete: SetNull)
+  agents          ProjectAgent[]
+  asks            ProjectAsk[]
+  knowledgeSources KnowledgeSource[]
+
+  @@unique([firmId, name])
+  @@index([firmId, status])
+  @@index([firmId, isDefault])
+  @@index([firmId, ownerUserId, status])
+}
+
+// 100 rows per project. The agent's base markdown (system prompt content)
+// and an evolution log of dated intel notes appended as relevant sources
+// land. Effective prompt at fan-out = baseMarkdown + RECENT INTEL section
+// listing the 5 most recent log entries.
+
+model ProjectAgent {
+  id              String          @id @default(cuid())
+  projectId       String
+  // Stable agent identifier within the project (e.g. "agent-001"). The
+  // base markdown is deterministic from the project's composition + this
+  // key, so re-materialising a project with the same composition
+  // produces identical agents.
+  agentKey        String
+  name            String
+  region          String
+  industry        String
+  companySize     String
+  tenure          String
+  stance          String
+  baseMarkdown    String          @db.Text
+  // Append-only log of intel notes. JSON array of { date, sourceTitle,
+  // sourceUrl, sourceHash }. Programmatic appends; no LLM call.
+  evolutionLog    Json            @default("[]")
+  // Sprint 5 — persona depth fields. Auto-populated when a Transcript
+  // matching this persona's industry + region is ingested. The persona
+  // is "patterned after" the transcripts in originatingTranscriptIds.
+  // coreOpinions = [{ topic: string, position: string }] extracted from
+  // those transcripts' targeted insights. signatureVocabulary = key
+  // phrases the agent should reuse. personaStale = true when an
+  // upstream insight was edited; admin triggers recompute explicitly.
+  originatingTranscriptIds String[]    @default([])
+  coreOpinions             Json        @default("[]")
+  signatureVocabulary      String[]    @default([])
+  personaStale             Boolean     @default(false)
+  createdAt       DateTime        @default(now())
+
+  project         Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, agentKey])
+  @@index([projectId])
+  @@index([projectId, region])
+  @@index([projectId, industry])
+}
+
+// Sprint 5 — CISO transcripts (manually curated by admin). The moat
+// content. Each transcript is paste-ingested with speaker context;
+// distillation extracts a fan of TranscriptInsight rows that route
+// independently into the briefing builder.
+
+enum DistillationStatus {
+  PENDING
+  COMPLETE
+  FAILED
+}
+
+model Transcript {
+  id                  String              @id @default(cuid())
+  firmId            String @map("vcFirmId")
+  speakerName         String                                  // free-text, e.g. "John Doe"
+  speakerRole         String                                  // e.g. "CISO", "BISO", "Director of Security"
+  speakerIndustry     String                                  // one of the 24 canonical industries
+  speakerRegion       String                                  // one of the 7 canonical regions
+  speakerCompanySize  String                                  // XS / S / M / L / XL
+  sourceUrl           String?                                 // YouTube / podcast / etc.
+  sourceTitle         String
+  rawTranscript       String              @db.Text
+  distillationStatus  DistillationStatus  @default(PENDING)
+  distillationError   String?             @db.Text
+  addedAt             DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  // Baseline link — see KnowledgeSource.baselineId. Transcripts
+  // pushed down via DP master sync carry the baseline source id; the
+  // panel reads them all, the tenant UI never shows them.
+  baselineId          String?
+  baselineRemovedAt   DateTime?
+  firm              Firm              @relation(fields: [firmId], references: [id], onDelete: Cascade)
+  insights            TranscriptInsight[]
+
+  @@unique([firmId, baselineId])
+  @@index([firmId, addedAt])
+  @@index([firmId, speakerIndustry, speakerRegion])
+}
+
+// Per-instance sync cursor. Tracks the DP master baseline version
+// this Principe instance last applied so the cheap-check on /version
+// can short-circuit when nothing has changed.
+model BaselineSyncState {
+  id                  Int        @id @default(1)
+  lastAppliedVersion  DateTime?
+  lastSyncAt          DateTime?
+  lastSyncStatus      String?    @db.Text  // "ok" / "version-match" / error message
+  syncCount           Int        @default(0)
+}
+
+enum InsightKind {
+  VENDOR_OPINION
+  REGULATORY_TAKE
+  INCIDENT_LESSON
+  BUYING_BEHAVIOR
+  TREND_CALL
+  THREAT_TAKE
+  FRAMEWORK_POSITION
+}
+
+enum InsightRoutingScope {
+  UNIVERSAL                                                  // flows to all agents
+  TARGETED                                                   // flows only to agents matching applicable* tags
+}
+
+model TranscriptInsight {
+  id                       String              @id @default(cuid())
+  transcriptId             String
+  insightText              String              @db.Text       // 1-3 sentences, ≤ 400 chars
+  kind                     InsightKind
+  routingScope             InsightRoutingScope
+  applicableIndustries     String[]            @default([])
+  applicableRegions        String[]            @default([])
+  applicableFrameworks     String[]            @default([])
+  applicableThreatTypes    String[]            @default([])   // e.g. ransomware, supply-chain, ai-misuse
+  vocabularyAnchors        String[]            @default([])   // key phrases this CISO uses
+  enabled                  Boolean             @default(true)
+  createdAt                DateTime            @default(now())
+  updatedAt                DateTime            @updatedAt
+
+  transcript               Transcript          @relation(fields: [transcriptId], references: [id], onDelete: Cascade)
+
+  @@index([transcriptId, enabled])
+  @@index([routingScope, enabled])
+  @@index([kind])
+}
+
+// Auto-saved every time an /api/ask call completes successfully.
+// The full panelResult + summary blobs let the history detail view
+// re-render the dashboard without re-running the panel.
+
+model ProjectAsk {
+  id              String          @id @default(cuid())
+  projectId       String
+  question        String          @db.Text
+  // The 100 responses (verdict / sentiment / headline / reasoning + per-
+  // agent metadata) as stored by lib/ciso-panel/ask.ts.
+  panelResult     Json            @db.Json
+  // Aggregates computed at save time.
+  aggregates      Json            @db.Json
+  // Synthesis output: { summary, topPros, topCons, insights }.
+  summary         Json            @db.Json
+  tokensIn        Int             @default(0)
+  tokensOut       Int             @default(0)
+  costUsd         Decimal         @default(0) @db.Decimal(10, 4)
+  durationMs      Int             @default(0)
+  // Sprint 5.5 — hybrid statistical validation. Runs synchronously after
+  // the panel completes (1-3s, negligible vs the 3-4min panel time).
+  // Shape: { verdict: "PASS"|"WARN"|"FAIL", confidence, klDivergence,
+  // bciLow, bciHigh, recommendedN, reasoningTrace, stub, ranAt } when
+  // Statistician returns. Shape: { error: "..." } when Statistician was
+  // unavailable. Null when validation was never attempted (legacy rows).
+  validation      Json?
+  createdAt       DateTime        @default(now())
+
+  project         Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+}

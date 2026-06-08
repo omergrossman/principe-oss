@@ -1,0 +1,108 @@
+{
+  "dataset_id": "verizon-2026-dbir",
+  "source": {
+    "name": "2026 Data Breach Investigations Report",
+    "publisher": "Verizon Business",
+    "publication_date": "2026-05-19",
+    "url": "https://www.verizon.com/business/resources/reports/dbir/",
+    "doc_id": "verizon-dbir-2026"
+  },
+  "year": 2026,
+  "sample_size": 22000,
+  "region_coverage": ["global", "us", "eu-west", "uk", "apac"],
+  "license_status": "public",
+  "methodology_notes": "Analyzes 22,000+ confirmed data breaches and 31,000+ security incidents across 145 countries. Timeline: Nov 1, 2024 through Oct 31, 2025. Single source for industry-wide breach pattern reference. Global sample but US-tilt in contributor base.",
+  "distributions": [
+    {
+      "question_category": "initial_access_vector",
+      "kind": "distribution",
+      "distribution": {
+        "vulnerability_exploitation": 0.31,
+        "phishing": 0.16,
+        "credential_abuse": 0.13,
+        "other_or_unknown": 0.40
+      },
+      "unit": "percentage",
+      "context": "Vulnerability exploitation rose to 31% of initial access vector (up from 20% prior period). Phishing stable at 16%. Credential abuse 13% as initial vector but 39% somewhere in attack chain.",
+      "page_reference": "Verizon DBIR 2026 + Gartner G00852689 p. 1"
+    },
+    {
+      "question_category": "credential_abuse_attack_chain_presence",
+      "kind": "scalar",
+      "value": 0.39,
+      "unit": "percentage",
+      "context": "Credential abuse appears at some point in the attack chain in 39% of breaches"
+    },
+    {
+      "question_category": "ransomware_breach_prevalence",
+      "kind": "scalar",
+      "value": 0.48,
+      "unit": "percentage",
+      "delta_yoy": 0.04,
+      "context": "Ransomware comprised 48% of all breaches in 2026 (up from 44% prior)"
+    },
+    {
+      "question_category": "ransomware_pay_rate",
+      "kind": "distribution",
+      "distribution": {
+        "did_not_pay": 0.69,
+        "paid_ransom": 0.31
+      },
+      "unit": "percentage",
+      "context": "69% of ransomware victims did not pay demanded ransoms"
+    },
+    {
+      "question_category": "credential_leak_to_attack_window",
+      "kind": "scalar",
+      "value": 95,
+      "unit": "days",
+      "context": "Half of ransomware victims with prior credential leaks experienced attacks within 95 days"
+    },
+    {
+      "question_category": "third_party_breach_involvement",
+      "kind": "scalar",
+      "value": 0.50,
+      "unit": "percentage",
+      "delta_yoy": 0.60,
+      "context": "Third parties now account for nearly half of all breaches (a 60% year-on-year increase in third-party involvement)"
+    },
+    {
+      "question_category": "mfa_remediation_gap_in_third_parties",
+      "kind": "scalar",
+      "value": 0.23,
+      "unit": "percentage",
+      "context": "Only 23% of third-party organizations fully remediated MFA gaps"
+    },
+    {
+      "question_category": "vulnerability_remediation_kev",
+      "kind": "scalar",
+      "value": 0.26,
+      "unit": "percentage",
+      "delta_yoy": -0.12,
+      "context": "Only 26% of CISA Known Exploited Vulnerabilities were fully remediated (down from 38% prior period)"
+    },
+    {
+      "question_category": "median_patch_time",
+      "kind": "scalar",
+      "value": 43,
+      "unit": "days",
+      "delta_yoy": 11,
+      "context": "Median patch time rose to 43 days, up from 32 days year-over-year"
+    },
+    {
+      "question_category": "third_party_permission_misconfig_resolution_months",
+      "kind": "scalar",
+      "value": 8,
+      "unit": "count",
+      "context": "Organizations require approximately 8 months to fix half of permission misconfigurations in third-party systems (unit: months)"
+    },
+    {
+      "question_category": "shadow_ai_insider_action_rank",
+      "kind": "scalar",
+      "value": 3,
+      "unit": "count",
+      "delta_yoy": 4.0,
+      "context": "Shadow AI increased fourfold YoY; now the third most common non-malicious insider action detected in DLP datasets"
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "dataset_id": "panorays-2026-ciso",
+  "source": {
+    "name": "2026 CISO Survey",
+    "publisher": "Panorays (conducted by Global Surveyz)",
+    "publication_date": "2026-01-15",
+    "url": "https://securityboulevard.com/2026/01/news-alert-panorays-study-finds-most-cisos-lack-vendor-visibility-as-supply-chain-attacks-climb/",
+    "doc_id": "panorays-ciso-2026"
+  },
+  "year": 2026,
+  "sample_size": 200,
+  "region_coverage": ["us", "global"],
+  "license_status": "public",
+  "methodology_notes": "Survey of 200 Chief Information Security Officers from finance, insurance, professional services, technology, healthcare and software development sectors. Conducted October 2025. Published summary findings; aggregate stats cited industry-wide.",
+  "distributions": [
+    {
+      "question_category": "third_party_breach_increase_perception",
+      "kind": "scalar",
+      "value": 0.60,
+      "unit": "percentage",
+      "context": "60% of CISOs report an increase in third-party security incidents"
+    },
+    {
+      "question_category": "third_party_visibility_gap",
+      "kind": "scalar",
+      "value": 0.15,
+      "unit": "percentage",
+      "context": "Only 15% of CISOs say they have full visibility into third-party security risks (corollary: 85% report visibility gap)"
+    },
+    {
+      "question_category": "peer_recommendation_trust",
+      "kind": "scalar",
+      "value": 0.79,
+      "unit": "percentage",
+      "context": "Peer recommendations are the most trusted source of vendor information for 79% of security leaders"
+    },
+    {
+      "question_category": "vendor_consolidation_priority",
+      "kind": "scalar",
+      "value": 0.75,
+      "unit": "percentage",
+      "context": "By 2026, 75% of organizations will consolidate the number of vendors securing their digital infrastructure (Gartner-aligned finding cited via Panorays)"
+    },
+    {
+      "question_category": "third_party_risk_top_concern_rank",
+      "kind": "scalar",
+      "value": 1,
+      "unit": "count",
+      "context": "Third-party cyber risk is the top critical challenge facing security leaders today per Panorays 2026"
+    }
+  ]
+}

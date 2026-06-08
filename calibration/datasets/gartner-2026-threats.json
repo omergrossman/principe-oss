@@ -1,0 +1,153 @@
+{
+  "dataset_id": "gartner-2026-threats",
+  "source": {
+    "name": "How to Respond to the 2026-2027 Threat Landscape",
+    "publisher": "Gartner, Inc.",
+    "publication_date": "2026-05-28",
+    "doc_id": "G00852689"
+  },
+  "year": 2026,
+  "sample_size": 1500,
+  "region_coverage": ["global", "us", "eu-west", "uk"],
+  "license_status": "licensed-pending-confirmation",
+  "methodology_notes": "Synthesized from Gartner CISO Survey 2026 + IBM X-Force Threat Intelligence Index 2026 + Microsoft / VulnCheck threat data + industry incident analysis. Aggregate findings extracted from published Gartner research note G00852689 for internal calibration reference. License confirmation outstanding before redistribution; current use is reference-distribution-only inside Principe's statistical model. Track per Product Council follow-up.",
+  "distributions": [
+    {
+      "question_category": "budget_growth_2026",
+      "kind": "distribution",
+      "distribution": {
+        "growth_10pct_or_less": 0.53,
+        "growth_above_10pct_or_flat_or_cut": 0.47
+      },
+      "unit": "percentage",
+      "context": "53% of organizations reported a cybersecurity budget increase of 10% or less in 2026 (2026 Gartner CISO Survey)",
+      "page_reference": "p. 6"
+    },
+    {
+      "question_category": "top_threat_priorities_2026",
+      "kind": "distribution",
+      "distribution": {
+        "phishing": 0.48,
+        "vulnerability_exploitation_management": 0.37,
+        "other": 0.15
+      },
+      "unit": "percentage",
+      "context": "48% of surveyed organizations put investment to address phishing in their top three threats; 37% included vulnerability exploitation management",
+      "page_reference": "p. 7"
+    },
+    {
+      "question_category": "deepfake_audio_attack_exposure",
+      "kind": "scalar",
+      "value": 0.41,
+      "unit": "percentage",
+      "context": "41% of organizations report having experienced a deepfake + social engineering attack on an audio call to an employee",
+      "page_reference": "p. 19"
+    },
+    {
+      "question_category": "deepfake_video_attack_exposure",
+      "kind": "scalar",
+      "value": 0.35,
+      "unit": "percentage",
+      "context": "35% experienced deepfake + social engineering on a video call",
+      "page_reference": "p. 11/19"
+    },
+    {
+      "question_category": "vulnerability_growth_rate_q1_2026",
+      "kind": "scalar",
+      "value": 0.264,
+      "unit": "percentage",
+      "delta_yoy": 0.06,
+      "context": "Reported vulnerability volume grew 26.4% in Q1 2026 (vs. 20.4% in 2025 vs 2024). NIST reported a 33% increase year-over-year.",
+      "page_reference": "p. 3"
+    },
+    {
+      "question_category": "kev_post_breach_exploitation_rate",
+      "kind": "scalar",
+      "value": 0.68,
+      "unit": "percentage",
+      "context": "Only 32% of CISA Known Exploited Vulnerabilities were patched within Verizon's window. Inverse (~68%) implies post-breach exploitation likelihood for known KEVs.",
+      "page_reference": "p. 3"
+    },
+    {
+      "question_category": "kev_pre_disclosure_exploitation",
+      "kind": "scalar",
+      "value": 0.29,
+      "unit": "percentage",
+      "delta_yoy": 0.05,
+      "context": "VulnCheck reports 29% of KEVs were exploited before or on the day a CVE was published (up from 24% in 2024)",
+      "page_reference": "p. 3"
+    },
+    {
+      "question_category": "phishing_attempts_brand_concentration",
+      "kind": "scalar",
+      "value": 0.60,
+      "unit": "percentage",
+      "context": "A single brand impersonation point was involved in more than 60% of all phishing attempts that Microsoft observed",
+      "page_reference": "p. 2"
+    },
+    {
+      "question_category": "exploit_initial_access_growth_ibm",
+      "kind": "scalar",
+      "value": 0.44,
+      "unit": "percentage",
+      "context": "IBM X-Force 2026 shows a 44% increase in incidents caused by exploits as initial access vector",
+      "page_reference": "p. 25"
+    },
+    {
+      "question_category": "cloud_targeting_threat_actor_growth",
+      "kind": "scalar",
+      "value": 0.37,
+      "unit": "percentage",
+      "context": "Threat actors specifically targeting cloud environments rose 37% in 2025",
+      "page_reference": "p. 25"
+    },
+    {
+      "question_category": "ransomware_industrial_targeting_growth",
+      "kind": "scalar",
+      "value": 0.49,
+      "unit": "percentage",
+      "context": "Ransomware groups targeting industrial organizations increased 49% year-over-year",
+      "page_reference": "p. 28"
+    },
+    {
+      "question_category": "industrial_protocol_attack_growth",
+      "kind": "scalar",
+      "value": 0.84,
+      "unit": "percentage",
+      "context": "Attacks against core industrial protocols rose 84% in 2025",
+      "page_reference": "p. 28"
+    },
+    {
+      "question_category": "internet_exposed_cps_assets_growth",
+      "kind": "scalar",
+      "value": 3.32,
+      "unit": "percentage",
+      "context": "Unique internet-exposed CPS (cyber-physical system) assets jumped by 332%; nearly 20 million devices exposed",
+      "page_reference": "p. 28"
+    },
+    {
+      "question_category": "sensitive_prompt_data_leak_rate",
+      "kind": "scalar",
+      "value": 0.16,
+      "unit": "percentage",
+      "context": "Approximately 16% of employees' prompts to AI included potentially sensitive content",
+      "page_reference": "p. 15"
+    },
+    {
+      "question_category": "indirect_prompt_injection_growth",
+      "kind": "scalar",
+      "value": 0.32,
+      "unit": "percentage",
+      "context": "Analysis shows a relative 32% increase of indirect prompt injections between observation periods",
+      "page_reference": "p. 17"
+    },
+    {
+      "question_category": "zero_day_exploitation_share_top_groups",
+      "kind": "scalar",
+      "value": 0.67,
+      "unit": "percentage",
+      "context": "Some groups exploit vulnerabilities before public disclosure in 67% of observed cases",
+      "page_reference": "p. 21"
+    }
+  ]
+}

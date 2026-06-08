@@ -1,0 +1,546 @@
+[
+  {
+    "url": "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
+    "title": "OWASP — Threat Modeling Cheat Sheet",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["OWASP Threat Modeling", "STRIDE"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "OWASP",
+      "resource_type": "threat_modeling",
+      "license_posture": "OPEN",
+      "primary_domain": "Threat Modeling",
+      "publication_or_update_date": "2024",
+      "key_concepts": [
+        "Four-question framework: What are we working on / What can go wrong / What are we going to do about it / Did we do a good job",
+        "STRIDE classification (Spoofing, Tampering, Repudiation, Information disclosure, Denial of service, Elevation of privilege)",
+        "Data flow diagrams (DFDs) and trust boundaries",
+        "Decompose-Identify-Mitigate-Validate lifecycle",
+        "Continuous threat modeling — refresh on every architectural change",
+        "Risk rating with DREAD or simpler likelihood × impact"
+      ],
+      "control_or_capability_taxonomy": [
+        "Asset inventory and prioritization",
+        "Trust boundary identification",
+        "Threat enumeration via STRIDE per element",
+        "Mitigation design and tracking",
+        "Threat model review cadence"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Architectural blind spots in new features",
+        "Trust boundary violations introduced by integrations",
+        "Unmitigated STRIDE categories on critical assets"
+      ],
+      "defensive_controls": [
+        "Authentication strengthening against spoofing",
+        "Integrity controls against tampering (signing, attestation)",
+        "Audit logging against repudiation",
+        "Least privilege against elevation"
+      ],
+      "mappings": {
+        "ATTACK": [],
+        "D3FEND": [],
+        "NIST": ["SSDF PW.1", "SSDF PW.4"],
+        "OWASP": ["Threat Modeling Cheat Sheet", "ASVS V1"],
+        "CSA": []
+      },
+      "source_url": "https://cheatsheetseries.owasp.org/cheatsheets/Threat_Modeling_Cheat_Sheet.html",
+      "summary": "OWASP's practical threat-modeling methodology, framed around Shostack's four questions. STRIDE provides the threat taxonomy; DFDs surface trust boundaries; iteration ties threat modeling into the SDLC rather than treating it as a one-time exercise."
+    },
+    "content": "OWASP Threat Modeling Cheat Sheet — Methodology and Application\n\nThe OWASP Threat Modeling Cheat Sheet codifies the practical methodology for systematically identifying and mitigating threats during software design. It is built around four questions (Shostack's framing): What are we working on? What can go wrong? What are we going to do about it? Did we do a good job?\n\nMethodology — STRIDE per element\n\nThe canonical taxonomy is STRIDE: Spoofing identity, Tampering with data, Repudiation, Information disclosure, Denial of service, and Elevation of privilege. STRIDE is applied per element of a data flow diagram (DFD) — for each process, data store, data flow, and external entity, the modeler asks which STRIDE categories apply and what mitigations exist. Trust boundaries on the DFD highlight where data crosses privilege levels and warrant the most rigorous review.\n\nLifecycle — decompose, identify, mitigate, validate\n\nThreat modeling is not a one-shot artifact. The cheat sheet recommends a continuous loop: decompose the system into its security-relevant elements; identify threats using STRIDE; design mitigations; validate that mitigations are implemented and effective. Threat models are refreshed whenever architectural changes occur — new integrations, new data classifications, new trust boundaries.\n\nIntegration with the SDLC\n\nFor mature programs, threat modeling fits at the design phase and continues into code review and runtime validation. Findings feed into security requirements, ASVS verification items, and acceptance criteria. The cheat sheet emphasizes that threat models are working documents, not deliverables — their value is in the conversation they drive among engineers, security, and product.\n\nRisk rating\n\nThe cheat sheet supports DREAD (Damage, Reproducibility, Exploitability, Affected users, Discoverability) but explicitly notes simpler likelihood × impact scoring is often sufficient. The point is consistency within an organization, not adherence to a specific scale.\n\nWhy it matters for CISOs\n\nThreat modeling shifts security left in the SDLC at low tool cost. The framework is methodology-agnostic; it works with Threat Dragon, IriusRisk, Microsoft TMT, or pencil and paper. CISOs evaluating AppSec maturity look for threat modeling as a leading indicator — organizations that threat-model proactively avoid vulnerability classes that organizations relying on penetration testing only discover after deployment."
+  },
+  {
+    "url": "https://owasp.org/www-project-threat-dragon/",
+    "title": "OWASP — Threat Dragon",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["OWASP Threat Modeling", "STRIDE"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "OWASP",
+      "resource_type": "threat_modeling",
+      "license_posture": "OPEN",
+      "primary_domain": "Threat Modeling",
+      "publication_or_update_date": "2024",
+      "key_concepts": [
+        "Open-source threat-modeling tool (web + desktop)",
+        "Visual DFD editor with drag-and-drop elements",
+        "Built-in STRIDE threat suggestions per element",
+        "Mitigation tracking and threat status (open/mitigated/transferred)",
+        "JSON-based threat model files (version-controllable)",
+        "Integration with GitHub for collaborative review"
+      ],
+      "control_or_capability_taxonomy": [
+        "Diagram-based threat modeling",
+        "Threat library customization",
+        "Mitigation lifecycle tracking",
+        "Reporting and export"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Unmodeled architectures (greenfield projects without threat models)",
+        "Threat-model drift (diagrams diverging from deployed reality)"
+      ],
+      "defensive_controls": [
+        "Threat-model-as-code stored alongside source",
+        "Pull-request review gates for threat-model updates"
+      ],
+      "mappings": {
+        "ATTACK": [],
+        "D3FEND": [],
+        "NIST": ["SSDF PW.1"],
+        "OWASP": ["Threat Modeling Cheat Sheet"],
+        "CSA": []
+      },
+      "source_url": "https://owasp.org/www-project-threat-dragon/",
+      "summary": "OWASP's open-source threat-modeling tool. Provides a visual DFD editor, STRIDE-based threat suggestions, mitigation tracking, and JSON file format that fits into source control. The practical companion to the Threat Modeling Cheat Sheet."
+    },
+    "content": "OWASP Threat Dragon — Open-Source Threat Modeling Tool\n\nThreat Dragon is OWASP's flagship open-source threat-modeling tool. It implements the methodology described in the Threat Modeling Cheat Sheet, providing a visual DFD editor, STRIDE-based threat suggestions per element, and tracking of mitigation status. Available as a web app, desktop app (Electron), and Docker container.\n\nKey capabilities\n\nThreat Dragon supports drag-and-drop DFD construction with processes, data stores, data flows, and external entities. Trust boundaries are first-class elements drawn as dashed regions. For each element, the tool offers STRIDE prompts — spoofing for entities, tampering for data flows and stores, repudiation for processes, etc. The user enumerates threats per prompt, assigns severity, and tracks mitigations through three states: open, mitigated, or transferred.\n\nFile format and version control\n\nThreat models are stored as JSON files. This means they can be committed to the source repository alongside the code, reviewed via pull requests, and diffed across architectural changes. Threat-model-as-code is the operating model — the artifact lives in the same workflow as the code it describes.\n\nIntegration paths\n\nThe GitHub integration allows pulling and pushing threat models directly from repositories, supporting team workflows. The threat library is extensible — organizations can add their own threat catalogs (industry-specific, regulatory, etc.) on top of the default STRIDE library.\n\nReporting\n\nThreat Dragon generates threat-model reports as PDFs, suitable for compliance evidence (e.g., demonstrating NIST SSDF PW.1 \"Design software to meet security requirements and mitigate security risks\") and for security review checkpoints.\n\nWhy it matters for CISOs\n\nThreat Dragon removes the tool excuse for not threat-modeling. It is free, open-source, easy to deploy, and supports the JSON-as-source-control pattern that engineering teams already follow. The barrier becomes process and discipline, not tooling. CISOs adopting Threat Dragon typically pair it with a threat-modeling policy that requires updated models for any architectural change touching authentication, data classification, or trust boundaries."
+  },
+  {
+    "url": "https://attack.mitre.org/",
+    "title": "MITRE ATT&CK Enterprise Matrix (top-level)",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["MITRE ATT&CK"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "MITRE",
+      "resource_type": "framework",
+      "license_posture": "OPEN",
+      "primary_domain": "Threat Behavior",
+      "publication_or_update_date": "2025-Q4 (v15)",
+      "key_concepts": [
+        "Tactics (the why — adversary objectives)",
+        "Techniques (the how — adversary behaviors)",
+        "Sub-techniques (specific instances of techniques)",
+        "Procedures (real-world implementations observed in the wild)",
+        "Groups (clusters of activity attributed to threat actors)",
+        "Software (malware and tools used by groups)",
+        "Mitigations and detections"
+      ],
+      "control_or_capability_taxonomy": [
+        "14 Enterprise tactics from Reconnaissance through Impact",
+        "~200 techniques with ~400 sub-techniques",
+        "Coverage matrices for SOC detection gap analysis",
+        "Adversary emulation plans (purple team exercises)"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Initial Access (T1190 Exploit Public-Facing App, T1078 Valid Accounts)",
+        "Execution (T1059 Command-Line Interface, T1106 Native API)",
+        "Persistence (T1098 Account Manipulation, T1136 Create Account)",
+        "Lateral Movement (T1021 Remote Services, T1550 Use Alternate Authentication)",
+        "Exfiltration (T1041 C2 Channel, T1567 Web Service)",
+        "Impact (T1486 Data Encrypted for Impact / ransomware, T1485 Data Destruction)"
+      ],
+      "defensive_controls": [
+        "Detection engineering aligned to specific technique IDs",
+        "Behavioral analytics anchored to ATT&CK procedures",
+        "Coverage gap analysis via Navigator overlays"
+      ],
+      "mappings": {
+        "ATTACK": ["full taxonomy"],
+        "D3FEND": ["technique-to-countermeasure mappings"],
+        "NIST": ["CSF v2 DETECT function alignment"],
+        "OWASP": [],
+        "CSA": []
+      },
+      "source_url": "https://attack.mitre.org/",
+      "summary": "Globally adopted knowledge base of adversary tactics, techniques, and procedures (TTPs) observed in real-world intrusions. The lingua franca for detection engineering, purple teaming, and threat-intelligence reporting."
+    },
+    "content": "MITRE ATT&CK — The Adversary Behavior Knowledge Base\n\nMITRE ATT&CK is the globally adopted knowledge base of adversary tactics, techniques, and procedures (TTPs) observed in real-world intrusions. It has become the lingua franca for threat intelligence, detection engineering, and red/blue team exercises. The Enterprise matrix covers 14 tactics from Reconnaissance through Impact, organizing approximately 200 techniques and 400 sub-techniques.\n\nStructure — tactics, techniques, procedures\n\nTactics describe the adversary's objective at a stage of attack (e.g., Initial Access, Persistence, Lateral Movement, Exfiltration). Techniques describe how an objective is achieved (e.g., T1190 Exploit Public-Facing Application for Initial Access). Sub-techniques specify variants (e.g., T1078.004 Valid Accounts: Cloud Accounts). Procedures are observed implementations attributed to specific threat groups.\n\nGroups, software, and threat intelligence\n\nATT&CK catalogs threat actor groups (G0050 APT32, G0007 APT28, G0096 APT41, etc.) with the techniques each is known to use, and the software/malware they deploy. Threat-intelligence reports use ATT&CK technique IDs as the anchor — a Mandiant or CrowdStrike report describing an intrusion will name the techniques observed (T1078, T1021, T1486) so defenders can immediately map detection coverage.\n\nDetection engineering and coverage gap analysis\n\nThe defender's primary use of ATT&CK is detection coverage mapping. SOC teams build a coverage matrix showing which techniques they detect, with what fidelity, in which data source. ATT&CK Navigator (a companion tool) lets teams overlay coverage onto the matrix visually, identifying gaps for purple-team exercises and detection-development sprints.\n\nLimitations\n\nATT&CK is descriptive, not prescriptive. It tells you what adversaries do, not how to defend. The pairing with MITRE D3FEND (defensive countermeasures) closes that gap — D3FEND maps offensive techniques to defensive functions. Programs that adopt ATT&CK without D3FEND or NIST CSF can over-rotate on detection while neglecting prevention and recovery.\n\nWhy it matters for CISOs\n\nCISOs use ATT&CK as the foundation for threat-informed defense. Board reporting frames risk in terms of \"which adversary groups target our sector and which of their techniques we detect.\" Detection-engineering team velocity is measured by ATT&CK coverage added per quarter. Threat-intel subscriptions are evaluated on the quality of their ATT&CK mappings — a vendor that delivers technique IDs is faster to operationalize than one that delivers prose."
+  },
+  {
+    "url": "https://attack.mitre.org/resources/attack-data-and-tools/",
+    "title": "MITRE ATT&CK Navigator",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["MITRE ATT&CK"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "MITRE",
+      "resource_type": "framework",
+      "license_posture": "OPEN",
+      "primary_domain": "Detection Engineering",
+      "publication_or_update_date": "2025",
+      "key_concepts": [
+        "Web-based visualization tool for the ATT&CK matrix",
+        "Layer files (JSON) annotating techniques with custom data",
+        "Stack multiple layers (e.g., coverage, threat actor TTPs, planned work)",
+        "Heatmap-style scoring per technique",
+        "Filter by platform (Windows, Linux, macOS, Cloud, Containers, etc.)",
+        "Export to Excel and SVG for reporting"
+      ],
+      "control_or_capability_taxonomy": [
+        "Coverage mapping (detected / partial / not detected)",
+        "Adversary emulation planning (which techniques to test)",
+        "Purple team exercise scoring",
+        "Detection development roadmap visualization"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Coverage gaps not visualized are easily ignored by leadership"
+      ],
+      "defensive_controls": [
+        "Quarterly coverage layer with score-and-color heatmap",
+        "Per-threat-actor overlay showing relevance to specific adversaries",
+        "Detection-engineering backlog as a Navigator layer"
+      ],
+      "mappings": {
+        "ATTACK": ["full visualization"],
+        "D3FEND": [],
+        "NIST": ["CSF v2 DETECT"],
+        "OWASP": [],
+        "CSA": []
+      },
+      "source_url": "https://attack.mitre.org/resources/attack-data-and-tools/",
+      "summary": "Web-based tool that visualizes ATT&CK matrices with custom annotations. The de facto way to communicate detection coverage to executives and to plan purple team exercises against specific adversary playbooks."
+    },
+    "content": "MITRE ATT&CK Navigator — Visualizing Detection Coverage\n\nATT&CK Navigator is the companion visualization tool to the ATT&CK matrix. It allows defenders to annotate techniques with custom data — coverage scores, planned work, threat-actor relevance — and produce heatmap-style visualizations that communicate detection posture to technical and executive audiences.\n\nLayer files as the data model\n\nNavigator's core abstraction is the \"layer\" — a JSON file that maps technique IDs to scores, colors, and comments. A typical defensive program maintains several layers: a current-coverage layer (every technique scored 0-100 for detection confidence), a per-threat-actor layer (techniques used by APT29 highlighted), a roadmap layer (techniques planned for detection work this quarter), and a purple-team layer (techniques tested in last exercise).\n\nLayers stack. Combining a threat-actor layer with a coverage layer immediately shows which APT29 techniques are detected and which are gaps — turning ATT&CK from a catalog into a directed prioritization tool.\n\nFiltering and platform views\n\nMatrix views can be filtered by platform (Windows, Linux, macOS, Cloud, Containers, Network) so teams focus on environments they actually run. Cloud-native organizations spend most of their time in the Cloud and Containers sub-matrices, while traditional enterprises focus on Windows and the network views.\n\nUse cases\n\nThe primary use cases are: communicating coverage to executive leadership (color-coded matrix is more legible than spreadsheets); planning purple-team exercises (which techniques are not yet tested); roadmapping detection work (which gaps to close next); evaluating vendor coverage claims (overlay vendor-claimed techniques on the matrix to spot marketing exaggeration).\n\nIntegration with detection content\n\nMore mature teams sync Navigator layers with their SIEM rule libraries — every detection rule is tagged with the technique ID it covers, and Navigator pulls counts and confidence scores automatically. This transforms Navigator from a static document into a live coverage dashboard.\n\nWhy it matters for CISOs\n\nNavigator is the artifact that gets shown to the board. The score-and-color heatmap makes detection investment legible: red squares are budget asks; green squares are credit-claiming material. CISOs who can produce a credible Navigator coverage layer and explain the gaps in plain language have a substantially easier time defending their detection-engineering budget."
+  },
+  {
+    "url": "https://d3fend.mitre.org/",
+    "title": "MITRE D3FEND — Defensive Countermeasures Knowledge Graph",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["MITRE D3FEND", "MITRE ATT&CK"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "MITRE",
+      "resource_type": "framework",
+      "license_posture": "OPEN",
+      "primary_domain": "Defensive Controls",
+      "publication_or_update_date": "2025",
+      "key_concepts": [
+        "Knowledge graph of cybersecurity countermeasures",
+        "Five top-level defensive tactics: Harden, Detect, Isolate, Deceive, Evict",
+        "Countermeasure-to-ATT&CK-technique mappings",
+        "Digital Artifact ontology (Files, Processes, Network Traffic, etc.)",
+        "Defensive function descriptions tied to real product capabilities",
+        "Inferred relationships from technique → digital artifact → countermeasure"
+      ],
+      "control_or_capability_taxonomy": [
+        "Hardening (e.g., Memory Boundary Tracking, Strong Password Policy)",
+        "Detection (e.g., Process Lineage Analysis, File Access Pattern Analysis)",
+        "Isolation (e.g., Network Isolation, Process Segmentation)",
+        "Deception (e.g., Decoy File, Honey User Account)",
+        "Eviction (e.g., Authentication Cache Invalidation, Account Locking)"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Programs that adopt ATT&CK without D3FEND tend to over-rotate on Detect at the expense of Harden and Isolate"
+      ],
+      "defensive_controls": [
+        "Map each ATT&CK technique to a portfolio of D3FEND countermeasures",
+        "Evaluate vendor capabilities against D3FEND function descriptions"
+      ],
+      "mappings": {
+        "ATTACK": ["technique → countermeasure mappings"],
+        "D3FEND": ["full taxonomy"],
+        "NIST": ["CSF v2 IDENTIFY, PROTECT, DETECT, RESPOND, RECOVER"],
+        "OWASP": [],
+        "CSA": []
+      },
+      "source_url": "https://d3fend.mitre.org/",
+      "summary": "Counterpart to ATT&CK. Whereas ATT&CK catalogs offensive behaviors, D3FEND catalogs defensive countermeasures and links them to the techniques they mitigate. The map for turning detection coverage analysis into a defense roadmap."
+    },
+    "content": "MITRE D3FEND — The Defensive Counterpart to ATT&CK\n\nD3FEND (\"Detection, Denial, and Disruption Framework Empowering Network Defense\") is MITRE's knowledge graph of cybersecurity countermeasures. Whereas ATT&CK catalogs what adversaries do, D3FEND catalogs what defenders do and explicitly links the two. It is the missing piece that turns ATT&CK from \"here's what's happening to you\" into \"here's what to do about it.\"\n\nFive defensive tactics\n\nD3FEND organizes countermeasures into five top-level tactics: Harden (reduce attack surface), Detect (observe and analyze adversary activity), Isolate (limit blast radius and lateral movement), Deceive (mislead the adversary), and Evict (remove adversary access). Each tactic decomposes into specific countermeasures — e.g., under Detect, you find Process Lineage Analysis, File Access Pattern Analysis, Network Traffic Analysis, Authentication Event Correlation.\n\nDigital Artifact ontology\n\nThe key innovation is the Digital Artifact ontology — a structured vocabulary of the things countermeasures observe and manipulate (Files, Processes, Network Traffic, Authentication Events, etc.). ATT&CK techniques produce artifacts (a malicious process execution produces a Process artifact); D3FEND countermeasures consume artifacts (Process Lineage Analysis operates on Process artifacts). This artifact-mediated link is what enables technique-to-countermeasure mapping.\n\nMapping ATT&CK to D3FEND\n\nFor any ATT&CK technique, D3FEND provides a portfolio of mapped countermeasures. T1059.001 PowerShell execution, for example, maps to Process Lineage Analysis (Detect), Script Execution Analysis (Detect), Authorization Database Access Pattern Analysis (Detect), and Code Signing (Harden). Defenders use these mappings to ensure that every high-risk technique has multi-layer countermeasure coverage rather than relying on a single detection.\n\nProgram implications — the Harden/Isolate gap\n\nA pattern D3FEND surfaces: programs that adopt ATT&CK in isolation tend to over-invest in Detect and under-invest in Harden and Isolate. ATT&CK's emphasis on technique observation biases toward SIEM and EDR spend. D3FEND counter-balances by showing that Harden countermeasures (memory safety, strong authentication, code signing) prevent many techniques from succeeding at all, and Isolate countermeasures (network segmentation, process sandboxing) limit blast radius when prevention fails.\n\nVendor evaluation\n\nD3FEND function descriptions are precise enough to evaluate vendor capabilities. A vendor that claims \"behavioral detection\" can be pressed: do you do Process Lineage Analysis, File Access Pattern Analysis, or just signature-based matching? The framework gives defenders a vocabulary for separating marketing from capability.\n\nWhy it matters for CISOs\n\nD3FEND is the bridge between threat-informed defense and capability roadmapping. CISOs who use ATT&CK + D3FEND together can articulate a defensive program as a portfolio of countermeasures with explicit coverage of the techniques their threat model includes. This is more legible to boards than \"we have EDR\" and more defensible to auditors than \"we follow NIST.\""
+  },
+  {
+    "url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+    "title": "NIST SP 800-218 — Secure Software Development Framework (SSDF) v1.1",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["NIST SSDF"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "NIST",
+      "resource_type": "framework",
+      "license_posture": "OPEN",
+      "primary_domain": "Secure SDLC",
+      "publication_or_update_date": "2022 (v1.1)",
+      "key_concepts": [
+        "Four practice groups: Prepare the Organization (PO), Protect the Software (PS), Produce Well-Secured Software (PW), Respond to Vulnerabilities (RV)",
+        "42 outcome-focused practices applicable across SDLC methodologies",
+        "Mapping to OMB M-22-18 federal software-supply-chain requirements",
+        "Self-attestation for federal software vendors",
+        "Tasks expressed at outcome level — implementation is methodology-agnostic"
+      ],
+      "control_or_capability_taxonomy": [
+        "PO — define security requirements, implement roles and responsibilities, implement supporting toolchains",
+        "PS — protect all forms of code from tampering, maintain provenance for software",
+        "PW — design software to meet security requirements and mitigate security risks, review and analyze software for vulnerabilities",
+        "RV — identify and confirm vulnerabilities on an ongoing basis, assess, prioritize, and remediate vulnerabilities"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Supply chain compromise via dependency tampering",
+        "Unsigned build artifacts",
+        "Inadequate vulnerability disclosure handling"
+      ],
+      "defensive_controls": [
+        "SBOM generation and signature",
+        "Reproducible builds",
+        "Code review and SAST/DAST gates",
+        "Coordinated vulnerability disclosure policy"
+      ],
+      "mappings": {
+        "ATTACK": ["T1195 Supply Chain Compromise"],
+        "D3FEND": ["Code Signing", "Software Composition Analysis"],
+        "NIST": ["SSDF v1.1", "OMB M-22-18"],
+        "OWASP": ["ASVS", "SAMM", "Threat Modeling"],
+        "CSA": []
+      },
+      "source_url": "https://csrc.nist.gov/pubs/sp/800/218/final",
+      "summary": "NIST's secure software development framework, mandated for federal software vendors under OMB M-22-18. Defines 42 outcome-focused practices across four groups (Prepare, Protect, Produce, Respond). The U.S. federal anchor for secure SDLC."
+    },
+    "content": "NIST SP 800-218 — Secure Software Development Framework (SSDF) v1.1\n\nSSDF is NIST's secure software development framework, mandated for federal software vendors under OMB M-22-18 (the post-SolarWinds executive order). It defines 42 outcome-focused practices organized into four groups, applicable to any SDLC methodology — waterfall, agile, DevOps, or hybrid.\n\nThe four practice groups\n\nPrepare the Organization (PO) covers foundational program elements: defining security requirements (PO.1), establishing roles and responsibilities (PO.2), implementing supporting toolchains (PO.3), and protecting the software development environment itself (PO.5). These are organization-level controls — the program must exist before product-level practices can be operationalized.\n\nProtect the Software (PS) addresses tamper-resistance of code and artifacts: PS.1 \"Protect all forms of code from unauthorized access and tampering\" includes source code access control, signed commits, and protected branches. PS.2 \"Provide a mechanism for verifying software release integrity\" requires signed artifacts and reproducible builds. PS.3 covers provenance — knowing where every component of the release came from.\n\nProduce Well-Secured Software (PW) is the design-and-build phase: PW.1 design to meet security requirements (threat modeling), PW.2 review designs (security architecture review), PW.4 reuse existing well-secured software (vetted libraries and components), PW.7 review and analyze human-readable code (code review and SAST), PW.8 test executable code (DAST, fuzzing, penetration testing).\n\nRespond to Vulnerabilities (RV) covers post-release: RV.1 identify and confirm vulnerabilities on an ongoing basis (vulnerability disclosure program, monitoring CVEs in dependencies), RV.2 assess, prioritize, and remediate (SLAs for fix windows by severity), RV.3 analyze root causes (post-incident review feeding back into PW practices).\n\nOMB M-22-18 attestation\n\nFederal software vendors must attest to SSDF compliance via the CISA Secure Software Self-Attestation Form. The form requires the CEO or designee to attest that the organization follows the SSDF practices, with specific reference to artifacts demonstrating each practice. SBOM submission is a related but separate requirement.\n\nIndustry adoption beyond federal\n\nLarge enterprises now require SSDF attestation from vendors as part of procurement, even outside federal contracts. JPMorgan Chase, Walmart, and several Fortune 100 buyers cite SSDF in vendor risk questionnaires. The practical effect is that any vendor selling to large enterprises needs SSDF readiness even if they don't sell to the federal government.\n\nWhy it matters for CISOs\n\nSSDF is the U.S. federal anchor for secure SDLC. Compliance maps cleanly to procurement requirements, and the practice structure aligns with what mature engineering organizations already do (code review, SAST/DAST, dependency scanning, signed builds). For CISOs, SSDF provides the vocabulary for conversations with engineering leadership about secure-by-design responsibilities — and the leverage to get them prioritized."
+  },
+  {
+    "url": "https://www.nist.gov/itl/ai-risk-management-framework",
+    "title": "NIST AI Risk Management Framework (AI RMF) 1.0",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["NIST AI RMF"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "NIST",
+      "resource_type": "AI_security",
+      "license_posture": "OPEN",
+      "primary_domain": "AI Security",
+      "publication_or_update_date": "2023-01 (1.0); Generative AI Profile 2024-07",
+      "key_concepts": [
+        "Four core functions: Govern, Map, Measure, Manage",
+        "Trustworthiness characteristics: valid, reliable, safe, secure, resilient, accountable, transparent, explainable, privacy-enhanced, fair",
+        "Risk = adverse impact × likelihood, evaluated across the AI lifecycle",
+        "Generative AI Profile addresses LLM-specific risks (NIST AI 600-1)",
+        "Not prescriptive — provides a structure for organizational risk programs"
+      ],
+      "control_or_capability_taxonomy": [
+        "GOVERN — policies, accountability, risk tolerance, supply-chain governance",
+        "MAP — context, AI system categorization, impact assessment",
+        "MEASURE — analytic, qualitative, quantitative assessment of AI risks",
+        "MANAGE — prioritization, response, monitoring, communication"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Confabulation / hallucination",
+        "Harmful bias / homogenization",
+        "Data poisoning",
+        "Information integrity (deepfakes, generated misinformation)",
+        "Information security (prompt injection, model extraction)",
+        "Intellectual property (training-data IP claims)",
+        "Obscene content / CSAM",
+        "Privacy (training-data leakage, inference attacks)",
+        "Value chain and component integration (third-party LLM use)"
+      ],
+      "defensive_controls": [
+        "AI risk register tied to MAP outputs",
+        "Pre-deployment red-teaming and adversarial testing",
+        "Content provenance (watermarking, C2PA)",
+        "Human oversight and override mechanisms",
+        "Continuous monitoring of model drift and degradation"
+      ],
+      "mappings": {
+        "ATTACK": ["T1606 Forge Web Credentials", "Cloud and SaaS adversary techniques applied to AI agents"],
+        "D3FEND": ["Input Validation", "Anomaly Detection"],
+        "NIST": ["AI RMF 1.0", "AI 600-1 GenAI Profile"],
+        "OWASP": ["Top 10 for LLM Applications"],
+        "CSA": []
+      },
+      "source_url": "https://www.nist.gov/itl/ai-risk-management-framework",
+      "summary": "NIST's framework for managing risks to individuals, organizations, and society from AI systems. Four functions (Govern/Map/Measure/Manage) plus ten trustworthiness characteristics. The Generative AI Profile (AI 600-1) extends to LLM-specific risks."
+    },
+    "content": "NIST AI Risk Management Framework (AI RMF) 1.0\n\nThe AI RMF is NIST's framework for managing risks to individuals, organizations, and society from AI systems. Published in January 2023 and extended with the Generative AI Profile (NIST AI 600-1) in July 2024, it has become the U.S. policy anchor for AI risk governance — referenced in the EU AI Act, executive orders, and most enterprise AI governance programs.\n\nFour core functions\n\nThe framework organizes AI risk management around four functions: GOVERN (policies, accountability structures, risk tolerance, supply-chain considerations for AI vendors), MAP (system context, categorization, impact assessment — what this AI system does and what could go wrong), MEASURE (analytic methods to assess risks — quantitative metrics where possible, qualitative assessments where not), and MANAGE (prioritization, response, monitoring, communication of residual risk).\n\nTrustworthiness characteristics\n\nThe framework names ten characteristics of trustworthy AI: valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair (with harmful bias managed). These characteristics are evaluated across the AI lifecycle from design through deployment and retirement. The framework does not prescribe acceptance thresholds — organizations define their own risk tolerance.\n\nGenerative AI Profile (AI 600-1)\n\nThe GenAI Profile enumerates LLM-specific risks: confabulation (hallucination), harmful bias and homogenization, data poisoning, information integrity (deepfakes), information security (prompt injection, model extraction), intellectual property concerns, obscene content, privacy (training-data leakage, inference attacks), and value-chain risks (using third-party foundation models). For each risk, the profile suggests mitigations across GOVERN, MAP, MEASURE, MANAGE.\n\nIntegration with security frameworks\n\nThe AI RMF complements rather than replaces traditional cybersecurity frameworks. NIST CSF v2 still governs the security of AI systems as IT assets. The AI RMF adds AI-specific risks (confabulation, bias, model extraction) that don't fit cleanly into the CSF threat model. Practical programs map AI risks to CSF functions where appropriate (e.g., model extraction is a DETECT/PROTECT problem) and use AI RMF for the residual.\n\nEnterprise operating model\n\nMost enterprise AI governance programs implement the AI RMF as: a cross-functional AI risk council (GOVERN); a pre-deployment risk assessment template for new AI use cases (MAP); ongoing red-teaming and bias evaluation (MEASURE); and a register of AI systems with owner-accountability and quarterly reviews (MANAGE). The framework supplies the structure; the content is organization-specific.\n\nWhy it matters for CISOs\n\nThe CISO is increasingly the de-facto owner of AI governance — partly because AI risks are emerging, partly because no other function has the cross-cutting authority. The AI RMF gives CISOs an external anchor when arguing for AI governance investment: \"NIST defines this as a four-function discipline; we currently do parts of two.\" The Generative AI Profile is especially valuable for evaluating LLM vendor contracts, since the risk taxonomy maps to specific contractual protections to demand."
+  },
+  {
+    "url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
+    "title": "OWASP — Top 10 for Large Language Model Applications, 2025",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["OWASP LLM Top 10", "NIST AI RMF"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "OWASP",
+      "resource_type": "AI_security",
+      "license_posture": "OPEN",
+      "primary_domain": "AI Security",
+      "publication_or_update_date": "2025",
+      "key_concepts": [
+        "Top 10 risks specific to LLM-integrated applications",
+        "LLM01 Prompt Injection (direct and indirect)",
+        "LLM02 Insecure Output Handling",
+        "LLM03 Training Data Poisoning",
+        "LLM04 Model Denial of Service",
+        "LLM05 Supply Chain Vulnerabilities",
+        "LLM06 Sensitive Information Disclosure",
+        "LLM07 Insecure Plugin Design / Excessive Agency",
+        "LLM08 Excessive Agency",
+        "LLM09 Overreliance",
+        "LLM10 Model Theft"
+      ],
+      "control_or_capability_taxonomy": [
+        "Input filtering and prompt-injection detection",
+        "Output validation against expected schema and policy",
+        "Tool-use scoping (least-privilege for agentic actions)",
+        "Vendor due diligence for foundation models and embeddings providers",
+        "PII and secrets redaction at prompt and output boundaries"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Direct prompt injection (user inputs malicious instructions)",
+        "Indirect prompt injection (LLM ingests poisoned external content)",
+        "Excessive agency (LLM granted tool/action permissions exceeding need)",
+        "PII leakage via training data memorization or prompt context",
+        "Hallucination consumed downstream as fact (overreliance)"
+      ],
+      "defensive_controls": [
+        "Treat all LLM output as untrusted; validate schema before action",
+        "Principle of least privilege for LLM tool-use scopes",
+        "Out-of-band confirmation for high-impact agent actions",
+        "Content filtering on inputs from external sources (web, email, documents)",
+        "Audit logging of all prompts and LLM-initiated actions"
+      ],
+      "mappings": {
+        "ATTACK": ["T1059 Command and Scripting Interpreter (when LLM executes commands)", "T1078 Valid Accounts (LLM-impersonated identity)"],
+        "D3FEND": ["Input Validation", "Output Validation", "Authorization Event Analysis"],
+        "NIST": ["AI RMF GenAI Profile", "AI 600-1"],
+        "OWASP": ["LLM Top 10", "ASVS"],
+        "CSA": []
+      },
+      "source_url": "https://owasp.org/www-project-top-10-for-large-language-model-applications/",
+      "summary": "Practical risk taxonomy for LLM-integrated applications. The first widely adopted vocabulary for LLM-specific vulnerabilities — prompt injection, excessive agency, training-data leakage. Tracks alongside ASVS and the broader OWASP catalog."
+    },
+    "content": "OWASP Top 10 for LLM Applications — The Practical Risk Taxonomy\n\nThe OWASP Top 10 for LLM Applications has emerged as the de facto risk taxonomy for LLM-integrated software. Updated in 2025 with explicit treatment of agentic AI (tool use, autonomous actions), it provides the vocabulary that AppSec teams, AI engineers, and procurement now use to discuss LLM-specific risks.\n\nThe ten risks (2025 ordering)\n\nLLM01 Prompt Injection — direct (user inputs malicious instructions that override system intent) and indirect (LLM ingests poisoned content from web, email, documents, retrieval sources). Indirect prompt injection is the more dangerous variant because the user is often a victim, not an adversary.\n\nLLM02 Insecure Output Handling — treating LLM output as trusted and passing it directly to downstream systems (SQL execution, command execution, HTML rendering) enables classic injection attacks via the LLM as a relay.\n\nLLM03 Training Data Poisoning — adversaries influence model behavior by contaminating training or fine-tuning data; matters most for self-trained or fine-tuned models on user-contributed content.\n\nLLM04 Model Denial of Service — token-budget exhaustion, recursive tool invocation, or compute-amplification attacks that drive up cost or degrade availability.\n\nLLM05 Supply Chain Vulnerabilities — risks from foundation models, embeddings APIs, vector databases, and the broader LLM toolchain.\n\nLLM06 Sensitive Information Disclosure — LLM emits PII or secrets from training data, prompt context (leakage across user sessions), or system prompts.\n\nLLM07 Insecure Plugin / Tool Design — plugins and tool integrations with weak authentication, overbroad permissions, or no input validation.\n\nLLM08 Excessive Agency — the LLM has been granted tool-use permissions or autonomy exceeding the trust earned by its reliability. The flagship 2025 risk as agentic deployments scale.\n\nLLM09 Overreliance — humans treating LLM output as fact and not validating; downstream consumers acting on hallucinations.\n\nLLM10 Model Theft — exfiltration of proprietary model weights via query-based extraction or compromise of model-hosting infrastructure.\n\nAgentic AI extensions\n\nThe 2025 revision expanded Excessive Agency into a flagship concern. The principle: the autonomy granted to an LLM agent should be calibrated to the LLM's demonstrated reliability and to the impact of its potential errors. Granting an LLM unrestricted access to email, calendars, or financial systems is the AI-era equivalent of granting any application full domain-admin rights — and the failure modes are far less predictable.\n\nMitigation patterns\n\nThe consensus mitigations: treat all LLM output as untrusted (output validation, schema enforcement, sandboxed execution); apply least privilege to tool-use scopes; require out-of-band human confirmation for high-impact actions; filter inputs that the LLM will ingest from external sources; log every prompt and action for audit and incident review.\n\nWhy it matters for CISOs\n\nLLM Top 10 is the AppSec extension every security program needs as LLM features ship across the enterprise. It supplies the language for code review of LLM integrations, the risk register categories for AI use cases, and the procurement questions for LLM vendor evaluation. CISOs whose AppSec teams don't yet know these ten risks are operating blind to a vulnerability class that's now widespread."
+  },
+  {
+    "url": "https://www.cisa.gov/securebydesign",
+    "title": "CISA — Secure by Design",
+    "category": "framework",
+    "region": "us",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["CISA Secure by Design", "NIST SSDF"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "CISA",
+      "resource_type": "framework",
+      "license_posture": "OPEN",
+      "primary_domain": "Secure SDLC",
+      "publication_or_update_date": "2023 (initial), 2024-10 (revised)",
+      "key_concepts": [
+        "Three principles: take ownership of customer security outcomes; embrace radical transparency; build organizational structure and leadership to achieve these goals",
+        "Secure by Default — products should be secure out of the box without expert configuration",
+        "Memory safety roadmap — eliminating C/C++ memory-unsafe languages from new code",
+        "MFA-by-default at no extra cost",
+        "Default-on logging at no extra cost",
+        "CVE attribution to the vendor whose product had the defect, not just the deployer",
+        "Secure by Design Pledge — public commitments by software vendors"
+      ],
+      "control_or_capability_taxonomy": [
+        "Eliminate default passwords",
+        "Eliminate entire classes of vulnerability (memory safety, SQL injection)",
+        "Reduce attack surface in default configurations",
+        "Make multi-factor authentication free and on by default",
+        "Provide logging at no additional cost",
+        "Publish vulnerability disclosure policies and authorized researcher safe harbor"
+      ],
+      "representative_vendors": [],
+      "threats_or_risks": [
+        "Customers expected to be security experts to safely deploy products",
+        "Vendors shipping known-defective software classes (memory safety bugs in C/C++)",
+        "Security features paywalled as premium add-ons (especially MFA, logging)"
+      ],
+      "defensive_controls": [
+        "Procurement clauses requiring Secure by Design Pledge signatories",
+        "RFP scoring criteria that prefer pledge-signing vendors",
+        "Vendor risk assessment with Secure by Design checklist"
+      ],
+      "mappings": {
+        "ATTACK": [],
+        "D3FEND": ["Strong Password Policy", "Multi-Factor Authentication"],
+        "NIST": ["SSDF v1.1", "CSF v2"],
+        "OWASP": ["ASVS"],
+        "CSA": []
+      },
+      "source_url": "https://www.cisa.gov/securebydesign",
+      "summary": "CISA's initiative to shift security responsibility upstream from customer to vendor. Anchored on three principles (take ownership, radical transparency, accountable leadership) with concrete product expectations: no default passwords, free MFA, default-on logging, memory-safe languages for new code."
+    },
+    "content": "CISA Secure by Design — Shifting Responsibility Upstream\n\nCISA's Secure by Design initiative, launched in 2023 under then-director Jen Easterly, reframes the cybersecurity problem as a software-quality problem and the responsibility as upstream of the customer. The thesis: customers should not be expected to be security experts to safely deploy software products. Vendors must ship products that are secure by default and secure by design.\n\nThree principles\n\nThe framework rests on three principles: Take Ownership of customer security outcomes (rather than disclaiming via warranty language and customer-misuse blame); Embrace Radical Transparency (publish vulnerability disclosure policies, post-incident root cause analyses, and roadmaps to retire known-bad practices); Build Organizational Structure and Leadership to make these commitments durable (CEO-level accountability, not bolted-on security team).\n\nConcrete product expectations\n\nThe initiative names specific product changes: eliminate default passwords; eliminate entire classes of vulnerability (memory safety violations, SQL injection); reduce attack surface in default configurations; make multi-factor authentication free and on by default; provide logging at no additional cost (logs are how customers detect compromise — paywalling them is hostile); publish vulnerability disclosure policies with safe harbor for researchers.\n\nMemory safety roadmap\n\nCISA has explicitly called out memory-unsafe languages (C, C++) as a class of defect that should not appear in new code. The October 2024 update encourages vendors to publish memory-safety roadmaps: how new code will use memory-safe languages (Rust, Go, modern Java/.NET) and how existing C/C++ code will be progressively rewritten or sandboxed. Big vendors (Microsoft, Google) have published their roadmaps. Mid-tier vendors are increasingly being pressed to do the same.\n\nSecure by Design Pledge\n\nThe Pledge is a public commitment by software vendors to seven specific goals (MFA, default passwords, vulnerability classes, security patches, vulnerability disclosure, CVEs, evidence of intrusions). As of 2025, over 240 vendors have signed including most major SaaS, EDR, and identity vendors. The Pledge is becoming a procurement signal — enterprise buyers and federal agencies are using signatory status as an RFP scoring criterion.\n\nIntegration with NIST SSDF and CMMC\n\nSecure by Design complements NIST SSDF (which is the practice-level detail) and CMMC (which is the assessment regime for federal contractors). CISA provides the customer-facing vocabulary and the shaming mechanism; NIST provides the engineering practices; CMMC provides the verification.\n\nWhy it matters for CISOs\n\nSecure by Design gives CISOs leverage in vendor negotiations. \"Are you a Secure by Design Pledge signatory?\" is a procurement question with growing weight. \"Why are you charging extra for MFA?\" is a Pledge-anchored complaint. For CISOs, the framework moves arguments about vendor responsibility from individual deals into the broader market discourse — softening the ground for procurement and risk teams to push back."
+  },
+  {
+    "url": "https://cloudsecurityalliance.org/artifacts/cloud-controls-matrix-v4-1",
+    "title": "CSA — Cloud Controls Matrix v4.1",
+    "category": "framework",
+    "region": "global",
+    "licensePosture": "OPEN",
+    "applicableFrameworks": ["CSA CCM", "CSA CAIQ"],
+    "applicableIndustries": [],
+    "richMetadata": {
+      "source_org": "CSA",
+      "resource_type": "control_catalog",
+      "license_posture": "OPEN",
+      "primary_domain": "Cloud Security",
+      "publication_or_update_date": "2021 (v4) / 2022 (v4.1)",
+      "key_concepts": [
+        "207 control objectives across 17 cloud domains",
+        "Mapped to NIST CSF, ISO 27001/27017/27018, NIST 800-53, PCI DSS, HIPAA",
+        "CAIQ (Consensus Assessments Initiative Questionnaire) is the vendor self-assessment companion",
+        "STAR Registry is the public repository of CSP CAIQ submissions",
+        "Shared responsibility model embedded — controls flagged as Customer / Provider / Shared",
+        "Implementation guidance per control objective"
+      ],
+      "control_or_capability_taxonomy": [
+        "Audit Assurance & Compliance (AAC)",
+        "Application & Interface Security (AIS)",
+        "Business Continuity Management (BCR)",
+        "Change Control & Configuration Management (CCC)",
+        "Cryptography, Encryption & Key Management (CEK)",
+        "Data Center Security (DCS)",
+        "Data Security & Privacy (DSP)",
+        "Governance, Risk & Compliance (GRC)",
+        "Human Resources (HRS)",
+        "Identity & Access Management (IAM)",
+        "Interoperability & Portability (IPY)",
+        "Infrastructure & Virtualization Security (IVS)",
+        "Logging & Monitoring (LOG)",
+        "Security Incident Management (SEF)",
+        "Supply Chain Management (STA)",
+        "Threat & Vulnerability Management (TVM)",
+        "Universal Endpoint Management (UEM)"
+      ],
+      "representative_vendors": ["AWS", "Microsoft Azure", "Google Cloud", "Oracle Cloud", "Salesforce", "ServiceNow"],
+      "threats_or_risks": [
+        "Misconfigured cloud storage (public buckets)",
+        "Identity sprawl across cloud accounts",
+        "Key management failures (long-lived static credentials)",
+        "Inadequate logging in cloud-native services"
+      ],
+      "defensive_controls": [
+        "CAIQ-driven vendor assessment for new SaaS purchases",
+        "STAR Registry as a procurement filter",
+        "Internal control mapping from CCM to organizational policies"
+      ],
+      "mappings": {
+        "ATTACK": ["Cloud tactic columns: IA, Execution, Persistence, etc."],
+        "D3FEND": ["Authentication Event Analysis", "Cloud Configuration Auditing"],
+        "NIST": ["CSF v2", "SP 800-53"],
+        "OWASP": [],
+        "CSA": ["CCM v4.1", "CAIQ v4.0.3"]
+      },
+      "source_url": "https://cloudsecurityalliance.org/artifacts/cloud-controls-matrix-v4-1",
+      "summary": "CSA's cloud security control framework. 207 control objectives across 17 domains, with cross-mappings to NIST, ISO, PCI, HIPAA. CAIQ is the vendor self-assessment companion; STAR Registry publishes CSP submissions for procurement use."
+    },
+    "content": "CSA Cloud Controls Matrix (CCM) v4.1 — Cloud Security Control Catalog\n\nThe Cloud Security Alliance's Cloud Controls Matrix is the dominant control catalog for cloud security. Version 4.1 contains 207 control objectives organized across 17 domains, with explicit mappings to NIST CSF, NIST SP 800-53, ISO 27001/27017/27018, PCI DSS, HIPAA, and other industry frameworks. It is paired with CAIQ — the Consensus Assessments Initiative Questionnaire — which is the vendor self-assessment companion.\n\nThe 17 domains\n\nThe domains cover the full cloud security operating model: Audit Assurance & Compliance, Application & Interface Security, Business Continuity Management, Change Control & Configuration Management, Cryptography Encryption & Key Management, Data Center Security, Data Security & Privacy, Governance Risk & Compliance, Human Resources, Identity & Access Management, Interoperability & Portability, Infrastructure & Virtualization Security, Logging & Monitoring, Security Incident Management, Supply Chain Management, Threat & Vulnerability Management, Universal Endpoint Management.\n\nShared responsibility embedded\n\nA distinguishing feature of CCM is the embedded shared responsibility model. Each control objective is annotated for the parties responsible: Cloud Service Provider (CSP), Customer, or Shared. This codifies what is otherwise an informal conversation in every cloud adoption — exactly where the provider's responsibility ends and the customer's begins for each control.\n\nCAIQ and the STAR Registry\n\nCAIQ is the questionnaire form of CCM — for each control objective, the CSP answers \"Yes/No/NA\" with explanatory detail. CSPs publish their CAIQ in the public STAR Registry (Security Trust Assurance and Risk). The registry has become a procurement filter: an enterprise security team evaluating a new SaaS vendor will start by checking STAR for a current CAIQ before sending custom questionnaires.\n\nThree levels of STAR\n\nSTAR offers three assurance levels. Level 1 is self-assessment (publish your CAIQ). Level 2 is third-party audit (a recognized auditor verifies CAIQ responses against evidence). Level 3 is continuous auditing (real-time monitoring of control effectiveness). Most CSPs are at Level 1 or Level 2; Level 3 remains rare due to operational complexity.\n\nIntegration with other frameworks\n\nThe cross-mapping is the practical superpower. A customer compliant with PCI DSS can identify which CCM controls already cover PCI requirements and which need additional work. A SaaS vendor demonstrating CCM compliance simultaneously demonstrates partial compliance with ISO 27001, NIST 800-53, and others — reducing duplicate audit work.\n\nWhy it matters for CISOs\n\nCCM is the practical baseline for cloud vendor risk assessment. CISOs use it to: structure SaaS vendor due diligence (CAIQ-driven); set internal cloud-security control standards (CCM is the catalog they map to); benchmark cloud posture against peers (STAR provides comparable submissions). For multi-cloud organizations, CCM provides one vocabulary across AWS, Azure, GCP, and Oracle — avoiding the trap of separate per-cloud security frameworks."
+  }
+]

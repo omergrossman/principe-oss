@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Project" ADD COLUMN     "panelSize" INTEGER NOT NULL DEFAULT 100;
