@@ -38,15 +38,11 @@ export default async function WorkspacePage() {
         select: {
           name: true,
           anthropicKeyLast4: true,
-          isTrial: true,
-          trialQuestionsRemaining: true,
         },
       })
     : null;
 
   const keyConnected = Boolean(firm?.anthropicKeyLast4);
-  const trialOver =
-    firm?.isTrial && (firm.trialQuestionsRemaining ?? 0) <= 0;
 
   const jar = await cookies();
   const cookieProjectId = jar.get(PROJECT_COOKIE)?.value ?? null;
@@ -113,20 +109,12 @@ export default async function WorkspacePage() {
 
         {!keyConnected && <KeyMissingBanner />}
 
-        {firm?.isTrial && !trialOver && (
-          <TrialBanner
-            remaining={firm.trialQuestionsRemaining ?? 0}
-            cap={10}
-          />
-        )}
-        {trialOver && <TrialEndedBanner />}
-
         {/* Key by project id so switching projects fully remounts the
             ask form — clears stale history (and the "View all N responses"
             count from a previous project's last run). */}
         <AskForm
           key={currentProject?.id ?? "no-project"}
-          disabled={!keyConnected || Boolean(trialOver)}
+          disabled={!keyConnected}
         />
 
         <div className="mt-8 pt-6 border-t border-ink-100 text-[13px]">
@@ -163,55 +151,3 @@ function KeyMissingBanner() {
   );
 }
 
-function TrialBanner({
-  remaining,
-  cap,
-}: {
-  remaining: number;
-  cap: number;
-}) {
-  const used = cap - remaining;
-  const pct = Math.min(100, (used / cap) * 100);
-  return (
-    <div className="mb-6 p-4 rounded-md bg-flare-100 border border-flare-600/30">
-      <div className="flex items-center justify-between gap-3 mb-2">
-        <p className="text-[14px] text-ink-900 font-semibold">
-          Free trial — {remaining} of {cap} questions left
-        </p>
-        <Link
-          href="/settings"
-          className="text-[12px] text-ink-500 hover:text-ink-900 font-mono"
-        >
-          details →
-        </Link>
-      </div>
-      <div className="h-1.5 w-full bg-ink-100/40 rounded-pill overflow-hidden">
-        <div
-          className="h-full bg-flare-600 rounded-pill transition-all"
-          style={{ width: `${pct}%` }}
-        />
-      </div>
-    </div>
-  );
-}
-
-function TrialEndedBanner() {
-  return (
-    <div className="mb-6 p-4 rounded-md bg-verdict-fail/10 border border-verdict-fail/30">
-      <p className="text-[14px] text-ink-900 font-semibold mb-1">
-        Free trial ended
-      </p>
-      <p className="text-[13px] text-ink-700 leading-relaxed mb-3">
-        You&apos;ve used all 10 of your free trial questions. The panel is
-        paused until your account is upgraded. Past asks remain readable in
-        history.
-      </p>
-      <a
-        href="mailto:service@principe.cloud?subject=Continue%20after%20free%20trial"
-        className="inline-flex items-center bg-ink-900 text-white px-4 py-2 rounded-md font-semibold text-[13px] hover:bg-ink-700 transition-colors"
-      >
-        Contact us to keep going
-      </a>
-    </div>
-  );
-}

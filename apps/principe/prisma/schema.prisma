@@ -112,15 +112,6 @@ model Firm {
   createdAt             DateTime       @default(now())
   updatedAt             DateTime       @updatedAt
 
-  // ─── Free trial (2026-06-07) ─────────────────────────────────
-  // Set true by `ensureInstanceBootstrap` when DP master seeds the
-  // tenant with `INSTANCE_IS_TRIAL=true`. trialQuestionsRemaining
-  // decrements on every successful ask; when it hits 0 the
-  // /api/ask path returns 402 and the workspace shows the
-  // "trial ended" state. NULL = not a trial (unlimited).
-  isTrial                 Boolean        @default(false)
-  trialQuestionsRemaining Int?
-
   portcos               Portco[]
   memberships           Membership[]
   invitations           Invitation[]
@@ -129,7 +120,6 @@ model Firm {
 
   @@index([status, purgeScheduledAt])
   @@index([region])
-  @@index([isTrial, trialQuestionsRemaining])
 
   @@map("VCFirm")
 }
