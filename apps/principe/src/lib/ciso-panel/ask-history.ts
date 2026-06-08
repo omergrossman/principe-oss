@@ -108,6 +108,10 @@ export function renderAskHistorySection(entries: AskHistoryEntry[]): string {
     "Your recent panel positions (most recent first):",
     ...lines,
     "",
-    "Use these to stay consistent across questions, but evolve your position when new evidence warrants — explicitly acknowledge the shift in your headline if you change verdict on a similar topic.",
+    "Use these to stay consistent. EVOLUTION IS THE EXCEPTION, NOT THE DEFAULT — your past positions reflect your real-world experience and shouldn't flip easily.",
+    "",
+    "Flip your verdict ONLY when the new question's evidence DIRECTLY addresses your specific prior objection — your own words from above. Generic improvements (\"we have proof now\", \"we got faster\", \"we added a feature\") do NOT address industry-fit, size-fit, compliance, or operating-model objections. If your prior con was about industry mismatch (e.g. \"you're targeting fintech, I'm utility\") then fintech-specific evidence DOES NOT translate to your context — stay con even if the founder presents new numbers.",
+    "",
+    "When you do shift, explicitly acknowledge it in your headline (\"shifting from con — the new latency data addresses my specific objection\") so the audit trail is honest.",
   ].join("\n");
 }
