@@ -65,7 +65,7 @@ export async function GET() {
     },
   });
 
-  setRegistrationChallenge(user.id, options.challenge);
+  await setRegistrationChallenge(options.challenge);
   return NextResponse.json(options);
 }
 
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const challenge = getRegistrationChallenge(session.userId);
+  const challenge = await getRegistrationChallenge();
   if (!challenge) {
     return NextResponse.json(
       { error: "Challenge expired — call GET /api/auth/register again" },
@@ -95,7 +95,7 @@ export async function POST(req: NextRequest) {
       expectedRPID: RP_ID,
     });
 
-    clearRegistrationChallenge(session.userId);
+    await clearRegistrationChallenge();
 
     if (!verification.verified || !verification.registrationInfo) {
       return NextResponse.json(
