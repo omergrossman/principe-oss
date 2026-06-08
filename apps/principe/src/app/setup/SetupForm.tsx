@@ -11,7 +11,6 @@ interface FormState {
   adminName: string;
   adminEmail: string;
   anthropicKey: string;
-  resendKey: string;
 }
 
 export function SetupForm() {
@@ -21,7 +20,6 @@ export function SetupForm() {
     adminName: "",
     adminEmail: "",
     anthropicKey: "",
-    resendKey: "",
   });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
@@ -50,7 +48,6 @@ export function SetupForm() {
           adminName: state.adminName.trim(),
           adminEmail: state.adminEmail.trim().toLowerCase(),
           anthropicKey: state.anthropicKey.trim(),
-          resendKey: state.resendKey.trim() || null,
         }),
       });
       const data = await res.json();
@@ -140,27 +137,6 @@ export function SetupForm() {
           BYO Anthropic key. The panel uses it to simulate every CISO
           response. Encrypted AES-256-GCM at rest. Validated against
           api.anthropic.com before persisting.
-        </p>
-      </Card>
-
-      <Card>
-        <h2 className="text-[13px] font-semibold text-ink-700 mb-3">
-          Optional — Resend key for emails
-        </h2>
-        <label className="block mb-2">
-          <input
-            type="password"
-            value={state.resendKey}
-            onChange={(e) => set("resendKey", e.target.value)}
-            placeholder="re_… (leave blank if you don't need email)"
-            autoComplete="off"
-            spellCheck={false}
-            className="w-full h-10 px-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20 font-mono"
-          />
-        </label>
-        <p className="text-[11px] text-ink-500 leading-relaxed">
-          Used only for passkey-reset emails. Skip it for a fully
-          passwordless setup — you can paste a key later in Settings.
         </p>
       </Card>
 

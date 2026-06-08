@@ -18,7 +18,6 @@ import { encryptSecret, last4 } from "@/lib/secrets";
  *   adminName      string  (≥2 chars)
  *   adminEmail     string  (valid email)
  *   anthropicKey   string  (starts with sk-ant-)
- *   resendKey      string | null  (optional)
  *
  * Response 200:  { ok: true, redirectTo: "/onboarding/enroll-passkey" }
  * Errors:        400 invalid input · 409 already set up · 502 anthropic key rejected
@@ -31,7 +30,6 @@ interface SetupBody {
   adminName?: unknown;
   adminEmail?: unknown;
   anthropicKey?: unknown;
-  resendKey?: unknown;
 }
 
 function slugify(name: string): string {
@@ -80,10 +78,6 @@ export async function POST(req: NextRequest) {
       : "";
   const anthropicKey =
     typeof body.anthropicKey === "string" ? body.anthropicKey.trim() : "";
-  const resendKey =
-    typeof body.resendKey === "string" && body.resendKey.trim().length > 0
-      ? body.resendKey.trim()
-      : null;
 
   if (workspaceName.length < 2) {
     return NextResponse.json(
@@ -153,15 +147,6 @@ export async function POST(req: NextRequest) {
         return { user, membership, firm };
       },
     );
-
-    // Optional Resend key — stored in the same column scheme but on the
-    // firm row. Schema doesn't have a dedicated resend field yet so we
-    // skip if not provided. (Future: add resendKeyCiphertext + last4.)
-    if (resendKey) {
-      console.log(
-        "[setup] Resend key provided but not yet persisted — Sprint 9 adds the column.",
-      );
-    }
 
     await createSession({
       userId: user.id,
