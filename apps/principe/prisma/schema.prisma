@@ -707,6 +707,12 @@ model ProjectAgent {
   // upstream insight was edited; admin triggers recompute explicitly.
   originatingTranscriptIds String[]    @default([])
   coreOpinions             Json        @default("[]")
+  // Sprint 9.1 — what this persona said in past asks within this
+  // project. Compact entries (askId, question gist, verdict, headline,
+  // askedAt) capped at the last 10. Injected into the runtime system
+  // prompt so the persona stays consistent across questions and can
+  // explicitly evolve when new evidence justifies it.
+  askHistory               Json        @default("[]")
   signatureVocabulary      String[]    @default([])
   personaStale             Boolean     @default(false)
   createdAt       DateTime        @default(now())

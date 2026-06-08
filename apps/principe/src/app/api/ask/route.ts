@@ -7,6 +7,7 @@ import { requireAuth } from "@/lib/auth/require-auth";
 import { getAnthropicClientForFirm } from "@/lib/anthropic/client";
 import { runPanelAsk } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
+import { appendAskHistory } from "@/lib/ciso-panel/ask-history";
 import {
   clearProgress,
   isRunActive,
@@ -202,6 +203,14 @@ export async function POST(req: Request) {
       },
       select: { id: true, createdAt: true },
     });
+
+    // Sprint 9.1 — append this ask's per-persona responses to each
+    // ProjectAgent's askHistory so the persona remembers and can
+    // evolve in subsequent asks. Best-effort: persistence failures
+    // here don't roll back the ask itself.
+    await appendAskHistory(saved.id, question, saved.createdAt, panel.responses).catch(
+      (e) => console.error("[ask] askHistory append failed:", e),
+    );
 
     return NextResponse.json({
       askId: saved.id,
