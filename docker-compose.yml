@@ -22,6 +22,14 @@ services:
       interval: 5s
       timeout: 3s
       retries: 10
+      # Grace window for first-boot initdb on a fresh volume. Without it,
+      # initdb's "not ready yet" checks burn the retry budget and db can
+      # flip to "unhealthy" under heavy I/O (right after image builds),
+      # which aborts web's `depends_on: service_healthy` and breaks the
+      # one-command boot. Failures during start_period don't count. 60s
+      # covers qemu-backed Docker on macOS, where initdb runs slower.
+      # (bin/start.sh additionally stages db before web for determinism.)
+      start_period: 60s
 
   statistician:
     build:
