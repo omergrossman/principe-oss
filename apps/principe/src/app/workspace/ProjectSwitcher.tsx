@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { projectDisplayName } from "@/lib/projects/describe";
 
 interface Project {
   id: string;
@@ -65,7 +66,7 @@ export function ProjectSwitcher({
           project
         </span>
         <span className="font-semibold text-ink-900 max-w-[200px] truncate">
-          {current?.name ?? "Default project"}
+          {current ? projectDisplayName(current) : "Default project"}
         </span>
         <svg
           width="10"
@@ -100,7 +101,7 @@ export function ProjectSwitcher({
                   disabled={switching === p.id}
                 >
                   <span className="truncate text-ink-900 font-medium">
-                    {p.name}
+                    {projectDisplayName(p)}
                   </span>
                   {p.isDefault && (
                     <span className="text-[10px] font-mono uppercase text-ink-300">
