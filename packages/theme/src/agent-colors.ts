@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /**
- * Per-agent color tokens for the Fable V2 storybook palette.
+ * Per-agent color tokens for the storybook palette.
  *
  * Each entry exposes three colors:
  *   - `color` — the agent's saturated brand color (pill borders, dots, icons).
@@ -13,7 +13,7 @@
  * inline notes for the rationale on each choice.
  *
  * Keyed by string so the @dp/theme package stays consumer-agnostic. Each
- * project narrows the index type at the consumption site (e.g. fable's
+ * project narrows the index type at the consumption site (e.g. the app's
  * AgentId union).
  */
 export interface AgentColor {

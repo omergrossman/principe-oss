@@ -7,7 +7,7 @@
  * the shape; consumers are free to use any string they want.
  *
  * A role bundles a list of permissions and optionally inherits from other
- * roles. Roles form a DAG: `fable.tenant-owner` may inherit `dp.founder`
+ * roles. Roles form a DAG: `app.tenant-owner` may inherit `dp.founder`
  * which inherits `dp.admin` which inherits `dp.member`.
  *
  * The registry is module-scoped (`ROLE_REGISTRY`). Consumers register roles
