@@ -153,10 +153,9 @@ export function UpdatesCard() {
 
           {check.mode === "local" && (
             <p className="text-[12px] text-ink-500 leading-relaxed mb-3">
-              No remote update endpoint is configured. The knowledge corpus
-              shipped with your install is the only one available. Set{" "}
-              <code className="font-mono text-ink-700">PRINCIPE_UPDATES_URL</code>{" "}
-              to enable signed pull updates.
+              Your panel is running on the knowledge corpus shipped with
+              this install. Future updates will pull automatically when
+              available.
             </p>
           )}
 
