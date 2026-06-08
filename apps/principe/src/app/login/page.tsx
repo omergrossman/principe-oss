@@ -84,12 +84,15 @@ export default function LoginPage() {
         {status === "empty" && (
           <>
             <p className="text-[14px] text-ink-500 mb-6 leading-relaxed">
-              No passkeys are registered yet. Create your workspace first —
-              you&apos;ll enroll a passkey at the end of signup.
+              No passkeys are registered yet. Enroll one at{" "}
+              <Link
+                href="/onboarding/enroll-passkey"
+                className="text-flare-600 hover:text-flare-500 underline underline-offset-4"
+              >
+                /onboarding/enroll-passkey
+              </Link>
+              .
             </p>
-            <Button href="/signup" variant="primary" size="lg" className="w-full">
-              Create workspace →
-            </Button>
           </>
         )}
 
@@ -132,12 +135,6 @@ export default function LoginPage() {
           <p className="text-[13px] text-ink-300 font-mono">Checking passkeys…</p>
         )}
 
-        <p className="text-[13px] text-ink-300 mt-6 text-center">
-          New to Príncipe?{" "}
-          <Link href="/signup" className="text-flare-600 hover:text-flare-500">
-            Create a workspace
-          </Link>
-        </p>
       </Card>
     </main>
   );
