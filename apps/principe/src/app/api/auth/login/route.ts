@@ -7,7 +7,7 @@ import {
   clearAuthenticationChallenge,
   getPasskey,
   updatePasskeyCounter,
-  totalPasskeyCount,
+  listAllCredentials,
 } from "@/lib/auth-store";
 import { createSession, getSession } from "@/lib/session";
 import { prisma } from "@/lib/db/prisma";
@@ -30,17 +30,24 @@ const RP_ID = process.env.WEBAUTHN_RP_ID ?? "localhost";
 const ORIGIN = process.env.WEBAUTHN_ORIGIN ?? "http://localhost:3000";
 
 export async function GET() {
-  const passkeyCount = await totalPasskeyCount();
-  if (passkeyCount === 0) {
+  const credentials = await listAllCredentials();
+  if (credentials.length === 0) {
     return NextResponse.json(
       { error: "No credentials registered" },
       { status: 404 },
     );
   }
 
+  // Present ONLY the credentials we actually have, so the browser can't offer
+  // an orphaned keychain passkey (from an abandoned enrolment) that we'd then
+  // reject as "credential not found".
   const options = await generateAuthOptions({
     rpID: RP_ID,
     userVerification: "preferred",
+    allowCredentials: credentials.map((c) => ({
+      id: c.credentialId,
+      transports: c.transports,
+    })),
   });
 
   await setAuthenticationChallenge(options.challenge);
