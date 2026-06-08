@@ -17,16 +17,8 @@ export default async function SettingsPage() {
       name: true,
       region: true,
       anthropicKeyLast4: true,
-      isTrial: true,
-      trialQuestionsRemaining: true,
     },
   });
-  const trialQuestionsCap = 10;
-  const trialUsed = firm?.isTrial
-    ? trialQuestionsCap - (firm.trialQuestionsRemaining ?? 0)
-    : 0;
-  const trialOver =
-    firm?.isTrial && (firm.trialQuestionsRemaining ?? 0) <= 0;
 
   return (
     <>
@@ -52,72 +44,6 @@ export default async function SettingsPage() {
             at rest.
           </p>
         </header>
-
-        {firm?.isTrial && (
-          <Card
-            className={`mb-6 border-2 ${
-              trialOver ? "border-verdict-fail/40" : "border-flare-600/30"
-            }`}
-          >
-            <div className="flex items-start justify-between gap-4 mb-3">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Pill tone="accent">free trial</Pill>
-                  {trialOver && (
-                    <span className="text-[11px] uppercase tracking-wide font-semibold text-verdict-fail">
-                      trial ended
-                    </span>
-                  )}
-                </div>
-                <h2 className="text-[16px] font-semibold text-ink-900">
-                  Trial questions
-                </h2>
-              </div>
-              <p
-                className="text-[28px] font-bold tabular-nums text-ink-900 leading-none"
-                title={`${trialUsed} used · ${firm.trialQuestionsRemaining ?? 0} left`}
-              >
-                {trialUsed}
-                <span className="text-ink-300 font-mono text-[14px] font-normal">
-                  {" "}
-                  / {trialQuestionsCap}
-                </span>
-              </p>
-            </div>
-            <div className="h-1.5 w-full bg-ink-100/40 rounded-pill overflow-hidden mb-3">
-              <div
-                className={`h-full rounded-pill transition-all ${
-                  trialOver ? "bg-verdict-fail" : "bg-flare-600"
-                }`}
-                style={{
-                  width: `${Math.min(100, (trialUsed / trialQuestionsCap) * 100)}%`,
-                }}
-              />
-            </div>
-            {trialOver ? (
-              <p className="text-[13px] text-ink-700 leading-relaxed">
-                You&apos;ve used all {trialQuestionsCap} of your free trial
-                questions. The panel won&apos;t accept new asks until you
-                upgrade — get in touch at{" "}
-                <a
-                  href="mailto:service@principe.cloud?subject=Continue%20after%20free%20trial"
-                  className="text-flare-600 underline underline-offset-4"
-                >
-                  service@principe.cloud
-                </a>{" "}
-                and we&apos;ll get you set up.
-              </p>
-            ) : (
-              <p className="text-[13px] text-ink-500 leading-relaxed">
-                You have <strong className="text-ink-900">
-                  {firm.trialQuestionsRemaining}
-                </strong>{" "}
-                of your {trialQuestionsCap} free panel questions left.
-                Past asks stay readable forever.
-              </p>
-            )}
-          </Card>
-        )}
 
         <Link href="/settings/members" className="block mb-6">
           <Card className="hover:border-flare-600/30 transition-colors">

@@ -10,20 +10,19 @@ import {
   getRefreshStatus,
 } from "@/lib/sources/bulk-fetch";
 import { ensureInstanceBootstrap } from "@/lib/bootstrap/instance";
-import { syncBaselineFromDp } from "@/lib/baseline-sync/sync";
 
 /**
  * Launch-page bootstrap. Idempotent.
  *
  * 1. Seeds the 100-agent panel (no-op if already seeded).
- * 2. Pulls the latest baseline KB from DP master (cheap version-check
- *    first; full delta only when DP master has moved on). DP master
- *    is the canonical source of the moat — the legacy hardcoded
- *    `curated.ts` seed was retired 2026-06-06.
- * 3. If the knowledge base hasn't been refreshed in >7 days, kicks off
+ * 2. If the knowledge base hasn't been refreshed in >7 days, kicks off
  *    a parallel bulk re-fetch in the background. Otherwise just fills
  *    in any sources that don't have content yet.
- * 4. Pings the firm's Anthropic key.
+ * 3. Pings the firm's Anthropic key.
+ *
+ * (OSS distribution: the DP-master baseline-sync step from the SaaS
+ * donor was removed in Sprint 8. Knowledge bundles arrive via the
+ * Sprint 9 signed-update pipeline once it ships.)
  *
  * The launch splash UI polls this endpoint until `sources.refreshing`
  * goes false, then redirects.
@@ -68,20 +67,11 @@ export async function POST(): Promise<NextResponse<LaunchInitResult>> {
     return NextResponse.json(result);
   }
 
-  // Baseline KB pull from DP master. Cheap version-check first; only
-  // pulls + applies if DP master has moved on since our last sync.
-  // Non-fatal — if DP master is unreachable the panel still works
-  // from whatever baseline + tenant rows we already have locally.
-  await syncBaselineFromDp({ firmId: session.firmId }).catch((e) => {
-    console.error(
-      `[baseline-sync] failed: ${e instanceof Error ? e.message : "unknown"}`,
-    );
-  });
-
-  // Knowledge sources — staleness-driven refresh. Baseline rows
-  // arrived via `syncBaselineFromDp` above; if any URL-kind sources
-  // landed without content (or were last fetched > STALE_DAYS ago)
-  // the bulk-fetch worker scrapes them in the background.
+  // Knowledge sources — staleness-driven refresh. The OSS distribution
+  // bundles a baseline knowledge set at install time (calibration/) and
+  // Sprint 9 will add signed updates. For now, if any URL-kind sources
+  // landed without content (or were last fetched > STALE_DAYS ago) the
+  // bulk-fetch worker scrapes them in the background.
   if (await needsFirstFill(session.firmId)) {
     kickoffPendingFetches(session.firmId);
   } else if (await isStaleBeyond(session.firmId, STALE_DAYS)) {

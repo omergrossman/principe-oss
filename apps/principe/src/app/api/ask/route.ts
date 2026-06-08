@@ -57,24 +57,6 @@ export async function POST(req: Request) {
     );
   }
 
-  // Trial gate — free-trial customers get a capped number of questions.
-  // Once trialQuestionsRemaining hits 0 the ask path is closed (the
-  // workspace UI also surfaces the "trial ended" state from /settings).
-  const trial = await prisma.firm.findUnique({
-    where: { id: session.firmId },
-    select: { isTrial: true, trialQuestionsRemaining: true },
-  });
-  if (trial?.isTrial && (trial.trialQuestionsRemaining ?? 0) <= 0) {
-    return NextResponse.json(
-      {
-        error:
-          "Your free trial is over. Get in touch with our team to keep your panel running.",
-        trialEnded: true,
-      },
-      { status: 402 },
-    );
-  }
-
   const cookieStore = await cookies();
   const requestedProjectId = cookieStore.get(PROJECT_COOKIE)?.value ?? null;
   const project = await resolveCurrentProject(
@@ -197,27 +179,6 @@ export async function POST(req: Request) {
       select: { id: true, createdAt: true },
     });
 
-    // Trial decrement — only after a successful ask + save. Guard with
-    // a >0 check so a racing concurrent ask can't push the counter
-    // negative.
-    let trialRemainingAfter: number | null = null;
-    if (trial?.isTrial) {
-      const updated = await prisma.firm.updateMany({
-        where: {
-          id: session.firmId,
-          isTrial: true,
-          trialQuestionsRemaining: { gt: 0 },
-        },
-        data: { trialQuestionsRemaining: { decrement: 1 } },
-      });
-      if (updated.count > 0) {
-        trialRemainingAfter = Math.max(
-          0,
-          (trial.trialQuestionsRemaining ?? 0) - 1,
-        );
-      }
-    }
-
     return NextResponse.json({
       askId: saved.id,
       projectId: project.id,
@@ -225,9 +186,6 @@ export async function POST(req: Request) {
       panel,
       summary,
       validation,
-      ...(trial?.isTrial
-        ? { trial: { remaining: trialRemainingAfter } }
-        : {}),
     });
   } catch (e) {
     const msg = e instanceof Error ? e.message : "Unknown error";

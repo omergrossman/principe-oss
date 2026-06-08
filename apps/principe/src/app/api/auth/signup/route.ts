@@ -113,15 +113,10 @@ export async function POST(req: NextRequest) {
       role: "VC_ADMIN",
     });
 
-    // If Stripe is configured, route through checkout first. Otherwise
-    // (V1 demo / design partner mode) skip straight to passkey enrollment.
-    const stripeReady =
-      !!process.env.STRIPE_SECRET_KEY && !!process.env.STRIPE_PRICE_ID_VC_FIRM;
+    // OSS distribution: no billing, go straight to passkey enrollment.
     return NextResponse.json({
       ok: true,
-      redirectTo: stripeReady
-        ? "/onboarding/checkout"
-        : "/onboarding/enroll-passkey",
+      redirectTo: "/onboarding/enroll-passkey",
     });
   } catch (e) {
     if (e instanceof Prisma.PrismaClientKnownRequestError) {
