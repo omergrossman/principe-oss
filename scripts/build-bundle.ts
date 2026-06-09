@@ -35,6 +35,33 @@ interface ManifestEntry {
   sha256: string;
   bytes: number;
   id: string;
+  // Optional news-feed targeting metadata, merged in (pre-signing) from
+  // an optional `feed-metadata.json` at the input root. Keyed by entry
+  // path. Carried in the signed manifest so it's tamper-protected, and
+  // written onto the KnowledgeSource row by the consumer's applyBundle.
+  region?: string;
+  industries?: string[];
+  category?: string;
+  publishedAt?: string;
+}
+
+interface FeedMetadata {
+  region?: string;
+  industries?: string[];
+  category?: string;
+  publishedAt?: string;
+}
+
+/**
+ * Load the optional `feed-metadata.json` (a map of entry path → targeting
+ * metadata) from the input root. Absent file → empty map (pre-feed
+ * bundles build exactly as before).
+ */
+function loadFeedMetadata(inputDir: string): Record<string, FeedMetadata> {
+  const path = join(inputDir, "feed-metadata.json");
+  if (!existsSync(path)) return {};
+  const parsed = JSON.parse(readFileSync(path, "utf8")) as Record<string, FeedMetadata>;
+  return parsed && typeof parsed === "object" ? parsed : {};
 }
 
 function classify(relPath: string): ManifestEntry["type"] | null {
@@ -80,6 +107,7 @@ async function main() {
   console.log(`[build-bundle] version=${version} input=${inputDir} output=${outputDir}`);
 
   // 1. Walk input dir, build per-file metadata.
+  const feedMeta = loadFeedMetadata(inputDir);
   const files = walk(inputDir);
   const entries: ManifestEntry[] = [];
   for (const f of files) {
@@ -89,7 +117,7 @@ async function main() {
       continue;
     }
     const bytes = readFileSync(f.abs);
-    entries.push({
+    const entry: ManifestEntry = {
       type,
       path: f.rel,
       sha256: sha256Hex(bytes),
@@ -97,15 +125,29 @@ async function main() {
       // Stable id = type:basename-without-ext. Keeps re-publishes idempotent
       // across the consumer's upsert-by-id apply.
       id: `${type}:${basename(f.rel).replace(/\.[^.]+$/, "")}`,
-    });
+    };
+    // Merge targeting metadata (pre-signing) for feed knowledge entries.
+    const m = feedMeta[f.rel];
+    if (m) {
+      if (m.region !== undefined) entry.region = m.region;
+      if (m.industries !== undefined) entry.industries = m.industries;
+      if (m.category !== undefined) entry.category = m.category;
+      if (m.publishedAt !== undefined) entry.publishedAt = m.publishedAt;
+    }
+    entries.push(entry);
   }
   console.log(`  ${entries.length} entries inventoried`);
 
   // 2. Build the tarball.
-  mkdirSync(join(outputDir, "bundles"), { recursive: true });
-  mkdirSync(join(outputDir, "manifests"), { recursive: true });
+  // BUNDLE_FLAT=1 lays assets flat (no bundles/ or manifests/ subdirs) so
+  // they can be served as GitHub Release assets (whose URLs are flat). The
+  // consumer joins PRINCIPE_UPDATES_URL + bundlePath, so a flat bundlePath
+  // (`<version>.tar.gz`) resolves to `.../releases/download/<tag>/<file>`.
+  const flat = process.env.BUNDLE_FLAT === "1";
+  mkdirSync(join(outputDir, flat ? "." : "bundles"), { recursive: true });
+  mkdirSync(join(outputDir, flat ? "." : "manifests"), { recursive: true });
 
-  const bundlePath = `bundles/${version}.tar.gz`;
+  const bundlePath = flat ? `${version}.tar.gz` : `bundles/${version}.tar.gz`;
   const bundleAbsPath = join(outputDir, bundlePath);
   await tar.create(
     {
@@ -131,7 +173,7 @@ async function main() {
     entries,
   };
   const manifestBytes = Buffer.from(JSON.stringify(manifest, null, 2), "utf8");
-  const manifestPath = join(outputDir, "manifests", `${version}.json`);
+  const manifestPath = join(outputDir, flat ? "." : "manifests", `${version}.json`);
   writeFileSync(manifestPath, manifestBytes);
   console.log(`  manifest written: ${manifestPath}`);
 

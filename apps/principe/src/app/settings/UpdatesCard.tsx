@@ -22,7 +22,7 @@ interface InstallResponse {
   ok: boolean;
   installedVersion?: string;
   diffSummary?: {
-    knowledge: { new: number; updated: number; skipped: number };
+    knowledge: { new: number; updated: number; skipped: number; removed: number };
     failed: { id: string; reason: string }[];
   };
   error?: string;
@@ -203,6 +203,8 @@ export function UpdatesCard() {
                     knowledge — {installResult.diffSummary.knowledge.new} new ·{" "}
                     {installResult.diffSummary.knowledge.updated} updated ·{" "}
                     {installResult.diffSummary.knowledge.skipped} skipped
+                    {installResult.diffSummary.knowledge.removed > 0 &&
+                      ` · ${installResult.diffSummary.knowledge.removed} removed`}
                     {installResult.diffSummary.failed.length > 0 &&
                       ` · ${installResult.diffSummary.failed.length} failed`}
                   </p>
