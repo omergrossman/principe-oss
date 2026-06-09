@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
-import { DPThemeProvider } from "@dp/theme";
+import { PrincipeThemeProvider } from "@principe/theme";
 import { principeTheme } from "@/lib/theme";
 import "./globals.css";
 
@@ -33,7 +33,7 @@ export default function RootLayout({
       className={`${inter.variable} ${jetbrainsMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <DPThemeProvider theme={principeTheme}>{children}</DPThemeProvider>
+        <PrincipeThemeProvider theme={principeTheme}>{children}</PrincipeThemeProvider>
       </body>
     </html>
   );

@@ -12,7 +12,7 @@
  * extensions that complete the Hilda × Simpsons palette family — see the
  * inline notes for the rationale on each choice.
  *
- * Keyed by string so the @dp/theme package stays consumer-agnostic. Each
+ * Keyed by string so the @principe/theme package stays consumer-agnostic. Each
  * project narrows the index type at the consumption site (e.g. the app's
  * AgentId union).
  */

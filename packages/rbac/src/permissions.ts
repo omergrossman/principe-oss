@@ -7,16 +7,16 @@
  * the shape; consumers are free to use any string they want.
  *
  * A role bundles a list of permissions and optionally inherits from other
- * roles. Roles form a DAG: `app.tenant-owner` may inherit `dp.founder`
- * which inherits `dp.admin` which inherits `dp.member`.
+ * roles. Roles form a DAG: `app.tenant-owner` may inherit `principe.founder`
+ * which inherits `principe.admin` which inherits `principe.member`.
  *
  * The registry is module-scoped (`ROLE_REGISTRY`). Consumers register roles
  * once at app startup via `defineRole()`, then call `hasPermission()` /
  * `requirePermission()` at the point of use.
  *
- * Ships three base roles (`dp.member`, `dp.admin`, `dp.founder`) so every
- * DP-built product has a sensible starting point. Projects layer their own
- * roles on top via `defineRole({ inherits: ['dp.admin'], ... })`.
+ * Ships three base roles (`principe.member`, `principe.admin`, `principe.founder`) so every
+ * Príncipe product has a sensible starting point. Projects layer their own
+ * roles on top via `defineRole({ inherits: ['principe.admin'], ... })`.
  */
 
 export type Permission = string
@@ -88,18 +88,18 @@ export class RBACError extends Error {
   }
 }
 
-// ─── Base roles every DP product gets ──────────────────────────────────────
+// ─── Base roles every Príncipe product gets ──────────────────────────────────────
 // Kept intentionally small. Projects extend by calling `defineRole()` with
-// `inherits: ['dp.admin']` (etc.) at boot.
+// `inherits: ['principe.admin']` (etc.) at boot.
 
-defineRole({ id: 'dp.member', permissions: [] })
+defineRole({ id: 'principe.member', permissions: [] })
 defineRole({
-  id: 'dp.admin',
-  inherits: ['dp.member'],
+  id: 'principe.admin',
+  inherits: ['principe.member'],
   permissions: ['tenant.read'],
 })
 defineRole({
-  id: 'dp.founder',
-  inherits: ['dp.admin'],
+  id: 'principe.founder',
+  inherits: ['principe.admin'],
   permissions: ['tenant.create', 'tenant.delete', 'billing.manage'],
 })

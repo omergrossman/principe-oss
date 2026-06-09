@@ -1,5 +1,5 @@
 {
-  "name": "@dp/rbac",
+  "name": "@principe/rbac",
   "version": "0.0.0",
   "private": true,
   "type": "module",

@@ -11,8 +11,8 @@
  *
  * Idempotent: re-running with the same email + org reuses existing rows.
  * Use this for "give a design partner their own org" while you're not
- * paying the DP-master automation. Once you flip the meter, real signups
- * flow through DP master's Stripe checkout instead of this script.
+ * paying the upstream baseline automation. Once you flip the meter, real signups
+ * flow through the upstream baseline service's Stripe checkout instead of this script.
  */
 
 import { Client } from "pg";

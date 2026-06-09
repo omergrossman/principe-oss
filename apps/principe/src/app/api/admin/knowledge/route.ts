@@ -9,7 +9,7 @@ import { appendEvolutionForSource } from "@/lib/projects/evolution";
 
 export async function GET() {
   const session = await requireRole("PRINCIPE_ADMIN");
-  // Baseline seeding now flows via DP master's /api/baseline/v1 sync
+  // Baseline seeding now flows via the upstream baseline service's /api/baseline/v1 sync
   // (launch/init + nightly cron). This endpoint just lists whatever's
   // landed locally and re-kicks any pending fetches.
   kickoffPendingFetches(session.firmId);

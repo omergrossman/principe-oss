@@ -51,9 +51,11 @@ is officially representing the community in public spaces.
 ## Enforcement
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
-reported to the maintainers at **service@principe.cloud**. All complaints
-will be reviewed and investigated promptly and fairly. Maintainers are
-obligated to respect the privacy and security of the reporter of any incident.
+reported privately to the maintainer by opening a confidential report through
+this repository's **Security → Report a vulnerability** form (it reaches only
+the maintainer, never the public). All complaints will be reviewed and
+investigated promptly and fairly. The maintainer is obligated to respect the
+privacy and security of the reporter of any incident.
 
 ## Attribution
 

@@ -1,5 +1,5 @@
 {
-  "name": "@dp/telemetry",
+  "name": "@principe/telemetry",
   "version": "0.0.0",
   "private": true,
   "type": "module",

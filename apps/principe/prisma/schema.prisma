@@ -4,7 +4,7 @@
 //
 // Data model architecture (see docs/02-adr.md):
 //
-//   Firm (top-level tenant; backed by @dp/tenant-lifecycle Tenant abstraction)
+//   Firm (top-level tenant; backed by @principe/tenant-lifecycle Tenant abstraction)
 //     ├── Portco (sub-workspace per portfolio company)
 //     │     ├── User memberships (via Membership)
 //     │     ├── Hypothesis (markdown content)
@@ -23,7 +23,7 @@
 //   CalibrationDataset (global) → BacktestResult
 //
 //   AuditLog (per-tenant scoped, append-only)
-//   TenantLifecycleAuditLog (DP pattern; survives org purge via SetNull)
+//   TenantLifecycleAuditLog (platform-lineage pattern; survives org purge via SetNull)
 
 generator client {
   provider = "prisma-client-js"
@@ -487,7 +487,7 @@ model AuditLog {
   @@index([createdAt])
 }
 
-// Tenant lifecycle audit — survives tenant purge via SetNull (GDPR pattern from Fable Phase 1)
+// Tenant lifecycle audit — survives tenant purge via SetNull (GDPR pattern from the SaaS lineage)
 model TenantLifecycleAuditLog {
   id          String   @id @default(cuid())
   firmId    String @map("vcFirmId")
@@ -519,7 +519,7 @@ enum KnowledgeSourceKind {
   // don't have a URL or file backing. Distilled via the vendor-card
   // prompt; treated as authoritative for vendor-positioning questions.
   VENDOR_CARD
-  // Phase 5+ baseline-KB pushdown — plain text snippet shipped by DP
+  // Phase 5+ baseline-KB pushdown — plain text snippet shipped by the baseline sync
   // master's /admin/baseline. No URL, no file, content stored inline.
   TEXT
   // Sprint 9 — entry that arrived via a signed update bundle. The
@@ -591,10 +591,10 @@ model KnowledgeSource {
   addedAt         DateTime            @default(now())
   updatedAt       DateTime            @updatedAt
 
-  // Baseline link — when this row was pushed down by DP master's
-  // baseline-KB sync, baselineId carries the DP master's source id.
+  // Baseline link — when this row was pushed down by the upstream baseline service's
+  // baseline-KB sync, baselineId carries the upstream baseline service's source id.
   // Tenant-added rows (user uploads, per-project sources) leave it
-  // NULL. baselineRemovedAt is stamped when DP master removed the
+  // NULL. baselineRemovedAt is stamped when the upstream baseline service removed the
   // baseline entry; the row stays for ProjectAsk history references
   // but is filtered out of every panel briefing.
   baselineId            String?
@@ -743,7 +743,7 @@ model Transcript {
   updatedAt           DateTime            @updatedAt
 
   // Baseline link — see KnowledgeSource.baselineId. Transcripts
-  // pushed down via DP master sync carry the baseline source id; the
+  // pushed down via the upstream baseline sync carry the baseline source id; the
   // panel reads them all, the tenant UI never shows them.
   baselineId          String?
   baselineRemovedAt   DateTime?
@@ -755,7 +755,7 @@ model Transcript {
   @@index([firmId, speakerIndustry, speakerRegion])
 }
 
-// Per-instance sync cursor. Tracks the DP master baseline version
+// Per-instance sync cursor. Tracks the upstream baseline version
 // this Principe instance last applied so the cheap-check on /version
 // can short-circuit when nothing has changed.
 

@@ -16,11 +16,20 @@ Treat the panel as **one input among many**. You remain solely responsible for a
 
 ## Status
 
-**Pre-alpha.** Installable, but not yet polished. Sprint 8 (this sprint) shipped the docker-compose distribution + first-run wizard. Sprint 9 will add signed daily knowledge bundles. v1.0 lands when both sprints are battle-tested and the install story is rock-solid on macOS + Linux.
+**Pre-alpha.** Installable, but not yet polished. The docker-compose distribution + first-run wizard and the signed daily knowledge feed (pull-based, ed25519-verified) are both live. v1.0 lands when the install story is battle-tested and rock-solid on macOS + Linux.
 
 ## Quickstart
 
-You need **Docker Desktop / Docker Engine ≥ 24** and an **Anthropic API key**. That's it.
+The only thing you need to bring is an **Anthropic API key** (you'll paste it at the end). One command does the rest — it installs Docker if you don't have it, clones the repo, and boots the stack:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.sh | bash
+```
+
+> On macOS it installs Docker Desktop via Homebrew; on Linux via the official `get.docker.com` script — both ask first. Already have Docker? It skips straight to booting. Prefer not to pipe to `bash`? Download `install.sh`, read it, and run it.
+
+<details>
+<summary><strong>Or do it manually</strong> (if you already have Docker ≥ 24)</summary>
 
 ```bash
 git clone https://github.com/omergrossman/principe-oss
@@ -28,13 +37,10 @@ cd principe-oss
 ./bin/start.sh
 ```
 
-The script:
+`bin/start.sh` generates strong random secrets on first run (`.env.runtime`, chmod 600, gitignored), then `docker compose up -d --build` boots Postgres + Statistician + web. Watch with `docker compose logs -f web statistician`.
+</details>
 
-1. Generates strong random secrets on first run (written to `.env.runtime`, chmod 600, gitignored)
-2. `docker compose up -d --build` — boots Postgres + Statistician + web app
-3. Watch progress: `docker compose logs -f web statistician`
-
-When healthy (≈3-5 min on first boot, seconds on subsequent boots), open **http://localhost:3000** and complete the setup wizard:
+When healthy (≈3-5 min on first boot, seconds on subsequent boots), the installer opens **http://localhost:3000** — complete the setup wizard:
 
 - **Workspace name** (your org name)
 - **Admin email + display name**
@@ -80,17 +86,20 @@ rm .env.runtime
 
 By default Príncipe ships in **local mode** — the calibration corpus in `calibration/` is what your panel reasons over, and there's no callout to any update endpoint. You see no "Check for updates" UI; nothing pings home.
 
-If you want signed pull-updates (e.g. Omer's weekly scrape of public CISO sources), set `PRINCIPE_UPDATES_URL` in `.env.runtime`:
+If you want signed pull-updates — e.g. the official daily feed distilled from public cybersecurity sources — set **both** of these in `.env.runtime`. The URL alone isn't enough: the public key is what makes verification meaningful.
 
 ```env
-PRINCIPE_UPDATES_URL=https://updates.principe.cloud
+PRINCIPE_UPDATES_URL=https://github.com/omergrossman/principe-feed/releases/download/latest
+PRINCIPE_UPDATES_PUBLIC_KEY=56c8813a7d455b4ec58dd45d0befd6920438f4f37a6836f1542d7f2a730606b8
 ```
+
+> ⚠️ `PRINCIPE_UPDATES_PUBLIC_KEY` is **required**. The key compiled into the build is a deliberate placeholder (`000…0`); without a real key set, every signed bundle is rejected. The value above is the official feed's ed25519 public key — verify it out-of-band if provenance matters to you, or use your own (see below).
 
 Boot the stack. **Settings → Knowledge updates** appears. The flow:
 
 1. Click "Check for updates" — fetches `latest.json` from the URL above.
 2. If a new bundle is available, click "Install".
-3. The app fetches the bundle tarball, verifies the manifest's ed25519 signature against the bundled public key (override via `PRINCIPE_UPDATES_PUBLIC_KEY`), confirms the bundle's sha256 matches the manifest's commitment, then writes the knowledge entries into your local DB.
+3. The app fetches the bundle tarball, verifies the manifest's ed25519 signature against your configured public key, confirms the bundle's sha256 matches the manifest's commitment, then writes the knowledge entries into your local DB.
 
 To opt out entirely (no UI, no checks), set `PRINCIPE_UPDATES_URL=disabled`.
 
@@ -120,7 +129,7 @@ Set `WEBAUTHN_ORIGIN=https://your-domain.example` in `.env.runtime` before booti
 
 ## Contributing
 
-PRs are paused until Sprint 8 stabilizes (the codebase is mid-migration from its SaaS-era monorepo). Issues and discussions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+PRs, issues, and discussions are all welcome — it's pre-alpha, so open an issue or discussion first for anything non-trivial. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Security
 
@@ -128,4 +137,8 @@ Found a vulnerability? Don't open a public issue. See [SECURITY.md](SECURITY.md)
 
 ## Contact
 
-service@principe.cloud
+Everything happens on GitHub — no mailing list, no inbox to chase:
+
+- **Questions, ideas, scenarios, sources** → [Discussions](https://github.com/omergrossman/principe-oss/discussions)
+- **Bugs, docs, install pain** → [Issues](https://github.com/omergrossman/principe-oss/issues)
+- **Security / private reports** → [SECURITY.md](SECURITY.md) (GitHub private vulnerability reporting)
