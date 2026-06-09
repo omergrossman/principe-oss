@@ -7,8 +7,6 @@ import { Pill } from "@/components/ui/Pill";
 import { AppTopBar } from "@/components/app/AppTopBar";
 import { AnthropicKeyForm } from "./AnthropicKeyForm";
 import { UpdatesCard } from "./UpdatesCard";
-import { FeedConsole } from "./FeedConsole";
-import { isFeedConfigured } from "@/lib/feed/repo";
 import { projectDisplayName } from "@/lib/projects/describe";
 
 export const dynamic = "force-dynamic";
@@ -87,8 +85,6 @@ export default async function SettingsPage() {
         </Card>
 
         <UpdatesCard />
-
-        {isFeedConfigured() && <FeedConsole />}
 
         <MonthlyCostCard firmId={session.firmId} />
       </main>
