@@ -8,6 +8,13 @@
     "build": "pnpm --filter principe build",
     "start": "pnpm --filter principe start",
     "lint": "pnpm --filter principe lint",
-    "typecheck": "pnpm --filter principe exec tsc --noEmit"
+    "typecheck": "pnpm --filter principe exec tsc --noEmit",
+    "build-bundle": "tsx scripts/build-bundle.ts",
+    "generate-keypair": "tsx scripts/generate-keypair.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "tar": "^7.4.3",
+    "tsx": "^4.22.4"
   }
 }
