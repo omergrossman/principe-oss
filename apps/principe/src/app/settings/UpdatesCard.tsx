@@ -14,6 +14,7 @@ interface CheckResponse {
   latestVersion: string | null;
   latestPublishedAt: string | null;
   changelog: string | null;
+  latestEntryCount: number | null;
   updateAvailable: boolean;
   autoUpdate: boolean;
   error?: string;
@@ -57,6 +58,7 @@ export function UpdatesCard() {
         latestVersion: null,
         latestPublishedAt: null,
         changelog: null,
+        latestEntryCount: null,
         updateAvailable: false,
         autoUpdate: false,
         error: "Network error — couldn't reach the local API.",
@@ -164,21 +166,13 @@ export function UpdatesCard() {
               {check.latestPublishedAt && (
                 <p className="text-[11px] text-ink-300 font-mono mt-0.5">
                   {new Date(check.latestPublishedAt).toLocaleDateString()}
+                  {check.updateAvailable && check.latestEntryCount != null
+                    ? ` · ${check.latestEntryCount} items`
+                    : ""}
                 </p>
               )}
             </div>
           </div>
-
-          {check.changelog && check.updateAvailable && (
-            <div className="mb-4 p-3 rounded-md bg-flare-100/40 border border-flare-600/20">
-              <p className="text-[11px] uppercase tracking-wide font-medium text-ink-500 mb-1">
-                What changed
-              </p>
-              <p className="text-[13px] text-ink-700 whitespace-pre-line">
-                {check.changelog}
-              </p>
-            </div>
-          )}
 
           {check.error && (
             <p
