@@ -123,7 +123,7 @@ Set `WEBAUTHN_ORIGIN=https://your-domain.example` in `.env.runtime` before booti
 
 ## Contributing
 
-PRs are paused until Sprint 8 stabilizes (the codebase is mid-migration from its SaaS-era monorepo). Issues and discussions are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+PRs, issues, and discussions are all welcome — it's pre-alpha, so open an issue or discussion first for anything non-trivial. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Security
 
@@ -131,4 +131,8 @@ Found a vulnerability? Don't open a public issue. See [SECURITY.md](SECURITY.md)
 
 ## Contact
 
-service@principe.cloud
+Everything happens on GitHub — no mailing list, no inbox to chase:
+
+- **Questions, ideas, scenarios, sources** → [Discussions](https://github.com/omergrossman/principe-oss/discussions)
+- **Bugs, docs, install pain** → [Issues](https://github.com/omergrossman/principe-oss/issues)
+- **Security / private reports** → [SECURITY.md](SECURITY.md) (GitHub private vulnerability reporting)

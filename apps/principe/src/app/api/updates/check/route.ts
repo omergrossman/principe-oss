@@ -109,11 +109,10 @@ export async function GET() {
       updateAvailable: manifest.version !== base.installedVersion,
     });
   } catch (e) {
-    // Network-level failures (DNS, connection refused, timeout) are
-    // common during the OSS publisher's bootstrap phase — the URL is
-    // pre-configured in compose, but updates.principe.cloud may not
-    // be live yet. Treat these as "no update available right now"
-    // instead of surfacing a scary error on every Settings load.
+    // Network-level failures (DNS, connection refused, timeout) happen
+    // when the configured update endpoint is unreachable or not yet
+    // live. Treat these as "no update available right now" instead of
+    // surfacing a scary error on every Settings load.
     // Real server errors (4xx/5xx with response) are still loud — see
     // the `!res.ok` branch above.
     const msg = e instanceof Error ? e.message : "Unknown error";

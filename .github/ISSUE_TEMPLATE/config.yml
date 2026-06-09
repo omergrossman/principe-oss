@@ -1,0 +1,11 @@
+# Routes "New issue" to the right GitHub channel. Bug reports and feature
+# requests still open as normal issues; questions and private reports are
+# nudged elsewhere.
+blank_issues_enabled: true
+contact_links:
+  - name: Questions, ideas & sources
+    url: https://github.com/omergrossman/principe-oss/discussions
+    about: Usage questions, panel/persona ideas, knowledge sources, and strategy — please use Discussions, not an issue.
+  - name: Security & private reports
+    url: https://github.com/omergrossman/principe-oss/security/advisories/new
+    about: Report a vulnerability (or a conduct concern) privately — never as a public issue.

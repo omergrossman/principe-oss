@@ -2,10 +2,7 @@
 
 ## Reporting a vulnerability
 
-**Please don't open a public issue for security problems.** Use either private channel:
-
-1. **Preferred — GitHub private vulnerability reporting.** On this repo, go to the **Security** tab → **Report a vulnerability**. This opens a private advisory thread with the maintainer; nothing is public until a fix ships.
-2. **Email** — **service@principe.cloud**, if you'd rather not use GitHub.
+**Please don't open a public issue for security problems.** Report it privately through GitHub: on this repo, go to the **Security** tab → **Report a vulnerability**. This opens a private advisory thread with the maintainer — nothing is public until a fix ships.
 
 Include:
 
