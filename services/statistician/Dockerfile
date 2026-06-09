@@ -45,16 +45,10 @@ RUN mkdir -p /var/cache/pytensor && chmod 1777 /var/cache/pytensor
 # `pm.sample()` compiles ~30s of C code; running it once at build time
 # means the runtime container's first /verdict request is fast.
 # Failure is tolerated — a slow first request beats a failed build.
-RUN python -c "import pymc as pm, numpy as np; \
-import warnings; warnings.filterwarnings('ignore'); \
-print('Pre-warming PyMC compile cache...'); \
-m = pm.Model(); \
-with m: \
-    p = pm.Beta('p', alpha=1, beta=1); \
-    pm.Binomial('y', n=10, p=p, observed=np.array([5])); \
-    pm.sample(draws=20, tune=20, chains=1, progressbar=False, return_inferencedata=False); \
-print('PyMC cache warmed.')" \
-    || echo "WARN: PyMC pre-warm failed; first /verdict will be slower."
+# (Kept as a script, not `python -c`: a `with` block can't follow `;` on a
+# single logical line, which silently broke the old one-liner.)
+COPY services/statistician/prewarm.py ./prewarm.py
+RUN python prewarm.py || echo "WARN: PyMC pre-warm failed; first /verdict will be slower."
 
 # Drop to an unprivileged user for runtime. The service only reads /app +
 # /calibration and writes to the shared compile cache above; no root needed.
