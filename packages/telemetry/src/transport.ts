@@ -4,7 +4,7 @@ import type { TelemetryEvent } from './types'
 /**
  * A transport sends a batch of events to wherever they ultimately live.
  * The package ships two: HttpTransport (POSTs to a configured ingest
- * URL — typically the project's own /api/dp/telemetry/ingest route) and
+ * URL — typically the project's own /api/telemetry/ingest route) and
  * NoopTransport (drops everything; useful for tests + dev).
  *
  * Phase 2 will add ClickHouseTransport that talks to ClickHouse Cloud
@@ -37,7 +37,7 @@ export class HttpTransport implements Transport {
       keepalive: true,
     })
     if (!res.ok) {
-      throw new Error(`[@dp/telemetry] transport responded ${res.status}`)
+      throw new Error(`[@principe/telemetry] transport responded ${res.status}`)
     }
   }
 }

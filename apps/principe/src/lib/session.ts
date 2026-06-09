@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { createHash } from "node:crypto";
 import { cookies } from "next/headers";
-import { encodeSession, decodeSession } from "@dp/rbac";
+import { encodeSession, decodeSession } from "@principe/rbac";
 
 const SESSION_COOKIE = "principe_session";
 const SESSION_MAX_AGE = 60 * 60 * 8; // 8h sliding (per ADR + spec)

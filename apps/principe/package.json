@@ -13,9 +13,9 @@
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.100.1",
-    "@dp/rbac": "workspace:*",
-    "@dp/telemetry": "workspace:*",
-    "@dp/theme": "workspace:*",
+    "@principe/rbac": "workspace:*",
+    "@principe/telemetry": "workspace:*",
+    "@principe/theme": "workspace:*",
     "@monaco-editor/react": "^4.7.0",
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",

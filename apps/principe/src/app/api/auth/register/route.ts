@@ -4,7 +4,7 @@ import {
   generateRegOptions,
   verifyRegResponse,
   type AuthenticatorTransportFuture,
-} from "@dp/rbac";
+} from "@principe/rbac";
 import {
   setRegistrationChallenge,
   getRegistrationChallenge,

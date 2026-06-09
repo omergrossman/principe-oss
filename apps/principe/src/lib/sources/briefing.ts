@@ -139,7 +139,7 @@ export async function loadEnabledSources(
       firmId,
       enabled: true,
       removedByFirm: false,
-      // Phase 5+ baseline sync — when DP master removes a source we
+      // Phase 5+ baseline sync — when the upstream baseline service removes a source we
       // stamp baselineRemovedAt and stop including it in briefings.
       baselineRemovedAt: null,
       content: { not: null },

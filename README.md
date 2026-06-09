@@ -16,7 +16,7 @@ Treat the panel as **one input among many**. You remain solely responsible for a
 
 ## Status
 
-**Pre-alpha.** Installable, but not yet polished. Sprint 8 (this sprint) shipped the docker-compose distribution + first-run wizard. Sprint 9 will add signed daily knowledge bundles. v1.0 lands when both sprints are battle-tested and the install story is rock-solid on macOS + Linux.
+**Pre-alpha.** Installable, but not yet polished. The docker-compose distribution + first-run wizard and the signed daily knowledge feed (pull-based, ed25519-verified) are both live. v1.0 lands when the install story is battle-tested and rock-solid on macOS + Linux.
 
 ## Quickstart
 
@@ -80,17 +80,20 @@ rm .env.runtime
 
 By default Príncipe ships in **local mode** — the calibration corpus in `calibration/` is what your panel reasons over, and there's no callout to any update endpoint. You see no "Check for updates" UI; nothing pings home.
 
-If you want signed pull-updates (e.g. Omer's weekly scrape of public CISO sources), set `PRINCIPE_UPDATES_URL` in `.env.runtime`:
+If you want signed pull-updates — e.g. the official daily feed distilled from public cybersecurity sources — set **both** of these in `.env.runtime`. The URL alone isn't enough: the public key is what makes verification meaningful.
 
 ```env
-PRINCIPE_UPDATES_URL=https://updates.principe.cloud
+PRINCIPE_UPDATES_URL=https://github.com/omergrossman/principe-feed/releases/download/latest
+PRINCIPE_UPDATES_PUBLIC_KEY=56c8813a7d455b4ec58dd45d0befd6920438f4f37a6836f1542d7f2a730606b8
 ```
+
+> ⚠️ `PRINCIPE_UPDATES_PUBLIC_KEY` is **required**. The key compiled into the build is a deliberate placeholder (`000…0`); without a real key set, every signed bundle is rejected. The value above is the official feed's ed25519 public key — verify it out-of-band if provenance matters to you, or use your own (see below).
 
 Boot the stack. **Settings → Knowledge updates** appears. The flow:
 
 1. Click "Check for updates" — fetches `latest.json` from the URL above.
 2. If a new bundle is available, click "Install".
-3. The app fetches the bundle tarball, verifies the manifest's ed25519 signature against the bundled public key (override via `PRINCIPE_UPDATES_PUBLIC_KEY`), confirms the bundle's sha256 matches the manifest's commitment, then writes the knowledge entries into your local DB.
+3. The app fetches the bundle tarball, verifies the manifest's ed25519 signature against your configured public key, confirms the bundle's sha256 matches the manifest's commitment, then writes the knowledge entries into your local DB.
 
 To opt out entirely (no UI, no checks), set `PRINCIPE_UPDATES_URL=disabled`.
 

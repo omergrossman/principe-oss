@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 /**
- * Design tokens (shared DP palette).
+ * Design tokens (shared Príncipe palette).
  *
  * Cream paper canvas, dusty teal primary, warm coral accent, simpsons yellow
  * sun. Storybook + Hilda × Simpsons cartoon energy. NOT a dark dashboard.

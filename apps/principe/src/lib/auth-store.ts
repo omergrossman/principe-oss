@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { cookies } from "next/headers";
-import type { AuthenticatorTransportFuture } from "@dp/rbac";
+import type { AuthenticatorTransportFuture } from "@principe/rbac";
 import { prisma } from "@/lib/db/prisma";
 
 /**

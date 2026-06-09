@@ -6,12 +6,12 @@ import { AGENT_COLORS } from './agent-colors'
 import { SEVERITY_CONFIG } from './severity'
 
 /**
- * Default theme that ships with DP. Currently the default DP tokens
+ * Default theme that ships with Príncipe. Currently the default design tokens
  * since they are the canonical reference set. New projects can use
  * this as-is during scaffolding, then override fields (especially
  * brand.Wordmark and colors) as their brand identity emerges.
  *
- * Callers provide brand.Wordmark — DP doesn't ship a wordmark itself.
+ * Callers provide brand.Wordmark — Príncipe doesn't ship a wordmark itself.
  */
 export function makeDefaultTheme(brand: {
   name: string
