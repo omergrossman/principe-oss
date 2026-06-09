@@ -38,6 +38,9 @@ export interface UpdatesCheckResponse {
   latestVersion: string | null;
   latestPublishedAt: string | null;
   changelog: string | null;
+  // Number of knowledge entries in the latest bundle — a concrete signal
+  // ("12 items") in place of an opaque changelog.
+  latestEntryCount: number | null;
   updateAvailable: boolean;
   // Manual (false, default) vs automatic (true) update consent.
   autoUpdate: boolean;
@@ -67,6 +70,7 @@ export async function GET() {
     latestVersion: null,
     latestPublishedAt: null,
     changelog: null,
+    latestEntryCount: null,
     updateAvailable: false,
     autoUpdate: workspace?.autoUpdate ?? false,
   };
@@ -101,6 +105,7 @@ export async function GET() {
       latestVersion: manifest.version,
       latestPublishedAt: manifest.createdAt,
       changelog: manifest.changelog,
+      latestEntryCount: manifest.entries.filter((e) => e.type === "knowledge").length,
       updateAvailable: manifest.version !== base.installedVersion,
     });
   } catch (e) {
