@@ -39,6 +39,8 @@ export interface UpdatesCheckResponse {
   latestPublishedAt: string | null;
   changelog: string | null;
   updateAvailable: boolean;
+  // Manual (false, default) vs automatic (true) update consent.
+  autoUpdate: boolean;
   error?: string;
 }
 
@@ -54,7 +56,7 @@ export async function GET() {
 
   const workspace = await prisma.firm.findFirst({
     orderBy: { createdAt: "asc" },
-    select: { createdAt: true },
+    select: { createdAt: true, autoUpdate: true },
   });
 
   const base: UpdatesCheckResponse = {
@@ -66,6 +68,7 @@ export async function GET() {
     latestPublishedAt: null,
     changelog: null,
     updateAvailable: false,
+    autoUpdate: workspace?.autoUpdate ?? false,
   };
 
   if (mode !== "remote") {
