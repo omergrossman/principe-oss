@@ -64,9 +64,9 @@ export default async function AboutPage() {
               Whether you&apos;re a <strong>founder</strong> about to spend a
               year of runway hunting for a hundred real CISOs, a{" "}
               <strong>VC</strong> stress-testing an investment thesis without
-              ever sitting across from the buyer, or a <strong>security
-              leader</strong> betting your next roadmap on an unverified
-              hunch — Príncipe lets you measure the idea from a hundred
+              ever sitting across from the buyer, or a{" "}
+              <strong>security leader</strong> betting your next roadmap on an
+              unverified hunch — Príncipe lets you measure the idea from a hundred
               different angles in an afternoon. We won&apos;t tell you
               whether your idea is right. We&apos;ll show you where the sky
               shifts — and where it doesn&apos;t.
