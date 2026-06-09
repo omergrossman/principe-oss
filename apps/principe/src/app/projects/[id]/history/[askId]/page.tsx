@@ -168,7 +168,7 @@ export default async function SavedAskPage({
             readOnly ? null : <ReuseActions question={ask.question} />
           }
         />
-        <PanelDisclaimer className="mt-8 max-w-2xl" />
+        <PanelDisclaimer className="mt-8" />
       </main>
     </>
   );
