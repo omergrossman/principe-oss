@@ -104,7 +104,7 @@ export default async function AboutPage() {
             <h2 className="text-[13px] font-semibold uppercase tracking-wide text-ink-500 mb-2">
               A note on the panel
             </h2>
-            <p className="text-[13px] text-ink-500 leading-relaxed max-w-2xl">
+            <p className="text-[13px] text-ink-500 leading-relaxed">
               Príncipe&apos;s CISOs are <strong>synthetic, AI-generated
               personas</strong> — not real people, customers, or professional
               advisers, and the statistical checks describe the panel, not the
