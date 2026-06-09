@@ -66,6 +66,7 @@ services:
       # updates UI entirely. (Do not point this at a live endpoint until a
       # real signing public key ships — the default key is a placeholder.)
       PRINCIPE_UPDATES_URL: ${PRINCIPE_UPDATES_URL:-}
+      PRINCIPE_UPDATES_PUBLIC_KEY: ${PRINCIPE_UPDATES_PUBLIC_KEY:-}
     depends_on:
       db:
         condition: service_healthy
