@@ -50,8 +50,25 @@ export interface BundleEntry {
   bytes: number;
   /** Stable identifier for the entry — used as the DB primary key for
    * idempotent applies. Same id with a new sha256 = update; new id =
-   * insert; missing id from a future bundle = skip (don't delete). */
+   * insert. For news-feed bundles the apply layer is snapshot-based:
+   * a knowledge entry's id missing from a later bundle is REMOVED (see
+   * applyBundle). A foundational analyst report that supersedes an
+   * earlier one ships under the same stable id → upsert replaces it. */
   id: string;
+  /**
+   * Optional targeting metadata for news-feed knowledge entries. Carried
+   * in the SIGNED manifest, so it's tamper-protected alongside the
+   * content hash. The consumer writes these onto the KnowledgeSource row
+   * so the existing briefing scorer (`scoreSource`: region +5,
+   * applicableIndustries +4, recency) can surface the entry for matching
+   * personas. All absent = a general, untargeted entry (current
+   * behaviour for pre-feed bundles, which remain valid).
+   */
+  region?: string;
+  industries?: string[];
+  category?: string;
+  /** ISO-8601 publication date — feeds recency ranking in the briefing. */
+  publishedAt?: string;
 }
 
 export function isBundleManifest(x: unknown): x is BundleManifest {
@@ -80,7 +97,14 @@ function isBundleEntry(x: unknown): x is BundleEntry {
     typeof e.sha256 === "string" &&
     /^[0-9a-f]{64}$/.test(e.sha256) &&
     typeof e.bytes === "number" &&
-    typeof e.id === "string"
+    typeof e.id === "string" &&
+    // Optional feed-targeting metadata — absent on pre-feed bundles.
+    (e.region === undefined || typeof e.region === "string") &&
+    (e.industries === undefined ||
+      (Array.isArray(e.industries) &&
+        e.industries.every((i) => typeof i === "string"))) &&
+    (e.category === undefined || typeof e.category === "string") &&
+    (e.publishedAt === undefined || typeof e.publishedAt === "string")
   );
 }
 
