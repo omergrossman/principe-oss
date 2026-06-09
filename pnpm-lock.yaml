@@ -6,7 +6,17 @@ settings:
 
 importers:
 
-  .: {}
+  .:
+    devDependencies:
+      '@types/node':
+        specifier: ^22.10.0
+        version: 22.19.20
+      tar:
+        specifier: ^7.4.3
+        version: 7.5.16
+      tsx:
+        specifier: ^4.22.4
+        version: 4.22.4
 
   apps/principe:
     dependencies:
@@ -1164,6 +1174,9 @@ packages:
 
   '@types/node@20.19.42':
     resolution: {integrity: sha512-5L7SUaFC1RyDraj2yRhyBzHTobyXHmohD100CChNtyPyleoq37Mqab5Gn8XEKI04dfN/oqPdpHk38MgcQWHbZg==}
+
+  '@types/node@22.19.20':
+    resolution: {integrity: sha512-6tELRwSDYWW9EdZhbeZmYGZ1/7Djkt+Ah3/ScEYT9cDord7UJzasR/4D3VONg9tQI5CDp+/CZC1AXj2pCFOvpw==}
 
   '@types/pg@8.20.0':
     resolution: {integrity: sha512-bEPFOaMAHTEP1EzpvHTbmwR8UsFyHSKsRisLIHVMXnpNefSbGA1bD6CVy+qKjGSqmZqNqBDV2azOBo8TgkcVow==}
@@ -4080,6 +4093,10 @@ snapshots:
   '@types/json5@0.0.29': {}
 
   '@types/node@20.19.42':
+    dependencies:
+      undici-types: 6.21.0
+
+  '@types/node@22.19.20':
     dependencies:
       undici-types: 6.21.0
 

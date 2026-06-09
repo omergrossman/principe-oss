@@ -139,10 +139,15 @@ async function main() {
   console.log(`  ${entries.length} entries inventoried`);
 
   // 2. Build the tarball.
-  mkdirSync(join(outputDir, "bundles"), { recursive: true });
-  mkdirSync(join(outputDir, "manifests"), { recursive: true });
+  // BUNDLE_FLAT=1 lays assets flat (no bundles/ or manifests/ subdirs) so
+  // they can be served as GitHub Release assets (whose URLs are flat). The
+  // consumer joins PRINCIPE_UPDATES_URL + bundlePath, so a flat bundlePath
+  // (`<version>.tar.gz`) resolves to `.../releases/download/<tag>/<file>`.
+  const flat = process.env.BUNDLE_FLAT === "1";
+  mkdirSync(join(outputDir, flat ? "." : "bundles"), { recursive: true });
+  mkdirSync(join(outputDir, flat ? "." : "manifests"), { recursive: true });
 
-  const bundlePath = `bundles/${version}.tar.gz`;
+  const bundlePath = flat ? `${version}.tar.gz` : `bundles/${version}.tar.gz`;
   const bundleAbsPath = join(outputDir, bundlePath);
   await tar.create(
     {
@@ -168,7 +173,7 @@ async function main() {
     entries,
   };
   const manifestBytes = Buffer.from(JSON.stringify(manifest, null, 2), "utf8");
-  const manifestPath = join(outputDir, "manifests", `${version}.json`);
+  const manifestPath = join(outputDir, flat ? "." : "manifests", `${version}.json`);
   writeFileSync(manifestPath, manifestBytes);
   console.log(`  manifest written: ${manifestPath}`);
 
