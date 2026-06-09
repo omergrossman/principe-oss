@@ -135,7 +135,7 @@ export default async function WorkspacePage() {
               </Link>
             )}
           </p>
-          <PanelDisclaimer className="mt-4 max-w-2xl" />
+          <PanelDisclaimer className="mt-4" />
         </div>
       </main>
     </>
