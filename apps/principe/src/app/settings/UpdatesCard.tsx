@@ -15,6 +15,7 @@ interface CheckResponse {
   latestPublishedAt: string | null;
   changelog: string | null;
   updateAvailable: boolean;
+  autoUpdate: boolean;
   error?: string;
 }
 
@@ -33,6 +34,8 @@ export function UpdatesCard() {
   const [checking, setChecking] = useState(true);
   const [installing, setInstalling] = useState(false);
   const [installResult, setInstallResult] = useState<InstallResponse | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [savingMode, setSavingMode] = useState(false);
 
   async function runCheck() {
     setChecking(true);
@@ -40,6 +43,11 @@ export function UpdatesCard() {
       const res = await fetch("/api/updates/check", { cache: "no-store" });
       const data = (await res.json()) as CheckResponse;
       setCheck(data);
+      // Automatic mode: an available update installs itself (consent was
+      // given by enabling auto). Manual mode never auto-installs.
+      if (data.mode === "remote" && data.autoUpdate && data.updateAvailable && !installing) {
+        void runInstall(true);
+      }
     } catch {
       setCheck({
         mode: "remote",
@@ -50,6 +58,7 @@ export function UpdatesCard() {
         latestPublishedAt: null,
         changelog: null,
         updateAvailable: false,
+        autoUpdate: false,
         error: "Network error — couldn't reach the local API.",
       });
     } finally {
@@ -61,22 +70,51 @@ export function UpdatesCard() {
     void runCheck();
   }, []);
 
-  async function runInstall() {
-    if (!confirm("Install the latest knowledge bundle? Signature is verified before apply.")) return;
+  async function runInstall(auto = false) {
+    if (!auto && !confirm("Install the latest knowledge bundle? Signature is verified before apply.")) return;
     setInstalling(true);
     setInstallResult(null);
+    // Animated download/apply progress. The bundle is small, so this ramps
+    // toward 90% then completes — enough to show the operation is live.
+    setProgress(8);
+    const ramp = setInterval(
+      () => setProgress((p) => (p < 90 ? p + Math.max(1, (90 - p) * 0.18) : p)),
+      180,
+    );
     try {
       const res = await fetch("/api/updates/install", { method: "POST" });
       const data = (await res.json()) as InstallResponse;
+      setProgress(100);
       setInstallResult(data);
       if (data.ok) {
-        // Refresh the check so installedVersion updates.
-        await runCheck();
+        await runCheck(); // refresh installedVersion / updateAvailable
       }
     } catch {
       setInstallResult({ ok: false, error: "Network error during install." });
     } finally {
+      clearInterval(ramp);
       setInstalling(false);
+      setTimeout(() => setProgress(0), 700);
+    }
+  }
+
+  async function setMode(autoUpdate: boolean) {
+    setSavingMode(true);
+    setCheck((c) => (c ? { ...c, autoUpdate } : c)); // optimistic
+    try {
+      await fetch("/api/updates/mode", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ autoUpdate }),
+      });
+      // Turning auto ON with a pending update = consent to install it now.
+      if (autoUpdate && check?.mode === "remote" && check?.updateAvailable && !installing) {
+        await runInstall(true);
+      }
+    } catch {
+      setCheck((c) => (c ? { ...c, autoUpdate: !autoUpdate } : c)); // revert
+    } finally {
+      setSavingMode(false);
     }
   }
 
@@ -154,35 +192,89 @@ export function UpdatesCard() {
           {check.mode === "local" && (
             <p className="text-[12px] text-ink-500 leading-relaxed mb-3">
               Your panel is running on the knowledge corpus shipped with
-              this install. Future updates will pull automatically when
-              available.
+              this install. Connect an update source to receive new
+              knowledge — you&apos;ll choose whether it installs manually
+              (the default) or automatically.
             </p>
           )}
 
           {check.mode === "remote" && (
-            <div className="flex items-center gap-3">
-              <Button
-                type="button"
-                variant="primary"
-                size="md"
-                onClick={runInstall}
-                disabled={installing || !check.updateAvailable}
-              >
-                {installing
-                  ? "Verifying + installing…"
-                  : check.updateAvailable
-                    ? `Install ${check.latestVersion}`
-                    : "Up to date"}
-              </Button>
-              <Button
-                type="button"
-                variant="text"
-                size="md"
-                onClick={runCheck}
-                disabled={checking || installing}
-              >
-                Re-check
-              </Button>
+            <div className="space-y-3">
+              {/* Manual vs automatic — default manual so nothing installs
+                  without explicit consent. */}
+              <div className="flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[13px] font-medium text-ink-900">Update mode</p>
+                  <p className="text-[11px] text-ink-500">
+                    {check.autoUpdate
+                      ? "Updates install automatically when available."
+                      : "Updates install only when you click Update now."}
+                  </p>
+                </div>
+                <div
+                  role="group"
+                  aria-label="Update mode"
+                  className="inline-flex shrink-0 rounded-md border border-ink-300 p-0.5 text-[12px] font-medium"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setMode(false)}
+                    disabled={savingMode || installing}
+                    aria-pressed={!check.autoUpdate}
+                    className={`px-3 py-1 rounded ${!check.autoUpdate ? "bg-ink-900 text-white" : "text-ink-500"}`}
+                  >
+                    Manual
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setMode(true)}
+                    disabled={savingMode || installing}
+                    aria-pressed={check.autoUpdate}
+                    className={`px-3 py-1 rounded ${check.autoUpdate ? "bg-ink-900 text-white" : "text-ink-500"}`}
+                  >
+                    Automatic
+                  </button>
+                </div>
+              </div>
+
+              {/* Download/apply progress. */}
+              {installing && (
+                <div
+                  className="h-1.5 w-full overflow-hidden rounded-full bg-flare-100"
+                  role="progressbar"
+                  aria-valuenow={Math.round(progress)}
+                >
+                  <div
+                    className="h-full rounded-full bg-flare-600 transition-all duration-200 ease-out"
+                    style={{ width: `${progress}%` }}
+                  />
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  onClick={() => runInstall(false)}
+                  disabled={check.autoUpdate || installing || !check.updateAvailable}
+                >
+                  {installing
+                    ? "Verifying + installing…"
+                    : check.updateAvailable
+                      ? `Update now${check.latestVersion ? ` (${check.latestVersion})` : ""}`
+                      : "Up to date"}
+                </Button>
+                <Button
+                  type="button"
+                  variant="text"
+                  size="md"
+                  onClick={runCheck}
+                  disabled={checking || installing}
+                >
+                  Re-check
+                </Button>
+              </div>
             </div>
           )}
 
