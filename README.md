@@ -20,7 +20,16 @@ Treat the panel as **one input among many**. You remain solely responsible for a
 
 ## Quickstart
 
-You need **Docker Desktop / Docker Engine ≥ 24** and an **Anthropic API key**. That's it.
+The only thing you need to bring is an **Anthropic API key** (you'll paste it at the end). One command does the rest — it installs Docker if you don't have it, clones the repo, and boots the stack:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.sh | bash
+```
+
+> On macOS it installs Docker Desktop via Homebrew; on Linux via the official `get.docker.com` script — both ask first. Already have Docker? It skips straight to booting. Prefer not to pipe to `bash`? Download `install.sh`, read it, and run it.
+
+<details>
+<summary><strong>Or do it manually</strong> (if you already have Docker ≥ 24)</summary>
 
 ```bash
 git clone https://github.com/omergrossman/principe-oss
@@ -28,13 +37,10 @@ cd principe-oss
 ./bin/start.sh
 ```
 
-The script:
+`bin/start.sh` generates strong random secrets on first run (`.env.runtime`, chmod 600, gitignored), then `docker compose up -d --build` boots Postgres + Statistician + web. Watch with `docker compose logs -f web statistician`.
+</details>
 
-1. Generates strong random secrets on first run (written to `.env.runtime`, chmod 600, gitignored)
-2. `docker compose up -d --build` — boots Postgres + Statistician + web app
-3. Watch progress: `docker compose logs -f web statistician`
-
-When healthy (≈3-5 min on first boot, seconds on subsequent boots), open **http://localhost:3000** and complete the setup wizard:
+When healthy (≈3-5 min on first boot, seconds on subsequent boots), the installer opens **http://localhost:3000** — complete the setup wizard:
 
 - **Workspace name** (your org name)
 - **Admin email + display name**
