@@ -49,6 +49,24 @@ When healthy (≈3-5 min on first boot, seconds on subsequent boots), the instal
 
 Then ask the panel a question and you're running.
 
+## Supported platforms
+
+The app runs entirely in Docker containers, so it behaves identically everywhere. The installer is a bash script:
+
+| OS | How |
+|---|---|
+| **macOS** | Run the installer directly — it sets up Docker Desktop via Homebrew if needed. |
+| **Linux** | Run the installer directly — it sets up Docker Engine via `get.docker.com` if needed. |
+| **Windows** | Use **WSL2** (Docker Desktop on Windows is WSL2-backed anyway). One-time setup below, then the install is identical to Linux. |
+
+### Windows (WSL2)
+
+```powershell
+wsl --install      # in an admin PowerShell, then reboot
+```
+
+Install **Docker Desktop**, and in its settings enable **"Use the WSL 2 based engine"** and **WSL integration** for your distro. Then open your **Ubuntu (WSL2)** terminal and run the same install command there — inside WSL2 everything is Linux, so it just works. (Running the installer in Git Bash instead of WSL2 won't work, and it'll tell you so.)
+
 ## Architecture
 
 Three containers, one compose file:
