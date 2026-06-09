@@ -153,8 +153,25 @@ open_browser() {
   ok "(workspace name → admin → Anthropic API key → passkey)."
 }
 
+# On Windows, Príncipe runs via WSL2 (Docker Desktop's Windows engine is
+# WSL2-backed anyway). bash in Git Bash / MSYS / Cygwin can't drive Docker
+# Desktop, so point those users to WSL2 instead of failing cryptically.
+# Inside WSL2, `uname -s` reports Linux, so this branch isn't hit there.
+check_windows_shell() {
+  case "$OS" in
+    MINGW* | MSYS* | CYGWIN* | Windows_NT)
+      die "You're in a Windows shell (Git Bash/MSYS/Cygwin). Príncipe runs on Windows via WSL2:
+       1. Install WSL2:  run 'wsl --install' in an admin PowerShell, then reboot
+       2. Install Docker Desktop and enable 'Use the WSL 2 based engine' + WSL integration
+       3. Open your Ubuntu (WSL2) terminal and re-run this installer there
+       Guide: https://learn.microsoft.com/windows/wsl/install"
+      ;;
+  esac
+}
+
 main() {
   log "Príncipe installer — let's get you running."
+  check_windows_shell
   ensure_git
   ensure_docker
   enter_repo
