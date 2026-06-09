@@ -92,6 +92,11 @@ model Firm {
   slug                  String         @unique
   status                TenantStatus   @default(ACTIVE)
   region                String         @default("us")  // us / eu-west / eu-central / uk / apac / anz
+  // Knowledge-update consent. FALSE (default) = manual: an available
+  // update installs only when the admin clicks "Update now". TRUE =
+  // automatic. Default manual so no instance ever pulls a knowledge push
+  // without explicit opt-in.
+  autoUpdate             Boolean        @default(false)
   // BYO Anthropic key — AES-256-GCM ciphertext (base64), iv:ct:tag tuple.
   // Last 4 chars of the plaintext stored separately for UI display only.
   anthropicKeyCiphertext String?
