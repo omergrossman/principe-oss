@@ -40,4 +40,4 @@ console.log("     DEFAULT_PUBLIC_KEY_HEX = the contents of updates-public.hex");
 console.log("  2. Store updates-private.pem somewhere safe (NOT in this repo).");
 console.log("     Load it via PRINCIPE_UPDATES_PRIVATE_KEY_PATH env when building bundles.");
 console.log("  3. Publish the public-key fingerprint outside the repo (release notes,");
-console.log("     security@principe.cloud) so self-hosters can verify provenance.");
+console.log("     your project page) so self-hosters can verify provenance.");

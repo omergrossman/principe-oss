@@ -7,7 +7,7 @@
  *
  * On-disk layout when published:
  *
- *   updates.principe.cloud/
+ *   <your-update-host>/
  *     latest.json                  → redirects to a versioned manifest
  *     manifests/2026-W23.json      → the manifest
  *     manifests/2026-W23.json.sig  → 64-byte ed25519 signature, raw bytes

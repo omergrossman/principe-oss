@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { NextRequest, NextResponse } from "next/server";
-import { generateAuthOptions, verifyAuthResponse } from "@dp/rbac";
+import { generateAuthOptions, verifyAuthResponse } from "@principe/rbac";
 import {
   setAuthenticationChallenge,
   getAuthenticationChallenge,

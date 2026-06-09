@@ -7,7 +7,7 @@ import type { SeverityConfig, Severity } from './severity'
  * The contract every project's theme must satisfy.
  *
  * Each project (each consuming app) provides one of these at mount time
- * via `<DPThemeProvider theme={projectTheme}>`. DP-shipped components
+ * via `<PrincipeThemeProvider theme={projectTheme}>`. Príncipe-shipped components
  * read from it via `useTheme()`.
  */
 export interface PlatformTheme {
@@ -76,5 +76,5 @@ export interface PlatformTheme {
   }
 }
 
-/** What DPThemeProvider exposes via context. */
+/** What PrincipeThemeProvider exposes via context. */
 export type ThemeContextValue = PlatformTheme

@@ -2,7 +2,9 @@
 
 ## Reporting a vulnerability
 
-**Please don't open a public issue for security problems.** Email **service@principe.cloud** with:
+**Please don't open a public issue for security problems.** Report it privately through GitHub: on this repo, go to the **Security** tab → **Report a vulnerability**. This opens a private advisory thread with the maintainer — nothing is public until a fix ships.
+
+Include:
 
 - A clear description of the vulnerability
 - Steps to reproduce
@@ -20,7 +22,7 @@ Príncipe is **pre-alpha**. Security boundaries are still being firmed up — tr
 - Authentication / session bypass
 - Server-side request forgery, SQL injection, command injection, deserialization issues
 - Statistician service contract violations that could leak data across panel runs
-- Knowledge-update bundle verification bypass (once Sprint 9 ships signed bundles)
+- Knowledge-update bundle verification bypass (ed25519 signature or sha256 commitment checks in the pull-updates path)
 - Any AGPL-3.0 license-circumvention mechanism baked into the code
 
 ## What we consider out of scope

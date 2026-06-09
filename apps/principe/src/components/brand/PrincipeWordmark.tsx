@@ -5,7 +5,7 @@
  * Principe's wordmark — lowercase typographic mark with the eclipse glyph.
  * Per the design system: ink-900 wordmark + flare-600 corona ring.
  * Marked "use client" because the Wordmark function is passed through
- * DPThemeProvider's theme prop, which crosses a server-to-client boundary.
+ * PrincipeThemeProvider's theme prop, which crosses a server-to-client boundary.
  */
 
 interface PrincipeWordmarkProps {

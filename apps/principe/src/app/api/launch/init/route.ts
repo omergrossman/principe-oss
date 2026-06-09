@@ -20,7 +20,7 @@ import {
  *    in any sources that don't have content yet.
  * 3. Pings the firm's Anthropic key.
  *
- * (OSS distribution: the DP-master baseline-sync step from the SaaS
+ * (OSS distribution: the upstream baseline-sync step from the SaaS
  * donor was removed in Sprint 8. Knowledge bundles arrive via the
  * Sprint 9 signed-update pipeline once it ships.)
  *

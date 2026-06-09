@@ -30,7 +30,7 @@ import type { BundleManifest, BundleEntry } from "./manifest";
  *
  * SECURITY INVARIANT: removal is hard-scoped to `kind = BUNDLE`. The
  * calibration baseline (kind TEXT, baked into the image), every user
- * upload, and every DP baseline-pushdown row are structurally untouchable
+ * upload, and every baseline-pushdown row are structurally untouchable
  * — an empty or hostile-but-signed bundle can never wipe the baseline.
  * (Assumes one curated feed per instance, per PRINCIPE_UPDATES_URL — all
  * BUNDLE rows originate from that single feed's successive bundles.)

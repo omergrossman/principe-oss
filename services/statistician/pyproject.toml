@@ -2,7 +2,7 @@
 name = "principe-statistician"
 version = "0.1.0"
 description = "Bayesian verdict service for Principe — Sprint 2 ships stub heuristics; Sprint 3 swaps in PyMC/NumPyro under the same API contract."
-authors = ["Omer Grossman <omer.grossman@gmail.com>"]
+authors = ["Omer Grossman <service@principe.cloud>"]
 package-mode = false
 
 [tool.poetry.dependencies]

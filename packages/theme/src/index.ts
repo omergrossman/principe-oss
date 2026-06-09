@@ -11,4 +11,4 @@ export type { PlatformTheme, ThemeContextValue } from './types'
 export { makeDefaultTheme } from './themes'
 
 // React Context glue (client-only)
-export { DPThemeProvider, useTheme } from './provider'
+export { PrincipeThemeProvider, useTheme } from './provider'

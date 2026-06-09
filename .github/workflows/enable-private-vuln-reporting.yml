@@ -1,0 +1,30 @@
+# Fires ONCE, automatically, when this repository is switched from private
+# to public (the `public` event), and turns on GitHub Private Vulnerability
+# Reporting — the confidential channel SECURITY.md and CODE_OF_CONDUCT point
+# at. PVR can't be enabled while a repo is private, so this closes that gap
+# at exactly the right moment without a manual step.
+#
+# Must live on the default branch before the flip to trigger. If the run
+# can't enable it (org policy may withhold admin from GITHUB_TOKEN), it logs
+# a warning with the one-click manual path instead of failing silently.
+name: enable-private-vuln-reporting
+
+on:
+  public:
+
+permissions:
+  administration: write
+
+jobs:
+  enable-pvr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enable Private Vulnerability Reporting
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if gh api --method PUT "/repos/${{ github.repository }}/private-vulnerability-reporting"; then
+            echo "✅ Private Vulnerability Reporting enabled."
+          else
+            echo "::warning title=Enable PVR manually::Automatic enable failed (GITHUB_TOKEN may lack admin). Turn it on at Settings → Code security → Private vulnerability reporting → Enable."
+          fi
