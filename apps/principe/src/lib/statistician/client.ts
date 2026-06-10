@@ -43,6 +43,25 @@ export class StatisticianBadRequest extends Error {
   }
 }
 
+/**
+ * A short, user-facing sentence explaining why statistical-soundness checks
+ * are missing. Validation never blocks a panel result, so these reassure the
+ * user the verdicts are fine while hiding stack/network noise (ECONNREFUSED…).
+ */
+export function describeStatisticianError(e: unknown): string {
+  const tail = " The panel verdicts are unaffected.";
+  if (e instanceof StatisticianUnavailable) {
+    return "The Statistician service isn't responding, so statistical-soundness checks were skipped." + tail;
+  }
+  if (e instanceof StatisticianContractViolation) {
+    return "The Statistician rejected the request (a configuration mismatch), so checks were skipped." + tail;
+  }
+  if (e instanceof PayloadTooLargeError || e instanceof StatisticianBadRequest) {
+    return "The Statistician couldn't process this panel's data, so checks were skipped." + tail;
+  }
+  return e instanceof Error ? e.message.slice(0, 160) : String(e);
+}
+
 interface ClientConfig {
   url: string;
   secret: string;
