@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
-import Link from "next/link";
 import { prisma } from "@/lib/db/prisma";
 import { requireRole } from "@/lib/auth/require-auth";
 import { Card } from "@/components/ui/Card";
@@ -48,21 +47,6 @@ export default async function SettingsPage() {
           </p>
         </header>
 
-        <Link href="/settings/members" className="block mb-6">
-          <Card className="hover:border-flare-600/30 transition-colors">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <h2 className="text-[16px] font-semibold text-ink-900 mb-0.5">
-                  Members
-                </h2>
-                <p className="text-[12px] text-ink-500">
-                  Invite teammates, manage roles, and revoke pending invites.
-                </p>
-              </div>
-              <span className="text-ink-300 font-mono text-[14px]">→</span>
-            </div>
-          </Card>
-        </Link>
 
         <Card className="mb-6">
           <div className="flex items-start justify-between mb-2">

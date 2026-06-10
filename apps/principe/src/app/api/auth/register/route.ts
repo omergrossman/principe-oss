@@ -21,8 +21,8 @@ import { prisma } from "@/lib/db/prisma";
  *   GET  — returns PublicKeyCredentialCreationOptions
  *   POST — verifies the attestation and writes the credential to the DB
  *
- * Requires an active session (created by /api/auth/signup or
- * /api/auth/accept-invite).
+ * Requires an active session (created during first-run setup by
+ * /api/auth/signup).
  */
 
 const RP_NAME = process.env.WEBAUTHN_RP_NAME ?? "Príncipe";
