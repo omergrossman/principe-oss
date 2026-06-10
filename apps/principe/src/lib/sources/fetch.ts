@@ -133,7 +133,7 @@ async function assertSafeUrl(rawUrl: string): Promise<void> {
 
 /** Normalise a URL hostname: strip IPv6 brackets, decode integer IPv4 forms. */
 function normaliseHost(hostname: string): string {
-  let h = hostname.toLowerCase().replace(/^\[|\]$/g, "");
+  const h = hostname.toLowerCase().replace(/^\[|\]$/g, "");
   // Decimal (2130706433), hex (0x7f000001), or octal (0177.0.0.1-style single
   // ints) representations of an IPv4 address.
   let n: number | null = null;
@@ -159,8 +159,10 @@ function normaliseHost(hostname: string): string {
  * form previously slipped past the regex guard and enabled SSRF to the
  * metadata IP. Tunnel/translation ranges (6to4, Teredo, NAT64) are also
  * non-"unicast" and therefore blocked.
+ *
+ * Exported for unit testing — it's the core of the SSRF guard.
  */
-function isPrivateOrReservedIp(ip: string): boolean {
+export function isPrivateOrReservedIp(ip: string): boolean {
   let addr: ipaddr.IPv4 | ipaddr.IPv6;
   try {
     addr = ipaddr.parse(ip);
