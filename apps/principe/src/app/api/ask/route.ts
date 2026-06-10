@@ -6,7 +6,11 @@ import { prisma } from "@/lib/db/prisma";
 import { requireAuth } from "@/lib/auth/require-auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getAnthropicClientForFirm } from "@/lib/anthropic/client";
-import { runPanelAsk, PanelAbortedError } from "@/lib/ciso-panel/ask";
+import {
+  runPanelAsk,
+  PanelAbortedError,
+  classifyAnthropicError,
+} from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
 import { appendAskHistory } from "@/lib/ciso-panel/ask-history";
 import {
@@ -20,7 +24,7 @@ import {
   markValidationDone,
 } from "@/lib/ciso-panel/progress";
 import { resolveCurrentProject } from "@/lib/projects/bootstrap";
-import { requestVerdict } from "@/lib/statistician/client";
+import { requestVerdict, describeStatisticianError } from "@/lib/statistician/client";
 import type { Verdict } from "@/lib/statistician/types";
 
 const CONFIDENCE_BY_KIND: Record<Verdict, number> = {
@@ -136,10 +140,13 @@ export async function POST(req: Request) {
         client,
       );
     } catch (synthErr) {
+      // The 100 per-persona verdicts already succeeded; only the summarising
+      // pass failed. Keep the result, explain the reason clearly, and point
+      // the user at the drill-down instead of dumping a raw stack message.
+      const cls = classifyAnthropicError(synthErr);
       summary = {
         summary:
-          "Synthesis pass failed — see the per-response drill-down for the raw 100 verdicts. " +
-          (synthErr instanceof Error ? synthErr.message.slice(0, 200) : ""),
+          `Couldn't generate the summary (${cls.userMessage}) — the ${panel.responses.length} individual verdicts below are valid; open the per-response drill-down to read them.`,
         topPros: [],
         topCons: [],
         insights: [],
@@ -186,11 +193,15 @@ export async function POST(req: Request) {
     const VALIDATION_BUDGET_MS = 15_000;
     const validation = await Promise.race([
       runValidation(question, project.id, observations).catch(
-        (e) => ({ error: e instanceof Error ? e.message : String(e) }),
+        (e) => ({ error: describeStatisticianError(e) }),
       ),
       new Promise<{ error: string }>((resolve) =>
         setTimeout(
-          () => resolve({ error: `validation timed out after ${VALIDATION_BUDGET_MS}ms` }),
+          () =>
+            resolve({
+              error:
+                "The Statistician service didn't respond in time, so statistical-soundness checks were skipped. The panel verdicts are unaffected.",
+            }),
           VALIDATION_BUDGET_MS,
         ),
       ),
