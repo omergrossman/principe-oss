@@ -67,6 +67,14 @@ services:
       # real signing public key ships — the default key is a placeholder.)
       PRINCIPE_UPDATES_URL: ${PRINCIPE_UPDATES_URL:-}
       PRINCIPE_UPDATES_PUBLIC_KEY: ${PRINCIPE_UPDATES_PUBLIC_KEY:-}
+    healthcheck:
+      # Hits the unauthenticated /api/health probe (DB reachability). The web
+      # image bundles curl. start_period covers the first-boot build/migrate.
+      test: ["CMD-SHELL", "curl -fsS http://localhost:3000/api/health || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
     depends_on:
       db:
         condition: service_healthy
