@@ -9,6 +9,7 @@
     "start": "pnpm --filter principe start",
     "lint": "pnpm --filter principe lint",
     "typecheck": "pnpm --filter principe exec tsc --noEmit",
+    "test": "pnpm --filter principe test",
     "build-bundle": "tsx scripts/build-bundle.ts",
     "generate-keypair": "tsx scripts/generate-keypair.ts"
   },
