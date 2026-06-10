@@ -6,7 +6,7 @@ import { prisma } from "@/lib/db/prisma";
 import { requireAuth } from "@/lib/auth/require-auth";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { getAnthropicClientForFirm } from "@/lib/anthropic/client";
-import { runPanelAsk } from "@/lib/ciso-panel/ask";
+import { runPanelAsk, PanelAbortedError } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
 import { appendAskHistory } from "@/lib/ciso-panel/ask-history";
 import {
@@ -236,6 +236,18 @@ export async function POST(req: Request) {
       validation,
     });
   } catch (e) {
+    // Fail-fast: the panel bailed early (bad key, no credit, outage). Surface
+    // the specific, actionable reason with a fitting status instead of a
+    // generic 500 after a long wait.
+    if (e instanceof PanelAbortedError) {
+      console.warn(
+        `[ask] panel aborted after ${e.attempted} call(s): ${e.classified.code}`,
+      );
+      return NextResponse.json(
+        { error: e.classified.userMessage, code: e.classified.code },
+        { status: e.classified.httpStatus },
+      );
+    }
     const msg = e instanceof Error ? e.message : "Unknown error";
     return NextResponse.json({ error: msg }, { status: 500 });
   } finally {
