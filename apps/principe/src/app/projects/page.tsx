@@ -67,7 +67,7 @@ export default async function ProjectsIndexPage({
             </h1>
             <p className="text-ink-500 mt-2 max-w-2xl">
               {isAdmin
-                ? "Read-only view of every member's projects. You can open and inspect them, but only the owner can edit, run asks, archive, or delete. Use /settings/members to manage who has access."
+                ? "Read-only view of every member's projects. You can open and inspect them, but only the owner can edit, run asks, archive, or delete."
                 : "Each project owns its own panel, knowledge sources, and ask history. Pick one to continue, or create a new one with a tailored panel composition."}
             </p>
           </div>

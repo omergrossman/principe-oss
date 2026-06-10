@@ -82,7 +82,7 @@ export default function LoginPage() {
           "Sign-in was cancelled or timed out. Tap “Sign in with passkey” again and approve the Touch ID / Face ID prompt.";
       } else if (/not found|no credential/i.test(msg)) {
         friendly =
-          "No matching passkey on this device. Use the passkey you created for Príncipe — or, if you don’t have one yet, ask your admin for an invite.";
+          "No matching passkey on this device. Use the passkey you created during setup, on the same device and browser.";
       } else if (/expired|challenge/i.test(msg)) {
         friendly = "That took too long. Tap “Sign in with passkey” and try again.";
       }
@@ -135,8 +135,8 @@ export default function LoginPage() {
                 <p className="font-semibold mb-1">Couldn&apos;t sign in</p>
                 <p>{error}</p>
                 <p className="mt-2 text-ink-500 text-[12px]">
-                  No passkey for Príncipe yet? Ask your workspace admin for an
-                  invite to set one up.
+                  Passkeys are tied to the device and browser where you
+                  completed setup. Use that one to sign in.
                 </p>
               </div>
             )}

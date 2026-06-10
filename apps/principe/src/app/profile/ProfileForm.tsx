@@ -88,7 +88,7 @@ export function ProfileForm({
       <LockedField
         label="Email"
         value={email}
-        hint="Set by your admin when you were invited. Contact your admin to change it."
+        hint="Set during initial setup and used as your account identity."
       />
 
       <LockedField
