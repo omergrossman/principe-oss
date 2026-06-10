@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { projectDisplayName } from "@/lib/projects/describe";
 
 interface Project {
@@ -118,36 +119,36 @@ export function ProjectSwitcher({
             })}
           </div>
           <div className="border-t border-ink-100 py-1">
-            <a
+            <Link
               href={`/projects/${currentId}/history`}
               className="block px-3 py-1.5 text-[12px] text-ink-500 hover:bg-subtle"
             >
               History for this project
-            </a>
-            <a
+            </Link>
+            <Link
               href={`/projects/${currentId}/sources`}
               className="block px-3 py-1.5 text-[12px] text-ink-500 hover:bg-subtle"
             >
               Project sources
-            </a>
-            <a
+            </Link>
+            <Link
               href={`/projects/${currentId}/settings`}
               className="block px-3 py-1.5 text-[12px] text-ink-500 hover:bg-subtle"
             >
               Project settings
-            </a>
-            <a
+            </Link>
+            <Link
               href="/projects"
               className="block px-3 py-1.5 text-[12px] text-ink-500 hover:bg-subtle"
             >
               All projects →
-            </a>
-            <a
+            </Link>
+            <Link
               href="/projects/new"
               className="block px-3 py-1.5 text-[12px] text-flare-600 hover:bg-subtle font-semibold"
             >
               + New project
-            </a>
+            </Link>
           </div>
         </div>
       )}
