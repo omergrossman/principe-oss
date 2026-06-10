@@ -2,6 +2,7 @@
 import crypto from "node:crypto";
 import net from "node:net";
 import dns from "node:dns/promises";
+import ipaddr from "ipaddr.js";
 
 /**
  * Lightweight URL fetcher + text extractor.
@@ -145,37 +146,32 @@ function normaliseHost(hostname: string): string {
   return h;
 }
 
-function isPrivateV4(ip: string): boolean {
-  const p = ip.split(".").map(Number);
-  if (p.length !== 4 || p.some((x) => Number.isNaN(x) || x < 0 || x > 255)) {
-    return true; // malformed → treat as unsafe
-  }
-  const [a, b] = p;
-  return (
-    a === 0 || // 0.0.0.0/8
-    a === 127 || // loopback
-    a === 10 || // private
-    (a === 169 && b === 254) || // link-local + cloud metadata
-    (a === 172 && b >= 16 && b <= 31) || // private
-    (a === 192 && b === 168) || // private
-    (a === 100 && b >= 64 && b <= 127) || // CGNAT
-    a >= 224 // multicast / reserved
-  );
-}
-
+/**
+ * True unless `ip` is a normal, globally-routable unicast address. Blocks
+ * loopback, private (RFC1918), link-local (incl. the cloud metadata IP
+ * 169.254.169.254), unique-local, CGNAT, multicast, broadcast, and reserved
+ * ranges — for BOTH IPv4 and IPv6.
+ *
+ * Uses ipaddr.js rather than hand-rolled regex so every textual form of an
+ * address normalises to the same bytes. Critically, an IPv4-mapped IPv6
+ * address is unwrapped to its IPv4 form whether written dotted
+ * (`::ffff:169.254.169.254`) or hex-grouped (`::ffff:a9fe:a9fe`) — the hex
+ * form previously slipped past the regex guard and enabled SSRF to the
+ * metadata IP. Tunnel/translation ranges (6to4, Teredo, NAT64) are also
+ * non-"unicast" and therefore blocked.
+ */
 function isPrivateOrReservedIp(ip: string): boolean {
-  const kind = net.isIP(ip);
-  if (kind === 4) return isPrivateV4(ip);
-  if (kind === 6) {
-    const l = ip.toLowerCase();
-    if (l === "::1" || l === "::") return true; // loopback / unspecified
-    if (/^fe[89ab]/.test(l)) return true; // fe80::/10 link-local
-    if (/^f[cd]/.test(l)) return true; // fc00::/7 unique-local
-    const m = l.match(/::ffff:(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/);
-    if (m) return isPrivateV4(m[1]); // IPv4-mapped IPv6
-    return false;
+  let addr: ipaddr.IPv4 | ipaddr.IPv6;
+  try {
+    addr = ipaddr.parse(ip);
+  } catch {
+    return true; // unparseable → unsafe
   }
-  return true; // not a valid IP → unsafe
+  if (addr.kind() === "ipv6") {
+    const v6 = addr as ipaddr.IPv6;
+    if (v6.isIPv4MappedAddress()) addr = v6.toIPv4Address();
+  }
+  return addr.range() !== "unicast";
 }
 
 function extractTitle(html: string): string | null {

@@ -11,7 +11,15 @@ export async function GET(req: Request) {
   }
   const url = new URL(req.url);
   const includeArchived = url.searchParams.get("archived") === "1";
-  const projects = await listProjects(session.firmId, { includeArchived });
+  // Members may only list their OWN projects; admins see the whole firm.
+  // Mirrors the scoping in app/projects/page.tsx — without it any member
+  // could read every other member's projects (owner email, composition,
+  // ask counts) by hitting this endpoint directly.
+  const isAdmin = session.role === "VC_ADMIN";
+  const projects = await listProjects(session.firmId, {
+    includeArchived,
+    ownerUserId: isAdmin ? undefined : session.userId,
+  });
   return NextResponse.json({ projects });
 }
 
