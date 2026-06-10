@@ -2,6 +2,15 @@ packages:
   - "apps/*"
   - "packages/*"
 verifyDepsBeforeRun: false
+# Pin patched versions of transitively-pulled packages with advisories. All
+# are same-major bumps (API-compatible):
+#   dompurify        — via monaco-editor; 10 moderate XSS/proto-pollution
+#   @hono/node-server — via prisma tooling; middleware-bypass
+#   postcss          — via next; XSS via unescaped </style>
+overrides:
+  dompurify: ">=3.4.0"
+  "@hono/node-server": "^1.19.13"
+  postcss: ">=8.5.10"
 onlyBuiltDependencies:
   - "@prisma/engines"
   - esbuild
