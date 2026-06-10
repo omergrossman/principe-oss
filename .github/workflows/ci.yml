@@ -31,12 +31,8 @@ jobs:
       - name: Generate Prisma client
         run: pnpm --filter principe exec prisma generate
 
-      # Non-blocking for now: a known backlog of pre-existing lint errors
-      # (5 react-hooks-in-effect, 2 next/link) is tracked separately. Once
-      # cleared, drop continue-on-error to make lint a hard gate too.
-      - name: Lint (non-blocking)
+      - name: Lint
         run: pnpm --filter principe lint
-        continue-on-error: true
 
       - name: Typecheck
         run: pnpm --filter principe typecheck
