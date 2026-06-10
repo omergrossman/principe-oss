@@ -1,0 +1,45 @@
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: lint · typecheck · test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.2.2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # Prisma client is generated, not committed — typecheck needs its types.
+      # `generate` only reads the schema; no database connection required.
+      - name: Generate Prisma client
+        run: pnpm --filter principe exec prisma generate
+
+      # Non-blocking for now: a known backlog of pre-existing lint errors
+      # (5 react-hooks-in-effect, 2 next/link) is tracked separately. Once
+      # cleared, drop continue-on-error to make lint a hard gate too.
+      - name: Lint (non-blocking)
+        run: pnpm --filter principe lint
+        continue-on-error: true
+
+      - name: Typecheck
+        run: pnpm --filter principe typecheck
+
+      - name: Test
+        run: pnpm --filter principe test
