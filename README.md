@@ -51,21 +51,24 @@ Then ask the panel a question and you're running.
 
 ## Supported platforms
 
-The app runs entirely in Docker containers, so it behaves identically everywhere. The installer is a bash script:
+The app runs entirely in Docker containers, so it behaves identically everywhere. Each OS has a one-command installer:
 
-| OS | How |
+| OS | Command |
 |---|---|
-| **macOS** | Run the installer directly — it sets up Docker Desktop via Homebrew if needed. |
-| **Linux** | Run the installer directly — it sets up Docker Engine via `get.docker.com` if needed. |
-| **Windows** | Use **WSL2** (Docker Desktop on Windows is WSL2-backed anyway). One-time setup below, then the install is identical to Linux. |
+| **macOS / Linux** | `curl -fsSL https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.sh \| bash` — sets up Docker if needed (Homebrew on macOS, `get.docker.com` on Linux). |
+| **Windows** | See the PowerShell one-liner below. |
 
-### Windows (WSL2)
+### Windows
+
+Open **PowerShell** and run:
 
 ```powershell
-wsl --install      # in an admin PowerShell, then reboot
+irm https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.ps1 | iex
 ```
 
-Install **Docker Desktop**, and in its settings enable **"Use the WSL 2 based engine"** and **WSL integration** for your distro. Then open your **Ubuntu (WSL2)** terminal and run the same install command there — inside WSL2 everything is Linux, so it just works. (Running the installer in Git Bash instead of WSL2 won't work, and it'll tell you so.)
+`install.ps1` does the whole Windows setup for you — it requests Administrator rights, enables **WSL2** (Docker Desktop's engine needs it; **one reboot** the first time, after which the installer resumes automatically), installs **Docker Desktop** and **Git** via `winget`, clones the repo, and boots the stack. The only thing you provide is your Anthropic API key, in the wizard.
+
+> Requires Windows 10 (2004+) or Windows 11 with `winget` (App Installer). On first Docker Desktop launch you may need to accept its terms once. If anything interrupts the install, just run the command again — it's safe to re-run and picks up where it left off.
 
 ## Architecture
 
