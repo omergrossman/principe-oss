@@ -389,7 +389,7 @@ interface ParsedResponse {
   parseError: boolean;
 }
 
-function parseStructured(text: string): ParsedResponse {
+export function parseStructured(text: string): ParsedResponse {
   // Try strict parse first.
   const candidate = extractJsonBlock(text);
   if (candidate) {
@@ -549,7 +549,7 @@ function normaliseVerdict(v: unknown): Verdict {
   return "neutral";
 }
 
-function computeAggregates(responses: PanelResponse[]): PanelAggregates {
+export function computeAggregates(responses: PanelResponse[]): PanelAggregates {
   const total = responses.length;
   let pro = 0,
     con = 0,
