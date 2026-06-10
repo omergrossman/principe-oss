@@ -103,6 +103,34 @@ rm .env.runtime
 
 ⚠️ Rotating `PRINCIPE_ENCRYPTION_KEY` means any stored API keys can no longer be decrypted. You'll need to re-enter your Anthropic key in Settings after rotation.
 
+## Backups
+
+Your data lives in the `principe_db` Docker volume. Back it up to a timestamped, gzipped SQL dump (safe to run on a live stack):
+
+```bash
+./bin/backup.sh                              # → backups/principe-YYYYMMDD-HHMMSS.sql.gz
+./bin/restore.sh backups/principe-….sql.gz   # restore (overwrites the current DB; prompts first)
+```
+
+For regular snapshots, schedule it — e.g. a nightly cron entry:
+
+```cron
+0 3 * * *  cd /path/to/principe-oss && ./bin/backup.sh
+```
+
+> `docker compose down -v` deletes the volume **and all your data** — take a backup first. Plain `docker compose down` keeps it.
+
+## Health check
+
+The web service exposes an unauthenticated liveness probe at **`/api/health`** — it reports only whether the app can reach its database (no tenant data), returning `200` when healthy and `503` when degraded:
+
+```bash
+curl -fsS http://localhost:3000/api/health
+# {"status":"ok","db":true,"time":"…"}
+```
+
+The Docker healthcheck and any reverse proxy / uptime monitor can use it. Container health shows up in `docker compose ps`. For logs, use `docker compose logs -f web statistician`.
+
 ## Knowledge updates
 
 By default Príncipe ships in **local mode** — the calibration corpus in `calibration/` is what your panel reasons over, and there's no callout to any update endpoint. You see no "Check for updates" UI; nothing pings home.
