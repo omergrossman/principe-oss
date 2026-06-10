@@ -113,6 +113,116 @@ const PANEL_MIN_DISPATCH_INTERVAL_MS = Math.max(
   Number(process.env.PRINCIPE_PANEL_MIN_DISPATCH_INTERVAL_MS) || 250,
 );
 
+/**
+ * Classify an Anthropic failure. A failure is "fatal" when retrying or trying
+ * other personas can't help — a bad key, no credit, a permission/model issue.
+ * Those are deterministic across all ~100 calls, so the circuit breaker aborts
+ * the fan-out on the FIRST one instead of waiting minutes for every call to
+ * fail identically. Transient ones (429/5xx/network) are not fatal.
+ */
+export interface ClassifiedAnthropicError {
+  fatal: boolean;
+  code:
+    | "auth" | "credit" | "permission" | "model" | "bad_request"
+    | "rate_limit" | "overloaded" | "server" | "network" | "unknown";
+  httpStatus: number; // suggested status for the /api/ask response
+  userMessage: string;
+}
+
+export function classifyAnthropicError(e: unknown): ClassifiedAnthropicError {
+  const status =
+    typeof (e as { status?: unknown })?.status === "number"
+      ? (e as { status: number }).status
+      : 0;
+  const raw = e instanceof Error ? e.message : String(e ?? "");
+  const m = raw.toLowerCase();
+  // Credit/billing first, matched by message — the status varies (400/403),
+  // and `models.list()` (used by the setup/settings key check) never trips it,
+  // so a real messages.create call is the only place this surfaces.
+  if (
+    m.includes("credit balance is too low") ||
+    m.includes("plans & billing") ||
+    m.includes("purchase credits")
+  ) {
+    return {
+      fatal: true, code: "credit", httpStatus: 402,
+      userMessage:
+        "Your Anthropic account is out of credit. Add credit in the Anthropic console (Plans & Billing), then try again.",
+    };
+  }
+  if (
+    status === 401 || m.includes("authentication") ||
+    m.includes("invalid x-api-key") || m.includes("invalid api key")
+  ) {
+    return {
+      fatal: true, code: "auth", httpStatus: 401,
+      userMessage:
+        "Anthropic rejected the API key (authentication failed). Update it in Settings.",
+    };
+  }
+  if (status === 403) {
+    return {
+      fatal: true, code: "permission", httpStatus: 403,
+      userMessage:
+        "This API key isn't permitted to use the panel model — check its permissions in the Anthropic console.",
+    };
+  }
+  if (status === 404) {
+    return {
+      fatal: true, code: "model", httpStatus: 502,
+      userMessage: "The configured Claude model isn't available to this API key.",
+    };
+  }
+  if (status === 400) {
+    return {
+      fatal: true, code: "bad_request", httpStatus: 400,
+      userMessage: `Anthropic rejected the request: ${raw.slice(0, 140)}`,
+    };
+  }
+  if (status === 429) {
+    return {
+      fatal: false, code: "rate_limit", httpStatus: 429,
+      userMessage:
+        "Anthropic rate-limited the panel. Try again shortly, or lower PRINCIPE_PANEL_CONCURRENCY.",
+    };
+  }
+  if (status === 529) {
+    return {
+      fatal: false, code: "overloaded", httpStatus: 503,
+      userMessage: "Anthropic is overloaded right now — try again in a moment.",
+    };
+  }
+  if (status >= 500) {
+    return {
+      fatal: false, code: "server", httpStatus: 502,
+      userMessage: "Anthropic returned a server error — try again shortly.",
+    };
+  }
+  return {
+    fatal: false, code: status === 0 ? "network" : "unknown", httpStatus: 502,
+    userMessage: `Couldn't reach Anthropic: ${raw.slice(0, 140)}`,
+  };
+}
+
+/**
+ * Thrown by runPanelAsk when the fan-out is aborted early because the panel
+ * cannot succeed (a fatal error, or a burst of failures with no successes).
+ * Carries a user-facing message + how many calls were attempted before bailing.
+ */
+export class PanelAbortedError extends Error {
+  constructor(
+    public readonly classified: ClassifiedAnthropicError,
+    public readonly attempted: number,
+  ) {
+    super(classified.userMessage);
+    this.name = "PanelAbortedError";
+  }
+}
+
+/** With zero successes, this many failures means the API is systemically down
+ *  (outage/overload) — bail instead of grinding through all ~100 personas. */
+const EARLY_ABORT_FAILURES = 6;
+
 export async function runPanelAsk(
   question: string,
   client: Anthropic,
@@ -146,10 +256,19 @@ export async function runPanelAsk(
 
   startProgress(firmId, personas.length);
 
+  // Circuit breaker: abort the whole fan-out the moment it's clear the panel
+  // can't succeed — a fatal error (bad key, no credit, permission/model) on
+  // ANY call, or a burst of failures with zero successes (API outage). Turns a
+  // multi-minute wait-for-all-100-to-fail into a couple of seconds.
+  const controller = new AbortController();
+  let successes = 0;
+  let failures = 0;
+  let abortInfo: ClassifiedAnthropicError | null = null;
+
   const settled = await runWithConcurrency(
     personas,
     PANEL_CONCURRENCY,
-    (p) =>
+    (p, signal) =>
       askOne(
         p,
         question,
@@ -160,11 +279,34 @@ export async function runPanelAsk(
           { insights, question, pitchDeckReferences },
         ),
         questionThreats,
+        signal,
       ),
-    (result) =>
-      incrementPersona(firmId, result.status === "rejected"),
+    (result, _i, ctrl) => {
+      incrementPersona(firmId, result.status === "rejected");
+      if (result.status === "fulfilled") {
+        successes++;
+        return;
+      }
+      if (ctrl.signal.aborted) return; // our own cancellation, not a real failure
+      failures++;
+      const cls = classifyAnthropicError(result.reason);
+      if (
+        !abortInfo &&
+        (cls.fatal || (successes === 0 && failures >= EARLY_ABORT_FAILURES))
+      ) {
+        abortInfo = cls;
+        ctrl.abort();
+      }
+    },
     PANEL_MIN_DISPATCH_INTERVAL_MS,
+    controller,
   );
+
+  // Nothing useful can come back — surface the specific reason fast instead of
+  // returning a panel of 100 identical failures.
+  if (abortInfo) {
+    throw new PanelAbortedError(abortInfo, successes + failures);
+  }
 
   let totalInput = 0;
   let totalOutput = 0;
@@ -492,9 +634,14 @@ function bump(
 async function runWithConcurrency<T, R>(
   items: T[],
   concurrency: number,
-  worker: (item: T) => Promise<R>,
-  onSettle?: (result: PromiseSettledResult<R>, index: number) => void,
+  worker: (item: T, signal: AbortSignal) => Promise<R>,
+  onSettle?: (
+    result: PromiseSettledResult<R>,
+    index: number,
+    controller: AbortController,
+  ) => void,
   minDispatchIntervalMs = 0,
+  controller: AbortController = new AbortController(),
 ): Promise<PromiseSettledResult<R>[]> {
   const results: PromiseSettledResult<R>[] = new Array(items.length);
   let cursor = 0;
@@ -512,16 +659,18 @@ async function runWithConcurrency<T, R>(
 
   async function pump() {
     while (true) {
+      if (controller.signal.aborted) return;
       const i = cursor++;
       if (i >= items.length) return;
       await acquire();
+      if (controller.signal.aborted) return;
       try {
-        const value = await worker(items[i]);
+        const value = await worker(items[i], controller.signal);
         results[i] = { status: "fulfilled", value };
       } catch (reason) {
         results[i] = { status: "rejected", reason };
       }
-      onSettle?.(results[i], i);
+      onSettle?.(results[i], i, controller);
     }
   }
   const runners = Array.from(
@@ -529,6 +678,14 @@ async function runWithConcurrency<T, R>(
     pump,
   );
   await Promise.all(runners);
+  // Early-abort leaves trailing items unprocessed — backfill so callers that
+  // map over the array never hit `undefined`. (runPanelAsk throws on a real
+  // abort before reaching its own map, but stay defensive.)
+  for (let i = 0; i < items.length; i++) {
+    if (!results[i]) {
+      results[i] = { status: "rejected", reason: new Error("cancelled") };
+    }
+  }
   return results;
 }
 
@@ -538,6 +695,7 @@ async function askOne(
   client: Anthropic,
   briefing: string,
   questionThreats: string[] = [],
+  signal?: AbortSignal,
 ): Promise<{ text: string; inputTokens: number; outputTokens: number }> {
   // Sprint 5 — inject persona depth sections from coreOpinions +
   // signatureVocabulary. These sit between the base systemPrompt and
@@ -559,7 +717,7 @@ async function askOne(
   // Keeps each response short enough to finish valid JSON inside max_tokens
   // and suppresses prose preambles/refusals that break the parser.
   const system = `${base}\n\nRESPONSE FORMAT — STRICT: Reply AS this persona with ONLY the single JSON object you were instructed to produce (verdict, sentiment, headline, reasoning) — nothing before or after it, no code fences, no preamble, no plain prose. Even if the question is open-ended, vague, a direct query, or not a product pitch, still answer in character with a real verdict and reasoning — NEVER refuse, never reply that you only evaluate pitches, never break format. Keep "reasoning" to 2-3 short sentences (~50 words maximum); be decisive, not exhaustive.`;
-  const res = await callAnthropicWithBackoff(client, system, question);
+  const res = await callAnthropicWithBackoff(client, system, question, signal);
   // We prefilled the assistant turn with "{" (see callAnthropicWithBackoff) to
   // force JSON; the API returns only the continuation, so prepend it back to
   // reconstruct the full object before the parser sees it.
@@ -578,6 +736,7 @@ async function callAnthropicWithBackoff(
   client: Anthropic,
   system: string,
   question: string,
+  signal?: AbortSignal,
 ): Promise<Anthropic.Messages.Message> {
   let lastErr: unknown = null;
   for (let attempt = 0; attempt <= MAX_429_RETRIES; attempt++) {
@@ -601,9 +760,11 @@ async function callAnthropicWithBackoff(
           { role: "user", content: question },
           { role: "assistant", content: "{" },
         ],
-      });
+      }, { signal });
     } catch (e) {
       lastErr = e;
+      // The circuit breaker aborted the fan-out — stop now, don't retry.
+      if (signal?.aborted) throw e;
       // Anthropic SDK exposes .status on its APIError class. 429 is
       // the only retriable case here — 4xx other than 429 is a client
       // bug we shouldn't paper over with retries.
