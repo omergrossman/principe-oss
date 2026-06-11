@@ -1,7 +1,10 @@
 # Principe web app — Next.js 16 + Prisma 7.
 # Built from project root: `docker build -f apps/principe/Dockerfile .`
 
-FROM node:22-alpine AS base
+# Pinned to Alpine 3.22 — Alpine 3.23 has a musl regression that causes
+# "exec format error" on ARM64 (Apple Silicon). Revert to node:22-alpine
+# once upstream images move to Alpine 3.24+. (docker-library/postgres#1389)
+FROM node:22-alpine3.22 AS base
 RUN apk add --no-cache libc6-compat curl bash openssl \
     && npm install -g pnpm@11.2.2
 WORKDIR /workspace
