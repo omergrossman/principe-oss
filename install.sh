@@ -166,6 +166,62 @@ open_browser() {
   ok "(workspace name → admin → Anthropic API key → passkey)."
 }
 
+# Put a Príncipe icon on the Desktop that re-opens the app (and brings the
+# stack up first). Best-effort — never fails the install.
+create_desktop_launcher() {
+  local desktop="$HOME/Desktop"
+  [ -d "$desktop" ] || return 0
+  local repo; repo="$(pwd)"
+  [ -x "$repo/bin/launch.sh" ] || return 0
+  case "$OS" in
+    Darwin) _launcher_macos "$repo" "$desktop" ;;
+    Linux)  _launcher_linux "$repo" "$desktop" ;;
+  esac
+}
+
+_launcher_macos() {
+  local repo="$1" desktop="$2" app="$2/Príncipe.app"
+  command -v osacompile >/dev/null 2>&1 || return 0
+  rm -rf "$app"
+  local src; src="$(mktemp -t principe).applescript"
+  # Single-quote the repo path inside the AppleScript string so spaces are safe.
+  printf 'do shell script %s\n' "\"'$repo/bin/launch.sh' > /dev/null 2>&1 &\"" > "$src"
+  if osacompile -o "$app" "$src" 2>/dev/null; then
+    cp "$repo/assets/desktop/principe.icns" "$app/Contents/Resources/applet.icns" 2>/dev/null || true
+    # NSWorkspace.setIcon makes Finder actually show the custom icon (a bare
+    # applet.icns swap often won't refresh). swift ships with the Xcode CLT
+    # that `git` already required, but degrade gracefully if it's absent.
+    if command -v swift >/dev/null 2>&1; then
+      swift - "$app" "$repo/assets/desktop/principe.icns" >/dev/null 2>&1 <<'SWIFT' || true
+import Cocoa
+let a = CommandLine.arguments
+if a.count >= 3, let img = NSImage(contentsOfFile: a[2]) {
+  NSWorkspace.shared.setIcon(img, forFile: a[1], options: [])
+}
+SWIFT
+    fi
+    touch "$app"
+    ok "Desktop icon created — double-click Príncipe to open it."
+  fi
+  rm -f "$src"
+}
+
+_launcher_linux() {
+  local repo="$1" desktop="$2" f="$2/principe.desktop"
+  cat > "$f" <<EOF
+[Desktop Entry]
+Type=Application
+Name=Príncipe
+Comment=Open the Príncipe CISO panel
+Exec=$repo/bin/launch.sh
+Icon=$repo/assets/desktop/principe.png
+Terminal=false
+EOF
+  chmod +x "$f" 2>/dev/null || true
+  command -v gio >/dev/null 2>&1 && gio set "$f" metadata::trusted true 2>/dev/null || true
+  ok "Desktop icon created (principe.desktop)."
+}
+
 # On Windows there's a dedicated PowerShell installer (install.ps1) that sets
 # up WSL2 + Docker Desktop for you. bash in Git Bash / MSYS / Cygwin can't do
 # that, so redirect those users to it instead of failing cryptically. Inside
@@ -190,6 +246,7 @@ main() {
   enter_repo
   boot
   open_browser
+  create_desktop_launcher
 }
 
 main "$@"
