@@ -201,6 +201,28 @@ function Boot-Stack($dir) {
   & docker compose --env-file .env.runtime up -d --build
 }
 
+# Put a Príncipe icon on the Desktop that re-opens the app (and brings the
+# stack up first via bin/launch.cmd). Best-effort — never fails the install.
+function New-DesktopShortcut($dir) {
+  try {
+    $desktop = [Environment]::GetFolderPath("Desktop")
+    $lnk = Join-Path $desktop "Príncipe.lnk"
+    $launch = Join-Path $dir "bin\launch.cmd"
+    $icon = Join-Path $dir "assets\desktop\principe.ico"
+    $ws = New-Object -ComObject WScript.Shell
+    $sc = $ws.CreateShortcut($lnk)
+    $sc.TargetPath = $launch
+    $sc.WorkingDirectory = $dir
+    $sc.IconLocation = "$icon,0"
+    $sc.Description = "Open the Príncipe CISO panel"
+    $sc.WindowStyle = 7  # minimized — launch.cmd flashes then opens the browser
+    $sc.Save()
+    Ok "Desktop icon created — double-click Príncipe to open it."
+  } catch {
+    Warn "Couldn't create the desktop shortcut (non-fatal)."
+  }
+}
+
 # ───────────────────────────── main ─────────────────────────────
 Info "Príncipe Windows installer — let's get you running."
 if (-not (Test-Admin)) { Invoke-Elevated }
@@ -210,6 +232,7 @@ Ensure-Docker
 $dir = Resolve-RepoDir
 Ensure-EnvFile $dir
 Boot-Stack $dir
+New-DesktopShortcut $dir
 
 Start-Process $AppUrl | Out-Null
 Ok "Príncipe is starting. Opening $AppUrl"
