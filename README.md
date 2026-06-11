@@ -47,7 +47,7 @@ When healthy (≈3-5 min on first boot, seconds on subsequent boots), the instal
 - **Anthropic API key** (validated against `api.anthropic.com` before being persisted — AES-256-GCM encrypted at rest)
 - **Register a passkey** (Touch ID, Face ID, or a security key)
 
-Then ask the panel a question and you're running.
+Then ask the panel a question and you're running. The installer also drops a **Príncipe icon on your Desktop** — double-click it any time to bring the stack up and reopen the app.
 
 ## Supported platforms
 
