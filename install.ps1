@@ -1,4 +1,4 @@
-#Requires -Version 5.1
+﻿#Requires -Version 5.1
 <#
   Príncipe — Windows one-command installer.
 
@@ -99,8 +99,8 @@ function Sync-Path {
 
 function Test-Docker {
   if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { return $false }
-  & docker info *> $null
-  return ($LASTEXITCODE -eq 0)
+  try { $null = & docker info 2>&1; return ($LASTEXITCODE -eq 0) }
+  catch { return $false }
 }
 
 function Start-DockerDesktop {
