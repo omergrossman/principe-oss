@@ -9,7 +9,10 @@
 
 services:
   db:
-    image: postgres:16-alpine
+    # Pinned to Alpine 3.22 — Alpine 3.23 has a musl regression that causes
+    # "exec format error" on ARM64 (Apple Silicon). Revert to postgres:16-alpine
+    # once upstream images move to Alpine 3.24+. (docker-library/postgres#1389)
+    image: postgres:16-alpine3.22
     restart: unless-stopped
     environment:
       POSTGRES_DB: principe

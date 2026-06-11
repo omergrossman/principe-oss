@@ -24,6 +24,7 @@ REPO_URL="https://github.com/omergrossman/principe-oss"
 REPO_DIR="principe-oss"
 ASSUME_YES="${PRINCIPE_YES:-0}"
 OS="$(uname -s)"
+ARCH="$(uname -m)"
 
 c_info='\033[1;36m'; c_warn='\033[1;33m'; c_err='\033[1;31m'; c_ok='\033[1;32m'; c_off='\033[0m'
 log()  { printf "${c_info}[principe]${c_off} %s\n" "$*"; }
@@ -131,8 +132,20 @@ enter_repo() {
   cd "$REPO_DIR"
 }
 
+# ─── platform ──────────────────────────────────────────────────────────
+# Map the host CPU to a Docker platform so images build natively (no QEMU).
+set_docker_platform() {
+  case "$ARCH" in
+    x86_64)        export DOCKER_DEFAULT_PLATFORM="linux/amd64" ;;
+    arm64|aarch64) export DOCKER_DEFAULT_PLATFORM="linux/arm64" ;;
+    *)             warn "Unknown architecture '$ARCH' — letting Docker choose the platform." ; return ;;
+  esac
+  log "CPU architecture: $ARCH → Docker platform: $DOCKER_DEFAULT_PLATFORM"
+}
+
 # ─── boot ──────────────────────────────────────────────────────────────
 boot() {
+  set_docker_platform
   log "Booting the stack — first run builds images and can take 3–5 minutes."
   if [ "${NEED_SG:-0}" = "1" ]; then
     # docker group was just added; activate it for this command without re-login
