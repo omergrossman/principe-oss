@@ -58,14 +58,14 @@ describe("wilsonInterval", () => {
 });
 
 describe("stanceFor", () => {
-  it("maps buy% to the five stances at the thresholds", () => {
-    expect(stanceFor(80)).toBe("Buy");
-    expect(stanceFor(66)).toBe("Buy");
-    expect(stanceFor(60)).toBe("Lean Buy");
+  it("maps % in favor to the five stances at the thresholds", () => {
+    expect(stanceFor(80)).toBe("Strong Yes");
+    expect(stanceFor(66)).toBe("Strong Yes");
+    expect(stanceFor(60)).toBe("Lean Yes");
     expect(stanceFor(50)).toBe("Split");
     expect(stanceFor(40)).toBe("Lean No");
-    expect(stanceFor(33)).toBe("No");
-    expect(stanceFor(0)).toBe("No");
+    expect(stanceFor(33)).toBe("Strong No");
+    expect(stanceFor(0)).toBe("Strong No");
   });
 });
 
@@ -79,10 +79,10 @@ describe("confidenceLabel", () => {
 });
 
 describe("computeDecision", () => {
-  it("buy% = pro / total (neutrals + failures count as not-a-yes)", () => {
+  it("favor% = pro / total (neutrals + failures count as not-in-favor)", () => {
     // 17 pro out of 50 total → 34% → Lean No
     const d = computeDecision(responses(50), agg({ proCount: 17, conCount: 20, neutralCount: 13 }), [], "");
-    expect(d.recommendation.buyPct).toBe(34);
+    expect(d.recommendation.favorPct).toBe(34);
     expect(d.recommendation.stance).toBe("Lean No");
     expect(d.confidence.belowFloor).toBe(false);
   });
@@ -101,7 +101,7 @@ describe("computeDecision", () => {
     );
     expect(d.dissent.objection).toBe("Integration risk is too high");
     expect(d.recommendation.rationale).toBe("Lean buy: most would adopt.");
-    expect(d.recommendation.buyPct).toBe(75); // computed, not from prose
+    expect(d.recommendation.favorPct).toBe(75); // computed, not from prose
   });
 
   it("names a majority-con segment, with a min-n guard", () => {

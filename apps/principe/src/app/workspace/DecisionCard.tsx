@@ -5,11 +5,11 @@ import { Card } from "@/components/ui/Card";
 import { PANEL_FLOOR, type PanelDecision, type DecisionStance } from "@/lib/ciso-panel/decision";
 
 const STANCE_TONE: Record<DecisionStance, { text: string; accent: string }> = {
-  Buy: { text: "text-verdict-pass", accent: "border-l-verdict-pass" },
-  "Lean Buy": { text: "text-verdict-pass", accent: "border-l-verdict-pass" },
+  "Strong Yes": { text: "text-verdict-pass", accent: "border-l-verdict-pass" },
+  "Lean Yes": { text: "text-verdict-pass", accent: "border-l-verdict-pass" },
   Split: { text: "text-verdict-warn", accent: "border-l-verdict-warn" },
   "Lean No": { text: "text-verdict-fail", accent: "border-l-verdict-fail" },
-  No: { text: "text-verdict-fail", accent: "border-l-verdict-fail" },
+  "Strong No": { text: "text-verdict-fail", accent: "border-l-verdict-fail" },
 };
 
 const CONF_TONE: Record<PanelDecision["confidence"]["label"], string> = {
@@ -26,10 +26,13 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
 
   return (
     <Card className={`border-l-4 ${tone.accent}`}>
+      <p className="text-[11px] text-ink-300 uppercase tracking-wide font-semibold mb-2">
+        Bottom line
+      </p>
       <div className="flex items-baseline gap-3 flex-wrap">
         <span className={`text-[24px] font-bold ${tone.text}`}>{rec.stance}</span>
         <span className="text-[20px] font-semibold text-ink-900 tabular-nums">
-          {rec.buyPct}% would buy
+          {rec.favorPct}% in favor
         </span>
       </div>
 

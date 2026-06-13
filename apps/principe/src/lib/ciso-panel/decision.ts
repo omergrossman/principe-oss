@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 //
 // Decision-grade output. Turns the raw panel into a single, honest call:
-//   - a recommendation (stance + "% would buy" + a one-line rationale),
+//   - a recommendation (stance + "% in favor" + a one-line rationale),
 //   - an N-aware confidence band (Wilson interval — honest about small panels),
 //   - the elevated dissent (the buy-blocking objection + the most-opposed segment).
 //
@@ -11,12 +11,20 @@
 
 import type { PanelResponse, PanelAggregates } from "./ask";
 
-export type DecisionStance = "Buy" | "Lean Buy" | "Split" | "Lean No" | "No";
+// Claim-neutral stances — the panel votes pro/con on whatever the question
+// proposes (a product to buy OR a strategy/claim to endorse), so the label is
+// agreement-with-the-claim, not purchase intent.
+export type DecisionStance =
+  | "Strong Yes"
+  | "Lean Yes"
+  | "Split"
+  | "Lean No"
+  | "Strong No";
 
 export interface DecisionRecommendation {
   stance: DecisionStance;
-  /** pro / total — neutrals AND failed responses count as "not a yes" (conservative). */
-  buyPct: number;
+  /** % "in favor" = pro / total. Neutrals AND failed responses count as not-in-favor (conservative). */
+  favorPct: number;
   /** One line from the LLM (or a server fallback). Narrative only — never the number. */
   rationale: string;
 }
@@ -63,13 +71,13 @@ export function wilsonInterval(successes: number, n: number, z = Z): [number, nu
   return [Math.max(0, center - margin), Math.min(1, center + margin)];
 }
 
-/** Stance from the buy% — fixed thresholds, tunable in one place. */
-export function stanceFor(buyPct: number): DecisionStance {
-  if (buyPct >= 66) return "Buy";
-  if (buyPct >= 55) return "Lean Buy";
-  if (buyPct >= 45) return "Split";
-  if (buyPct >= 34) return "Lean No";
-  return "No";
+/** Stance from the % in favor — fixed thresholds, tunable in one place. */
+export function stanceFor(favorPct: number): DecisionStance {
+  if (favorPct >= 66) return "Strong Yes";
+  if (favorPct >= 55) return "Lean Yes";
+  if (favorPct >= 45) return "Split";
+  if (favorPct >= 34) return "Lean No";
+  return "Strong No";
 }
 
 /** High/Moderate/Low from the CI half-width. Tunable cutoffs (D3). */
@@ -120,15 +128,15 @@ export function computeDecision(
   rationale: string,
 ): PanelDecision {
   const n = responses.length;
-  const buyFrac = n > 0 ? aggregates.proCount / n : 0; // D2: pro / total
-  const buyPct = Math.round(buyFrac * 100);
+  const favorFrac = n > 0 ? aggregates.proCount / n : 0; // D2: pro / total
+  const favorPct = Math.round(favorFrac * 100);
   const [lo, hi] = wilsonInterval(aggregates.proCount, n);
   const halfWidthPp = ((hi - lo) / 2) * 100;
   return {
     recommendation: {
-      stance: stanceFor(buyPct),
-      buyPct,
-      rationale: rationale.trim() || `${buyPct}% of the panel would buy.`,
+      stance: stanceFor(favorPct),
+      favorPct,
+      rationale: rationale.trim() || `${favorPct}% of the panel is in favor.`,
     },
     confidence: {
       ci95: [Math.round(lo * 100), Math.round(hi * 100)],
