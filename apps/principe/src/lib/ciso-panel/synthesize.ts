@@ -2,6 +2,7 @@
 import type Anthropic from "@anthropic-ai/sdk";
 import type { PanelResponse, PanelAggregates } from "./ask";
 import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";
+import { computeDecision, type PanelDecision } from "./decision";
 
 /**
  * One synthesis call that turns the 100 structured responses into an
@@ -36,6 +37,9 @@ export interface ExecSummary {
   // description + supporting agent names; verdictMix is computed
   // server-side from the actual responses for reliability.
   themes: ThemeCluster[];
+  // Decision-grade output — recommendation + N-aware confidence + dissent.
+  // All numbers computed server-side; only the rationale is from the LLM.
+  decision: PanelDecision;
   inputTokens: number;
   outputTokens: number;
   durationMs: number;
@@ -50,6 +54,7 @@ You receive a founder's question, 100 structured responses from agentic CISOs (e
 Output EXACTLY this JSON shape, no prose around it:
 {
   "summary": "<3-4 short sentences. Lead with the verdict. State the split. State what the strongest signal is. Don't waffle.>",
+  "recommendation": "<ONE sentence a founder reads first: the call plus the single biggest reason. e.g. 'Lean no — most wouldn't buy, blocked mainly by integration risk.' Do NOT invent a percentage; the system computes the number.>",
   "topPros": ["<5 distinct, specific pro arguments drawn from the actual responses. Each is one sentence, specific. NOT 'CISOs like the speed.' YES 'EU banking CISOs would adopt because the DORA evidence pipeline maps to their existing audit cadence.'>"],
   "topCons": ["<5 distinct, specific con arguments. Same specificity bar.>"],
   "insights": [
@@ -127,28 +132,47 @@ export async function synthesizePanel(
 
   const block = extractJson(text);
   if (!block) {
-    return fallback(text, res.usage.input_tokens, res.usage.output_tokens, Date.now() - started);
+    return fallback(
+      text,
+      responses,
+      aggregates,
+      res.usage.input_tokens,
+      res.usage.output_tokens,
+      Date.now() - started,
+    );
   }
   try {
     const parsed = JSON.parse(block) as Record<string, unknown>;
+    const topCons = arrayOfStrings(parsed.topCons).slice(0, 5);
+    const rationale =
+      typeof parsed.recommendation === "string" ? parsed.recommendation : "";
     return {
       summary:
         typeof parsed.summary === "string"
           ? parsed.summary
           : "Synthesis returned without summary.",
       topPros: arrayOfStrings(parsed.topPros).slice(0, 5),
-      topCons: arrayOfStrings(parsed.topCons).slice(0, 5),
+      topCons,
       insights: arrayOfInsights(parsed.insights).slice(0, 3),
       // Sprint 7 — themes from LLM, verdictMix computed server-side from
       // the actual response set for reliability (LLM-self-reported counts
       // would drift).
       themes: arrayOfThemes(parsed.themes, responses).slice(0, 5),
+      // Numbers server-side; the LLM only supplied the rationale prose.
+      decision: computeDecision(responses, aggregates, topCons, rationale),
       inputTokens: res.usage.input_tokens,
       outputTokens: res.usage.output_tokens,
       durationMs: Date.now() - started,
     };
   } catch {
-    return fallback(text, res.usage.input_tokens, res.usage.output_tokens, Date.now() - started);
+    return fallback(
+      text,
+      responses,
+      aggregates,
+      res.usage.input_tokens,
+      res.usage.output_tokens,
+      Date.now() - started,
+    );
   }
 }
 
@@ -260,6 +284,8 @@ function arrayOfInsights(v: unknown): { title: string; reasoning: string }[] {
 
 function fallback(
   text: string,
+  responses: PanelResponse[],
+  aggregates: PanelAggregates,
   inputTokens: number,
   outputTokens: number,
   durationMs: number,
@@ -270,6 +296,9 @@ function fallback(
     topCons: [],
     insights: [],
     themes: [],
+    // The synthesis prose failed, but the decision numbers come straight
+    // from the verdicts — still valid, still worth showing.
+    decision: computeDecision(responses, aggregates, [], ""),
     inputTokens,
     outputTokens,
     durationMs,

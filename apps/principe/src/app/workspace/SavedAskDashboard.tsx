@@ -12,6 +12,8 @@ import { IndustryBreakdown } from "./IndustryBreakdown";
 import { ValidationBanner, type AskValidation } from "./ValidationBanner";
 import { MarkdownLite } from "./MarkdownLite";
 import { ThemesCard, type Theme } from "./ThemesCard";
+import { DecisionCard } from "./DecisionCard";
+import type { PanelDecision } from "@/lib/ciso-panel/decision";
 
 interface PanelAggregates {
   proCount: number;
@@ -33,6 +35,7 @@ interface Summary {
   topCons: string[];
   insights: { title: string; reasoning: string }[];
   themes?: Theme[];
+  decision?: PanelDecision;
 }
 
 /**
@@ -89,6 +92,9 @@ export function SavedAskDashboard({
       </Card>
 
       {validation && <ValidationBanner validation={validation} />}
+
+      {/* Decision-grade output — the headline call sits above everything. */}
+      <DecisionCard decision={summary.decision} />
 
       <KpiRow aggregates={aggregates} />
 
