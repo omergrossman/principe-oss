@@ -43,6 +43,7 @@ interface Summary {
     verdictMix: { pro: number; con: number; neutral: number; total: number };
     segments?: { regions: string[]; industries: string[]; stances: string[] };
   }[];
+  decision?: import("@/lib/ciso-panel/decision").PanelDecision | null;
 }
 
 export async function GET(
@@ -157,6 +158,7 @@ export async function GET(
       topCons: summary.topCons ?? [],
       insights: summary.insights ?? [],
       themes: summary.themes ?? [],
+      decision: summary.decision ?? null,
     },
     regionalBreakdown,
     sentiment,

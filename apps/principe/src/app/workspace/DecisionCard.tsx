@@ -2,6 +2,7 @@
 "use client";
 
 import { Card } from "@/components/ui/Card";
+import { MarkdownLite } from "./MarkdownLite";
 import { PANEL_FLOOR, type PanelDecision, type DecisionStance } from "@/lib/ciso-panel/decision";
 
 const STANCE_TONE: Record<DecisionStance, { text: string; accent: string }> = {
@@ -44,7 +45,9 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
         </span>
       </div>
 
-      <p className="text-[14px] text-ink-700 mt-2 leading-relaxed">{rec.rationale}</p>
+      <p className="text-[14px] text-ink-700 mt-2 leading-relaxed">
+        <MarkdownLite text={rec.rationale} />
+      </p>
 
       <div className="mt-4 flex items-center gap-2 flex-wrap text-[13px]">
         <span className="text-ink-500">Confidence:</span>
@@ -76,7 +79,8 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
         </p>
         {dissent.objection ? (
           <p className="text-[13px] text-ink-700">
-            <span className="font-semibold">Biggest objection:</span> {dissent.objection}
+            <span className="font-semibold">Biggest objection:</span>{" "}
+            <MarkdownLite text={dissent.objection} />
           </p>
         ) : (
           <p className="text-[13px] text-ink-500">No single buy-blocking objection stood out.</p>
