@@ -54,7 +54,7 @@ You receive a founder's question, 100 structured responses from agentic CISOs (e
 Output EXACTLY this JSON shape, no prose around it:
 {
   "summary": "<3-4 short sentences. Lead with the verdict. State the split. State what the strongest signal is. Don't waffle.>",
-  "recommendation": "<ONE sentence a founder reads first: the call plus the single biggest reason. e.g. 'Lean no — most wouldn't buy, blocked mainly by integration risk.' Do NOT invent a percentage; the system computes the number.>",
+  "recommendation": "<ONE sentence the reader sees first: the call plus the single biggest reason. Match the question — for a product/pitch e.g. 'Lean no — most wouldn't adopt, blocked by integration risk'; for a strategy or claim e.g. 'Lean yes — the panel favors detection-first, though regulated sectors push back.' Do NOT invent a percentage; the system computes the number.>",
   "topPros": ["<5 distinct, specific pro arguments drawn from the actual responses. Each is one sentence, specific. NOT 'CISOs like the speed.' YES 'EU banking CISOs would adopt because the DORA evidence pipeline maps to their existing audit cadence.'>"],
   "topCons": ["<5 distinct, specific con arguments. Same specificity bar.>"],
   "insights": [
