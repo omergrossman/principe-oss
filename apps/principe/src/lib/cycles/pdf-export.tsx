@@ -343,6 +343,51 @@ function RegionalRow({
   );
 }
 
+function IndustryRow({
+  row,
+}: {
+  row: { industry: string; pro: number; con: number; neutral: number; total: number };
+}) {
+  const total = row.total || 1;
+  const proPct = (row.pro / total) * 100;
+  const neutralPct = (row.neutral / total) * 100;
+  const conPct = (row.con / total) * 100;
+  return (
+    <View style={styles.regionRowVisual} wrap={false}>
+      <Text style={[styles.regionLabel, { width: 140 }]}>{row.industry}</Text>
+      <View style={styles.regionBarTrack}>
+        {row.pro > 0 && (
+          <View
+            style={[
+              styles.regionBarSegment,
+              { width: `${proPct}%`, backgroundColor: PALETTE.pass },
+            ]}
+          />
+        )}
+        {row.neutral > 0 && (
+          <View
+            style={[
+              styles.regionBarSegment,
+              { width: `${neutralPct}%`, backgroundColor: PALETTE.ink300 },
+            ]}
+          />
+        )}
+        {row.con > 0 && (
+          <View
+            style={[
+              styles.regionBarSegment,
+              { width: `${conPct}%`, backgroundColor: PALETTE.fail },
+            ]}
+          />
+        )}
+      </View>
+      <Text style={styles.regionCount}>
+        {row.pro}/{row.neutral}/{row.con}
+      </Text>
+    </View>
+  );
+}
+
 export interface PdfCycleData {
   cycleId: string;
   panelVersion: string;
@@ -391,6 +436,15 @@ export interface PdfCycleData {
     neutral: number;
     total: number;
     sentimentMean: number | null;
+  }[];
+  // Per-industry verdict split, sorted by coverage. Rendered compact (top N
+  // + a "more" note) so the PDF stays short.
+  industryBreakdown: {
+    industry: string;
+    pro: number;
+    con: number;
+    neutral: number;
+    total: number;
   }[];
   // Headline panel sentiment metrics (matches the aggregates shape from
   // ciso-panel/ask.ts).
@@ -750,6 +804,25 @@ function CycleReport({ data }: { data: PdfCycleData }) {
             {data.regionalBreakdown.map((r) => (
               <RegionalRow key={r.region} row={r} />
             ))}
+          </View>
+        )}
+
+        {data.industryBreakdown.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.h2}>Industry distribution — verdict split</Text>
+            {data.industryBreakdown.slice(0, 8).map((r) => (
+              <IndustryRow key={r.industry} row={r} />
+            ))}
+            {data.industryBreakdown.length > 8 && (
+              <Text style={[styles.meta, { marginTop: 4 }]}>
+                + {data.industryBreakdown.length - 8}{" "}
+                {data.industryBreakdown.length - 8 === 1 ? "industry" : "industries"} more (
+                {data.industryBreakdown
+                  .slice(8)
+                  .reduce((s, r) => s + r.total, 0)}{" "}
+                responses)
+              </Text>
+            )}
           </View>
         )}
 
