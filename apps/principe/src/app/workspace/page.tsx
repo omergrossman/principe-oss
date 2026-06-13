@@ -122,6 +122,7 @@ export default async function WorkspacePage() {
         <AskForm
           key={currentProject?.id ?? "no-project"}
           disabled={!keyConnected}
+          panelSize={currentProject?.panelSize ?? null}
         />
 
         <div className="mt-8 pt-6 border-t border-ink-100 text-[13px]">
