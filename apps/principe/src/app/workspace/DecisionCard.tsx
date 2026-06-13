@@ -22,7 +22,15 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
   // Older saved asks (pre-decision-grade-output) won't carry this — render nothing.
   if (!decision) return null;
   const { recommendation: rec, confidence: conf, dissent } = decision;
-  const tone = STANCE_TONE[rec.stance];
+  // Fall back to a neutral tone for legacy/unknown stance strings (e.g. asks
+  // saved before the BLUF rename carried "Buy"/"Lean Buy") so the card never
+  // crashes on old data.
+  const tone = STANCE_TONE[rec.stance] ?? {
+    text: "text-ink-900",
+    accent: "border-l-ink-300",
+  };
+  // Legacy asks (pre-rename) stored `buyPct`; new ones store `favorPct`.
+  const favorPct = rec.favorPct ?? (rec as { buyPct?: number }).buyPct ?? 0;
 
   return (
     <Card className={`border-l-4 ${tone.accent}`}>
@@ -32,7 +40,7 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
       <div className="flex items-baseline gap-3 flex-wrap">
         <span className={`text-[24px] font-bold ${tone.text}`}>{rec.stance}</span>
         <span className="text-[20px] font-semibold text-ink-900 tabular-nums">
-          {rec.favorPct}% in favor
+          {favorPct}% in favor
         </span>
       </div>
 
