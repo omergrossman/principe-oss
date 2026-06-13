@@ -29,6 +29,8 @@ interface PanelAggregates {
 import { ValidationBanner, type AskValidation } from "./ValidationBanner";
 import { MarkdownLite } from "./MarkdownLite";
 import { ThemesCard, type Theme } from "./ThemesCard";
+import { DecisionCard } from "./DecisionCard";
+import type { PanelDecision } from "@/lib/ciso-panel/decision";
 
 interface AskResult {
   // Returned by /api/ask after ProjectAsk persistence; drives the export
@@ -48,6 +50,7 @@ interface AskResult {
     topCons: string[];
     insights: { title: string; reasoning: string }[];
     themes?: Theme[];
+    decision?: PanelDecision;
   };
   // Sprint 5.5 — hybrid statistical validation. Silent on PASS; renders
   // a warning banner on WARN/FAIL. Undefined for pre-Sprint-5.5 asks.
@@ -636,6 +639,10 @@ function ResultBody({ result }: { result: AskResult }) {
         <RateLimitBanner failures={panel.aggregates.apiFailures} total={panel.responses.length} />
       )}
       {result.validation && <ValidationBanner validation={result.validation} />}
+
+      {/* Decision-grade output — the headline call sits above everything. */}
+      <DecisionCard decision={summary.decision} />
+
       <KpiRow aggregates={panel.aggregates} />
 
       {/* Sprint 7 T4 — Strongest signals sits above the exec summary so a
