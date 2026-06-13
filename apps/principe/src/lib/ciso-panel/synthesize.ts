@@ -77,6 +77,7 @@ Rules:
 - Themes are 3-5 GROUPS of agents who share a common reason or stance (e.g. "Compliance-driven EU pro", "ROI-skeptic mid-market", "Vendor-fatigue Series B+"). Each agent should appear in AT MOST one theme. List 4-12 supporting agents per theme using their EXACT names from the input — but DESCRIBE the theme by its shared attribute pattern, never by naming agents.
 - Pros and cons should be sortable from STRONGEST to weakest.
 - If the panel is sharply split, say so in summary. Don't paper over divisions.
+- Use markdown **bold** to emphasise the single most important phrase in the summary, in each pro and con, and in each insight's reasoning — sparingly, one phrase each, never a whole sentence. The product renders it as real bold in both the UI and the PDF, which makes the report scannable for an executive.
 - Never invent persona names or quotes that aren't in the input.`;
 
 export async function synthesizePanel(
