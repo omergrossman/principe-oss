@@ -1,0 +1,46 @@
+{
+  "dataset_id": "cribl-2025-ciso-priorities",
+  "source": {
+    "name": "What CISOs Are Prioritizing in 2025",
+    "publisher": "Cribl (synthesizing multiple 2025 benchmark studies)",
+    "publication_date": "2025-09-01",
+    "url": "https://cribl.io/blog/what-cisos-are-prioritizing-in-2025-and-why-it-matters/",
+    "doc_id": "cribl-ciso-priorities-2025"
+  },
+  "year": 2025,
+  "sample_size": 0,
+  "region_coverage": ["us", "global"],
+  "license_status": "public",
+  "methodology_notes": "Cribl synthesis of multiple 2025 CISO benchmark studies (incl. Team8 CISO Village). Public blog. NOTE: provides a deliberately BALANCING signal to the corpus — the consolidation and budget-growth narratives are more contested than single-source figures (e.g. Panorays/Gartner '75% will consolidate') suggest.",
+  "distributions": [
+    {
+      "question_category": "budget_increase_share",
+      "kind": "scalar",
+      "value": 0.52,
+      "unit": "percentage",
+      "delta_yoy": -0.18,
+      "context": "52% of CISOs report a budget increase in 2025, down from 70% in 2024. ~Half report a flat budget; 43% report no change in technology spend YoY."
+    },
+    {
+      "question_category": "best_of_breed_preference",
+      "kind": "scalar",
+      "value": 0.60,
+      "unit": "percentage",
+      "context": "60% of CISOs prefer best-of-breed solutions over platform consolidation, despite megavendor consolidation messaging — a counterweight to the 'everyone is consolidating' narrative."
+    },
+    {
+      "question_category": "vendor_consolidation_top_priority",
+      "kind": "scalar",
+      "value": 0.50,
+      "unit": "percentage",
+      "context": "50% of CISOs say vendor consolidation is a top priority for the next year — coexisting with the best-of-breed preference above. (Contrast: Panorays/Gartner cite ~75% consolidating.)"
+    },
+    {
+      "question_category": "ai_budget_over_10pct",
+      "kind": "scalar",
+      "value": 0.70,
+      "unit": "percentage",
+      "context": "70% of organizations now dedicate more than 10% of their security budget to AI-related investments; AI risk is the top 2025 security priority."
+    }
+  ]
+}

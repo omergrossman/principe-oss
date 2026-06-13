@@ -1,0 +1,38 @@
+{
+  "dataset_id": "sygnia-2026-ir-readiness",
+  "source": {
+    "name": "2026 CISO Survey: The State of Incident Response Readiness",
+    "publisher": "Sygnia",
+    "publication_date": "2026-04-13",
+    "url": "https://www.sygnia.co/guides-and-tools/ciso-survey-2026/",
+    "doc_id": "sygnia-ciso-ir-2026"
+  },
+  "year": 2026,
+  "sample_size": 600,
+  "region_coverage": ["global"],
+  "license_status": "public",
+  "methodology_notes": "Survey of 600+ senior cybersecurity decision-makers, released April 2026. Grounds the operational mindset under pressure: most have the components of IR but lack confidence they can execute under real attack, due to organizational friction, cross-environment visibility gaps, and a broadening AI-era threat surface.",
+  "distributions": [
+    {
+      "question_category": "ir_not_ready_for_major_attack",
+      "kind": "scalar",
+      "value": 0.73,
+      "unit": "percentage",
+      "context": "73% say their organization would NOT be fully ready to execute under pressure if a significant attack occurred tomorrow."
+    },
+    {
+      "question_category": "attacked_last_12_months",
+      "kind": "scalar",
+      "value": 0.76,
+      "unit": "percentage",
+      "context": "76% of organizations experienced at least one cyber attack in the last 12 months."
+    },
+    {
+      "question_category": "formal_ir_plan_adoption",
+      "kind": "scalar",
+      "value": 0.99,
+      "unit": "percentage",
+      "context": "99% have a formal IR plan in place — but foundational components are not delivering a unified response in practice."
+    }
+  ]
+}

@@ -1,0 +1,52 @@
+{
+  "dataset_id": "glilot-2026-ciso-survey",
+  "source": {
+    "name": "Glilot CISO Survey 2026",
+    "publisher": "Glilot Capital Partners (Israel-based cyber VC)",
+    "publication_date": "2026-02-01",
+    "url": "https://glilotcisosurvey2026.base44.app/",
+    "doc_id": "glilot-ciso-2026"
+  },
+  "year": 2026,
+  "sample_size": 0,
+  "region_coverage": ["us", "global"],
+  "license_status": "public",
+  "methodology_notes": "Public 2026 CISO budget/priorities survey from Glilot Capital (Israeli cyber VC; helps ground non-US / Israel-network CISO views). Participants include security leaders from Blackstone, Virgin, NTT, Rakuten, AppLovin, Forter, Nebius and others. Sample size not disclosed. Strong, current AI-investment + vendor-strategy signal.",
+  "distributions": [
+    {
+      "question_category": "ai_tool_investment_intent",
+      "kind": "scalar",
+      "value": 0.778,
+      "unit": "percentage",
+      "context": "77.8% of CISOs plan to invest in AI-powered cybersecurity tools; ~80% cite AI-related solutions as high-priority 2026 funding."
+    },
+    {
+      "question_category": "ai_task_automation_budget",
+      "kind": "scalar",
+      "value": 0.413,
+      "unit": "percentage",
+      "context": "41.3% intend to allocate budget for AI systems designed for task automation."
+    },
+    {
+      "question_category": "vendor_strategy_preference",
+      "kind": "distribution",
+      "distribution": { "best_of_breed": 0.349, "reduce_vendor_count": 0.333, "broad_platform_consolidation": 0.063 },
+      "unit": "percentage",
+      "context": "34.9% prefer best product per category, 33.3% aim to reduce vendors, only 6.3% favor relying on 2–3 broad platforms. Reinforces that 'consolidation' is contested, not consensus."
+    },
+    {
+      "question_category": "ai_defense_standard_by_2026",
+      "kind": "scalar",
+      "value": 0.587,
+      "unit": "percentage",
+      "context": "58.7% believe operational use of AI for defense will become standard by end of 2026; 55.6% flag securing AI-generated code, 50.8% detecting AI-driven attacks, 47.6% AI governance/monitoring."
+    },
+    {
+      "question_category": "cloud_data_and_identity_investment",
+      "kind": "scalar",
+      "value": 0.33,
+      "unit": "percentage",
+      "context": "Cloud data protection and identity threat detection were each favored by ~33% of respondents as investment areas."
+    }
+  ]
+}
