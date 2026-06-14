@@ -213,6 +213,37 @@ const STANCE_COLORING: Record<AgenticPersona["stance"], string> = {
   contrarian: "Default to skepticism of consensus and security-industry hype. Vote con and call out flawed premises when warranted; vote pro when a pitch genuinely cuts against the consensus narrative in a useful way. Equally allergic to herd 'yes' and reflexive 'no.'",
 };
 
+// AI posture — a THIRD axis, narrower than `posture`. Where `posture` is the
+// broad security-vs-business worldview, AI posture is specifically how much the
+// persona trusts AI to ACT autonomously (the sharp edge for AI-security pitches:
+// autonomy, AI-for-defense, "trust the model"). Distinct from posture so an
+// enablement-first CISO can still be autonomy-skeptical, and vice versa — the
+// real-world combination. Mix reflects 2026 data: AI is the #1 CISO priority and
+// ~78% plan AI investment (most engage), but real AI-attack experience drives
+// genuine skepticism of autonomy.
+const AI_POSTURE_COLORING = {
+  forward:
+    "AI posture: forward. You already run AI agents in production and you lean toward letting automation ACT, accepting bounded risk for the leverage. You push to adopt early rather than wait for the category to mature.",
+  pragmatic:
+    "AI posture: pragmatic. You're investing in AI but you want guardrails — human oversight on consequential actions, and evidence before you cede control. Interested, not credulous.",
+  skeptic:
+    "AI posture: skeptic. You've watched 'AI-powered' overpromise for years. You'll use AI to augment analysts, but you resist autonomy and 'trust the model' claims and assume vendor AI is marketing until proven.",
+} as const;
+type AiPosture = keyof typeof AI_POSTURE_COLORING;
+
+// Shared 2026 world the personas operate in — narrative grounding drawn from the
+// public CISO surveys in /calibration + YL Ventures' State of the Cyber Nation.
+// Context to react to through each persona's OWN seat/stance/posture, never a
+// consensus to echo (echoing it would homogenise the panel — the opposite goal).
+const CISO_REALITY_2026 = [
+  `The world you operate in (2026) — react to it through YOUR own seat, stance, and posture; do NOT just echo it:`,
+  `- A flood of well-funded security startups: a record ~$4.4B into cyber in 2025 across ~130 rounds, with global VCs now leading seed. You are pitched constantly; "another AI-security seed company" is a weekly occurrence. Tool sprawl and early-stage-vendor risk are daily realities.`,
+  `- AI is the #1 stated CISO priority for 2026 (~78% plan to invest in AI security tools; ~70% of enterprises already run AI agents in production) — yet ~1 in 4 CISOs has already seen an AI-generated attack, and many distrust autonomy.`,
+  `- Identity is the dominant attack surface (~67% of incidents are identity-rooted). ~73% of CISOs say they are NOT fully ready for a major attack.`,
+  `- Budgets are tightening: only ~52% report an increase (down from ~70%). Consolidation is contested — ~60% still prefer best-of-breed over broad platforms.`,
+  `- Most CISOs (~64%) still report into IT; a growing minority report to the business or board.`,
+].join("\n");
+
 const CONCERN_POOL = [
   "vendor consolidation pressure from the CFO",
   "AI tool sprawl across the org",
@@ -290,15 +321,21 @@ function buildBudget(size: typeof SIZES[number], currency: string): string {
   return `${currency}${Math.round(base)}M/yr`;
 }
 
-function buildSystemPrompt(p: Omit<AgenticPersona, "markdown" | "systemPrompt">): string {
+function buildSystemPrompt(
+  p: Omit<AgenticPersona, "markdown" | "systemPrompt">,
+  aiPosture: AiPosture,
+): string {
   return [
     `You are ${p.name}, an experienced CISO. ${p.tenure} in the role.`,
     `Region: ${p.region}. Industry: ${p.industry}. Company size: ${p.companySize}. Budget responsibility: ${p.budget}. Reports to: ${p.reportsTo}.`,
     `Background: ${p.background}.`,
     `Stance (how you evaluate): ${STANCE_COLORING[p.stance]}`,
     `Posture (your security-vs-business worldview and your org's maturity): ${POSTURE_COLORING[p.posture]}`,
+    AI_POSTURE_COLORING[aiPosture],
     `Current top concerns: ${p.concerns.join("; ")}.`,
     `Active initiative right now: ${p.initiative}.`,
+    ``,
+    CISO_REALITY_2026,
     ``,
     `Respond to the founder's question by outputting EXACTLY this JSON object — no prose before, no prose after:`,
     `{"verdict": "pro" | "con" | "neutral", "sentiment": <integer 1-10>, "headline": "<one-sentence verdict, max 18 words, in your voice>", "reasoning": "<2-3 sentences explaining your verdict, in your voice>"}`,
@@ -447,6 +484,11 @@ export function generatePersonas(
     const background = pick(BACKGROUNDS, rng);
     const stance = stanceLottery[Math.floor(rng() * stanceLottery.length)];
     const posture = postureLottery[Math.floor(rng() * postureLottery.length)];
+    // AI-posture lottery — ~30% forward, ~45% pragmatic, ~25% skeptic. A distinct
+    // axis from posture so AI-autonomy pitches genuinely split the panel.
+    const aiRoll = rng();
+    const aiPosture: AiPosture =
+      aiRoll < 0.3 ? "forward" : aiRoll < 0.75 ? "pragmatic" : "skeptic";
     const concerns = pickN(CONCERN_POOL, 2, rng);
     const initiative = pick(INITIATIVES, rng);
     const reportsTo = pick(region.reports, rng);
@@ -472,7 +514,7 @@ export function generatePersonas(
     personas.push({
       ...partial,
       markdown: buildMarkdown(partial),
-      systemPrompt: buildSystemPrompt(partial),
+      systemPrompt: buildSystemPrompt(partial, aiPosture),
     });
   }
 

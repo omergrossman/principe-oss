@@ -110,29 +110,29 @@ export const SEED_POINTS: PairedPoint[] = [
   { type: "FORECAST", raw: 16, real: 59, note: "glilot: AI-for-defense standard by 2026" },
   // Global multi-survey points (Proofpoint VoC 2025, Foundry 2026, Cisco RI 2025),
   // run through the panel via scripts/calibration-references.ts. These reflect the
-  // panel AFTER the 2026-06-14 panel-layer fixes, applied in three measured
+  // panel AFTER the 2026-06-14 panel-layer fixes, applied in four measured
   // iterations: (1) Tier-1 framing override that revokes the baked pitch verdict
   // for non-PITCH questions; (2) the persona disposition/posture axis
   // (enablement-first / pragmatic / security-purist); (3) targeted nudges —
-  // business-continuity pragmatism in the posture coloring (rescues the ransom
-  // refusal) + an embedded-AI-adoption reminder in the FACTUAL skill. Overall MAE
-  // on this set fell 46.5 → 43.9 → 33.1 → 22.9pp; FACTUAL 45 → 15, FORECAST 14 → 8,
-  // STRATEGY 66 → 32. The panel now SPLITS instead of collapsing to 0%/100%.
-  // Stubborn residual is now concentrated in PRIORITY (MAE ~38): the panel
-  // under-affirms BROAD business priorities (GenAI/data-protection) yet
-  // over-affirms NARROW AI-security ones (Glilot govern-own-AI) — genuine
-  // within-type variance that the affine map carries as an honest wide band
-  // rather than fakes away. Refresh these whenever the panel layer changes.
-  { type: "PRIORITY", raw: 32, real: 64, note: "proofpoint: GenAI enablement a strategic priority" },
+  // business-continuity pragmatism in the posture coloring + an embedded-AI
+  // reminder in the FACTUAL skill; (4) the AI-autonomy posture axis + a shared
+  // 2026-reality grounding block (from persona-grounding). Overall MAE on this set
+  // fell 46.5 → 43.9 → 33.1 → 22.9 → 17.7pp; per-type now balanced (PRIORITY 23,
+  // FORECAST 14, STRATEGY 16, FACTUAL 16). The panel now SPLITS instead of
+  // collapsing to 0%/100%. Residual stubborn cases the affine map carries as an
+  // honest wide band: data-protection single-top-priority (0 vs 48 — personas
+  // pin to their assigned concerns) and the grounding-amplified risk/overwhelm
+  // over-shoots (GenAI-as-risk 96 vs 60). Refresh whenever the panel layer changes.
+  { type: "PRIORITY", raw: 44, real: 64, note: "proofpoint: GenAI enablement a strategic priority" },
   { type: "PRIORITY", raw: 0, real: 48, note: "foundry: data protection single top priority" },
-  { type: "PRIORITY", raw: 40, real: 73, note: "foundry: more likely to consider AI-enabled tools" },
-  { type: "FORECAST", raw: 68, real: 76, note: "proofpoint: at risk of material attack in 12mo" },
-  { type: "STRATEGY", raw: 34, real: 66, note: "proofpoint: would consider paying a ransom" },
-  { type: "FACTUAL", raw: 82, real: 60, note: "proofpoint: regard GenAI as a security risk" },
-  { type: "FACTUAL", raw: 54, real: 76, note: "foundry: harder to choose the right tools" },
-  { type: "FACTUAL", raw: 32, real: 34, note: "cisco: very confident in resilience" },
+  { type: "PRIORITY", raw: 72, real: 73, note: "foundry: more likely to consider AI-enabled tools" },
+  { type: "FORECAST", raw: 62, real: 76, note: "proofpoint: at risk of material attack in 12mo" },
+  { type: "STRATEGY", raw: 50, real: 66, note: "proofpoint: would consider paying a ransom" },
+  { type: "FACTUAL", raw: 96, real: 60, note: "proofpoint: regard GenAI as a security risk" },
+  { type: "FACTUAL", raw: 90, real: 76, note: "foundry: harder to choose the right tools" },
+  { type: "FACTUAL", raw: 38, real: 34, note: "cisco: very confident in resilience" },
   { type: "FACTUAL", raw: 100, real: 89, note: "cisco: org uses AI to understand threats" },
-  { type: "FACTUAL", raw: 26, real: 45, note: "cisco: internal resources for AI security assessments" },
+  { type: "FACTUAL", raw: 32, real: 45, note: "cisco: internal resources for AI security assessments" },
 ];
 
 export const CORRECTIONS = fitCorrections(SEED_POINTS);
