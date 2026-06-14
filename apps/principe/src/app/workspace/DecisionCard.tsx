@@ -3,7 +3,7 @@
 
 import { Card } from "@/components/ui/Card";
 import { MarkdownLite } from "./MarkdownLite";
-import { PANEL_FLOOR, type PanelDecision, type DecisionStance } from "@/lib/ciso-panel/decision";
+import { type PanelDecision, type DecisionStance } from "@/lib/ciso-panel/decision";
 
 const STANCE_TONE: Record<DecisionStance, { text: string; accent: string }> = {
   "Strong Yes": { text: "text-verdict-pass", accent: "border-l-verdict-pass" },
@@ -56,16 +56,6 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
           95% CI {conf.ci95[0]}–{conf.ci95[1]}% (±{conf.bandHalfWidthPp}pp · N={conf.n})
         </span>
       </div>
-
-      {conf.belowFloor ? (
-        <p className="text-[12px] text-verdict-warn mt-1">
-          Below the {PANEL_FLOOR}-CISO floor — directional only. Run a larger panel to make this meaningful.
-        </p>
-      ) : conf.label === "Low" ? (
-        <p className="text-[12px] text-ink-500 mt-1">
-          Wide band — read this as directional. A larger panel narrows it.
-        </p>
-      ) : null}
 
       {conf.failedCount > 0 && (
         <p className="text-[12px] text-ink-300 mt-1">
