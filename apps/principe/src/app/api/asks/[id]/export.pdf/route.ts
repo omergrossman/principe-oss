@@ -11,6 +11,7 @@ export const dynamic = "force-dynamic";
 
 interface PanelRow {
   region?: string;
+  industry?: string;
   verdict?: string;
   sentiment?: number;
 }
@@ -43,6 +44,7 @@ interface Summary {
     verdictMix: { pro: number; con: number; neutral: number; total: number };
     segments?: { regions: string[]; industries: string[]; stances: string[] };
   }[];
+  decision?: import("@/lib/ciso-panel/decision").PanelDecision | null;
 }
 
 export async function GET(
@@ -114,6 +116,26 @@ export async function GET(
     }))
     .sort((a, b) => a.region.localeCompare(b.region));
 
+  // Industry verdict split — summarised for the PDF (top by coverage; the
+  // component truncates and notes the rest, so it stays compact).
+  const byIndustry = new Map<string, { pro: number; con: number; neutral: number }>();
+  for (const r of responses) {
+    const ind = r.industry ?? "(unknown)";
+    const verd = r.verdict === "pro" ? "pro" : r.verdict === "con" ? "con" : "neutral";
+    const row = byIndustry.get(ind) ?? { pro: 0, con: 0, neutral: 0 };
+    row[verd] += 1;
+    byIndustry.set(ind, row);
+  }
+  const industryBreakdown = Array.from(byIndustry.entries())
+    .map(([industry, r]) => ({
+      industry,
+      pro: r.pro,
+      con: r.con,
+      neutral: r.neutral,
+      total: r.pro + r.con + r.neutral,
+    }))
+    .sort((a, b) => b.total - a.total);
+
   const sentiment = computeOverallSentiment(sentimentValues);
 
   const v = (ask.validation ?? null) as {
@@ -157,8 +179,10 @@ export async function GET(
       topCons: summary.topCons ?? [],
       insights: summary.insights ?? [],
       themes: summary.themes ?? [],
+      decision: summary.decision ?? null,
     },
     regionalBreakdown,
+    industryBreakdown,
     sentiment,
     totals: {
       totalPersonas: responses.length,

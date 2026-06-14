@@ -12,6 +12,11 @@ import {
   renderToBuffer,
   Font,
 } from "@react-pdf/renderer";
+import type { PanelDecision } from "@/lib/ciso-panel/decision";
+
+// react-pdf's Style type, derived from StyleSheet.create so we don't depend on
+// the (non-hoisted) @react-pdf/types package.
+type RichStyle = Parameters<typeof StyleSheet.create>[0][string];
 
 // react-pdf doesn't ship system fonts. Use the embedded Helvetica
 // (default) — adequate for executive reports; consistent across platforms.
@@ -216,6 +221,41 @@ function verdictColour(verdict: string | null): string {
   return PALETTE.ink500;
 }
 
+function stanceColour(stance: string): string {
+  if (stance === "Strong Yes" || stance === "Lean Yes") return PALETTE.pass;
+  if (stance === "Split") return PALETTE.warn;
+  if (stance === "Lean No" || stance === "Strong No") return PALETTE.fail;
+  return PALETTE.ink500;
+}
+
+/**
+ * Render `**bold**` spans inside a PDF Text. LLM output frequently contains
+ * markdown bold even when asked not to; this shows it as actual bold rather
+ * than literal asterisks. Plain strings pass through unchanged.
+ */
+function RichText({
+  text,
+  style,
+}: {
+  text: string;
+  style?: RichStyle | RichStyle[];
+}) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  return (
+    <Text style={style}>
+      {parts.map((p, i) =>
+        p.startsWith("**") && p.endsWith("**") && p.length > 4 ? (
+          <Text key={i} style={{ fontWeight: 700 }}>
+            {p.slice(2, -2)}
+          </Text>
+        ) : (
+          p
+        ),
+      )}
+    </Text>
+  );
+}
+
 /**
  * Executive-level narrative for a validation verdict. Renders above the
  * metric grid so a reader who scans the PDF top-to-bottom sees the
@@ -303,6 +343,51 @@ function RegionalRow({
   );
 }
 
+function IndustryRow({
+  row,
+}: {
+  row: { industry: string; pro: number; con: number; neutral: number; total: number };
+}) {
+  const total = row.total || 1;
+  const proPct = (row.pro / total) * 100;
+  const neutralPct = (row.neutral / total) * 100;
+  const conPct = (row.con / total) * 100;
+  return (
+    <View style={styles.regionRowVisual} wrap={false}>
+      <Text style={[styles.regionLabel, { width: 140 }]}>{row.industry}</Text>
+      <View style={styles.regionBarTrack}>
+        {row.pro > 0 && (
+          <View
+            style={[
+              styles.regionBarSegment,
+              { width: `${proPct}%`, backgroundColor: PALETTE.pass },
+            ]}
+          />
+        )}
+        {row.neutral > 0 && (
+          <View
+            style={[
+              styles.regionBarSegment,
+              { width: `${neutralPct}%`, backgroundColor: PALETTE.ink300 },
+            ]}
+          />
+        )}
+        {row.con > 0 && (
+          <View
+            style={[
+              styles.regionBarSegment,
+              { width: `${conPct}%`, backgroundColor: PALETTE.fail },
+            ]}
+          />
+        )}
+      </View>
+      <Text style={styles.regionCount}>
+        {row.pro}/{row.neutral}/{row.con}
+      </Text>
+    </View>
+  );
+}
+
 export interface PdfCycleData {
   cycleId: string;
   panelVersion: string;
@@ -338,6 +423,8 @@ export interface PdfCycleData {
       verdictMix: { pro: number; con: number; neutral: number; total: number };
       segments?: { regions: string[]; industries: string[]; stances: string[] };
     }[];
+    // Decision-grade output (BLUF). Optional — legacy asks / cycles won't carry it.
+    decision?: PanelDecision | null;
   };
   // Sentiment + verdicts per region. `sentimentMean` is 0-10 (Claude's
   // own 1-10 sentiment scale from PanelResponse.sentiment), null when
@@ -349,6 +436,15 @@ export interface PdfCycleData {
     neutral: number;
     total: number;
     sentimentMean: number | null;
+  }[];
+  // Per-industry verdict split, sorted by coverage. Rendered compact (top N
+  // + a "more" note) so the PDF stays short.
+  industryBreakdown: {
+    industry: string;
+    pro: number;
+    con: number;
+    neutral: number;
+    total: number;
   }[];
   // Headline panel sentiment metrics (matches the aggregates shape from
   // ciso-panel/ask.ts).
@@ -383,6 +479,7 @@ function CycleReport({ data }: { data: PdfCycleData }) {
     ? data.completedAt.toISOString().slice(0, 10)
     : "—";
   const title = deriveTitle(data.projectName, data.completedAt);
+  const decision = data.execSummary.decision;
 
   return (
     <Document title={title}>
@@ -423,6 +520,71 @@ function CycleReport({ data }: { data: PdfCycleData }) {
             <Text>{data.hypothesis}</Text>
           </View>
         </View>
+
+        {decision && (
+          <View style={styles.section}>
+            <Text style={styles.h2}>Bottom line</Text>
+            <View style={styles.verdictGrid}>
+              <View style={styles.verdictItem}>
+                <Text style={styles.verdictLabel}>Verdict</Text>
+                <Text
+                  style={[
+                    styles.verdictValue,
+                    { color: stanceColour(decision.recommendation.stance) },
+                  ]}
+                >
+                  {decision.recommendation.stance}
+                </Text>
+              </View>
+              <View style={styles.verdictItem}>
+                <Text style={styles.verdictLabel}>In favour</Text>
+                <Text style={styles.verdictValue}>
+                  {decision.recommendation.favorPct}%
+                </Text>
+              </View>
+              <View style={styles.verdictItem}>
+                <Text style={styles.verdictLabel}>Confidence</Text>
+                <Text style={styles.verdictValue}>
+                  {decision.confidence.label}
+                </Text>
+              </View>
+            </View>
+            <RichText
+              text={decision.recommendation.rationale}
+              style={[styles.body, { marginTop: 4 }]}
+            />
+            <Text style={[styles.meta, { marginTop: 2 }]}>
+              95% CI {decision.confidence.ci95[0]}–{decision.confidence.ci95[1]}%
+              {" (±"}
+              {decision.confidence.bandHalfWidthPp}pp · N={decision.confidence.n}
+              {")"}
+              {decision.confidence.belowFloor
+                ? " · below the 30-CISO floor — directional only"
+                : ""}
+              {decision.confidence.failedCount > 0
+                ? ` · ${decision.confidence.failedCount} failed (counted as not in favour)`
+                : ""}
+            </Text>
+            {(decision.dissent.objection || decision.dissent.opposedSegment) && (
+              <View style={{ marginTop: 6 }}>
+                <Text style={styles.verdictLabel}>Where it splits</Text>
+                {decision.dissent.objection && (
+                  <RichText
+                    text={`Biggest objection: ${decision.dissent.objection}`}
+                    style={styles.body}
+                  />
+                )}
+                {decision.dissent.opposedSegment && (
+                  <Text style={styles.body}>
+                    Most opposed: {decision.dissent.opposedSegment.label} —{" "}
+                    {decision.dissent.opposedSegment.conPct}% con (n=
+                    {decision.dissent.opposedSegment.n})
+                  </Text>
+                )}
+              </View>
+            )}
+          </View>
+        )}
 
         {data.verdict && (
           <View style={styles.section}>
@@ -519,7 +681,7 @@ function CycleReport({ data }: { data: PdfCycleData }) {
                       {dominant} {t.verdictMix.total}
                     </Text>
                   </View>
-                  <Text style={styles.insightBody}>{t.description}</Text>
+                  <RichText text={t.description} style={styles.insightBody} />
                   <Text
                     style={{
                       fontSize: 8,
@@ -540,10 +702,10 @@ function CycleReport({ data }: { data: PdfCycleData }) {
         {data.execSummary.summary && (
           <View style={styles.section}>
             <Text style={styles.h2}>Summary</Text>
-            <Text style={styles.body}>
-              {data.isInvalid && "[invalid] "}
-              {data.execSummary.summary}
-            </Text>
+            <RichText
+              text={`${data.isInvalid ? "[invalid] " : ""}${data.execSummary.summary}`}
+              style={styles.body}
+            />
           </View>
         )}
 
@@ -559,7 +721,7 @@ function CycleReport({ data }: { data: PdfCycleData }) {
                   {data.execSummary.topPros.map((p, i) => (
                     <View key={i} style={styles.bullet}>
                       <Text style={styles.bulletMark}>•</Text>
-                      <Text style={styles.bulletText}>{p}</Text>
+                      <RichText text={p} style={styles.bulletText} />
                     </View>
                   ))}
                 </View>
@@ -572,7 +734,7 @@ function CycleReport({ data }: { data: PdfCycleData }) {
                   {data.execSummary.topCons.map((c, i) => (
                     <View key={i} style={styles.bullet}>
                       <Text style={styles.bulletMark}>•</Text>
-                      <Text style={styles.bulletText}>{c}</Text>
+                      <RichText text={c} style={styles.bulletText} />
                     </View>
                   ))}
                 </View>
@@ -587,7 +749,7 @@ function CycleReport({ data }: { data: PdfCycleData }) {
             {data.execSummary.insights.map((ins, i) => (
               <View key={i} wrap={false}>
                 <Text style={styles.insightTitle}>{ins.title}</Text>
-                <Text style={styles.insightBody}>{ins.reasoning}</Text>
+                <RichText text={ins.reasoning} style={styles.insightBody} />
               </View>
             ))}
           </View>
@@ -642,6 +804,25 @@ function CycleReport({ data }: { data: PdfCycleData }) {
             {data.regionalBreakdown.map((r) => (
               <RegionalRow key={r.region} row={r} />
             ))}
+          </View>
+        )}
+
+        {data.industryBreakdown.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.h2}>Industry distribution — verdict split</Text>
+            {data.industryBreakdown.slice(0, 8).map((r) => (
+              <IndustryRow key={r.industry} row={r} />
+            ))}
+            {data.industryBreakdown.length > 8 && (
+              <Text style={[styles.meta, { marginTop: 4 }]}>
+                + {data.industryBreakdown.length - 8}{" "}
+                {data.industryBreakdown.length - 8 === 1 ? "industry" : "industries"} more (
+                {data.industryBreakdown
+                  .slice(8)
+                  .reduce((s, r) => s + r.total, 0)}{" "}
+                responses)
+              </Text>
+            )}
           </View>
         )}
 
