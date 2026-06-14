@@ -1,0 +1,52 @@
+{
+  "dataset_id": "proofpoint-2025-voc",
+  "source": {
+    "name": "2025 Voice of the CISO",
+    "publisher": "Proofpoint",
+    "publication_date": "2025-05-01",
+    "url": "https://www.proofpoint.com/us/resources/white-papers/voice-of-the-ciso-report",
+    "doc_id": "proofpoint-voc-2025"
+  },
+  "year": 2025,
+  "sample_size": 1600,
+  "region_coverage": ["global"],
+  "license_status": "public",
+  "methodology_notes": "Survey of 1,600 CISOs at organizations of 100+ employees across 16 countries (US, Canada, UK, France, Germany, Italy, Spain, Sweden, Netherlands, UAE, KSA, Australia, Japan, Singapore, South Korea, Brazil), ~100 per country. Aggregate global figures cited. Used here both as a distributional reference and as a source of paired on-task calibration questions (see calibration-map SEED_POINTS).",
+  "distributions": [
+    {
+      "question_category": "genai_enablement_strategic_priority",
+      "kind": "scalar",
+      "value": 0.64,
+      "unit": "percentage",
+      "context": "64% of CISOs say enabling employee use of generative-AI tools is a strategic priority over the next two years"
+    },
+    {
+      "question_category": "material_attack_risk_12mo",
+      "kind": "scalar",
+      "value": 0.76,
+      "unit": "percentage",
+      "context": "76% of CISOs feel at risk of a material cyberattack in the next 12 months"
+    },
+    {
+      "question_category": "would_consider_paying_ransom",
+      "kind": "scalar",
+      "value": 0.66,
+      "unit": "percentage",
+      "context": "66% of CISOs would consider paying a ransom to restore systems or prevent a data leak"
+    },
+    {
+      "question_category": "genai_perceived_as_security_risk",
+      "kind": "scalar",
+      "value": 0.60,
+      "unit": "percentage",
+      "context": "~60% of CISOs regard generative AI as a security risk to their organization"
+    },
+    {
+      "question_category": "human_error_top_vulnerability",
+      "kind": "scalar",
+      "value": 0.74,
+      "unit": "percentage",
+      "context": "74% of CISOs view human error as their organization's most significant cyber vulnerability"
+    }
+  ]
+}

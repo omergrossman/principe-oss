@@ -107,6 +107,25 @@ export const SEED_POINTS: PairedPoint[] = [
   { type: "PRIORITY", raw: 64, real: 78, note: "glilot: invest in AI security tools" },
   { type: "PRIORITY", raw: 82, real: 51, note: "glilot: detect AI-driven attacks" },
   { type: "FORECAST", raw: 16, real: 59, note: "glilot: AI-for-defense standard by 2026" },
+  // Global multi-survey points (Proofpoint VoC 2025, Foundry 2026, Cisco RI 2025),
+  // run through the ORIGINAL global panel via scripts/calibration-references.ts.
+  // The KEY finding: the panel's bias is NOT a clean per-type offset. Within a
+  // single type the panel swings from 0% to 100% on different questions (Glilot
+  // "govern own AI" panel=100 vs Proofpoint "GenAI a priority" panel=0, both
+  // PRIORITY). So pooling these widens the residual rather than sharpening the
+  // offset — the map correctly keeps these types "directional" (wide band). The
+  // root cause is over-unanimity + missing org-self-knowledge in the panel, which
+  // an affine correction can't fix; it must be addressed at the panel layer.
+  { type: "PRIORITY", raw: 0, real: 64, note: "proofpoint: GenAI enablement a strategic priority" },
+  { type: "PRIORITY", raw: 0, real: 48, note: "foundry: data protection top priority" },
+  { type: "PRIORITY", raw: 24, real: 73, note: "foundry: more likely to consider AI-enabled tools" },
+  { type: "FORECAST", raw: 62, real: 76, note: "proofpoint: at risk of material attack in 12mo" },
+  { type: "STRATEGY", raw: 0, real: 66, note: "proofpoint: would consider paying a ransom" },
+  { type: "FACTUAL", raw: 100, real: 60, note: "proofpoint: regard GenAI as a security risk" },
+  { type: "FACTUAL", raw: 94, real: 76, note: "foundry: harder to choose the right tools" },
+  { type: "FACTUAL", raw: 0, real: 34, note: "cisco: very confident in resilience" },
+  { type: "FACTUAL", raw: 2, real: 89, note: "cisco: org uses AI to understand threats" },
+  { type: "FACTUAL", raw: 0, real: 45, note: "cisco: internal resources for AI security assessments" },
 ];
 
 export const CORRECTIONS = fitCorrections(SEED_POINTS);
