@@ -12,6 +12,7 @@ import {
   classifyAnthropicError,
 } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
+import { computeDecision } from "@/lib/ciso-panel/decision";
 import { appendAskHistory } from "@/lib/ciso-panel/ask-history";
 import {
   clearProgress,
@@ -151,6 +152,8 @@ export async function POST(req: Request) {
         topCons: [],
         insights: [],
         themes: [],
+        // Numbers come from the verdicts, not the (failed) summary pass.
+        decision: computeDecision(panel.responses, panel.aggregates, [], ""),
         inputTokens: 0,
         outputTokens: 0,
         durationMs: 0,
@@ -220,6 +223,7 @@ export async function POST(req: Request) {
           topCons: summary.topCons,
           insights: summary.insights,
           themes: summary.themes,
+          decision: summary.decision,
         } as unknown as Prisma.InputJsonValue,
         tokensIn: totalInput,
         tokensOut: totalOutput,
