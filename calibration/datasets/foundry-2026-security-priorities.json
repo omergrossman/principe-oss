@@ -1,0 +1,45 @@
+{
+  "dataset_id": "foundry-2026-security-priorities",
+  "source": {
+    "name": "Security Priorities Study 2026",
+    "publisher": "Foundry (IDG)",
+    "publication_date": "2026-01-20",
+    "url": "https://www.foundryco.com/tools-for-marketers/security-priorities-study/",
+    "doc_id": "foundry-security-priorities-2026"
+  },
+  "year": 2026,
+  "sample_size": 870,
+  "region_coverage": ["global", "us", "emea", "apac"],
+  "license_status": "public",
+  "methodology_notes": "Annual Foundry/IDG Security Priorities study of security-focused IT leaders and decision-makers across regions. Aggregate figures cited. Used here as both a distributional reference and a source of paired on-task calibration questions (see calibration-map SEED_POINTS).",
+  "distributions": [
+    {
+      "question_category": "data_protection_top_priority",
+      "kind": "scalar",
+      "value": 0.48,
+      "unit": "percentage",
+      "context": "48% rank strengthening data protection as a top security priority for the year"
+    },
+    {
+      "question_category": "more_likely_to_consider_ai_security_tools",
+      "kind": "scalar",
+      "value": 0.73,
+      "unit": "percentage",
+      "context": "73% are more likely than before to consider AI-enabled security solutions"
+    },
+    {
+      "question_category": "harder_to_choose_security_tools",
+      "kind": "scalar",
+      "value": 0.76,
+      "unit": "percentage",
+      "context": "76% say it is getting harder to choose the right security tools amid a crowded vendor market"
+    },
+    {
+      "question_category": "security_budget_increase_expected",
+      "kind": "scalar",
+      "value": 0.61,
+      "unit": "percentage",
+      "context": "61% expect their security budget to increase over the next 12 months"
+    }
+  ]
+}
