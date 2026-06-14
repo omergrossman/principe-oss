@@ -1,0 +1,52 @@
+{
+  "dataset_id": "sophos-2026-ciso",
+  "source": {
+    "name": "2026 CISO Report",
+    "publisher": "Sophos (with Cybersecurity Ventures)",
+    "publication_date": "2026-02-01",
+    "url": "https://www.sophos.com/en-us/resources/report/2026-ciso-report",
+    "doc_id": "sophos-ciso-2026"
+  },
+  "year": 2026,
+  "sample_size": 0,
+  "region_coverage": ["global"],
+  "license_status": "public",
+  "methodology_notes": "Sophos 2026 CISO Report + Active Adversary findings (Sophos IR/MDR incident data) and Cybersecurity Trust Reality (5,000 organizations across 17 countries). Grounds resource constraints and the identity-attack threat reality. Incident-share figures are from Sophos IR/MDR caseload, not a CISO opinion survey.",
+  "distributions": [
+    {
+      "question_category": "identity_attack_incident_share",
+      "kind": "scalar",
+      "value": 0.67,
+      "unit": "percentage",
+      "context": "67% of all incidents investigated by Sophos IR/MDR were rooted in identity-related attacks."
+    },
+    {
+      "question_category": "identity_breach_enterprise_prevalence",
+      "kind": "scalar",
+      "value": 0.71,
+      "unit": "percentage",
+      "context": "71% of enterprises experienced an identity-related breach."
+    },
+    {
+      "question_category": "non_human_identity_breach_root_cause",
+      "kind": "scalar",
+      "value": 0.41,
+      "unit": "percentage",
+      "context": "Weak management of non-human identities (machine accounts, which can outnumber humans 100:1) was the root cause of 41% of successful identity breaches."
+    },
+    {
+      "question_category": "human_factor_breach_share",
+      "kind": "scalar",
+      "value": 0.80,
+      "unit": "percentage",
+      "context": "70–90% of breaches are linked to human factors (social engineering, phishing). Midpoint stored."
+    },
+    {
+      "question_category": "ciso_workforce_gap",
+      "kind": "scalar",
+      "value": 4800000,
+      "unit": "count",
+      "context": "~4.8M unfilled cybersecurity roles globally; ~35,000 CISOs serve ~359M businesses (≈10,000:1). Hiring/retention is a top resilience barrier."
+    }
+  ]
+}
