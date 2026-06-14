@@ -139,6 +139,7 @@ export async function POST(req: Request) {
         panel.responses,
         panel.aggregates,
         client,
+        panel.questionType,
       );
     } catch (synthErr) {
       // The 100 per-persona verdicts already succeeded; only the summarising
@@ -153,7 +154,7 @@ export async function POST(req: Request) {
         insights: [],
         themes: [],
         // Numbers come from the verdicts, not the (failed) summary pass.
-        decision: computeDecision(panel.responses, panel.aggregates, [], ""),
+        decision: computeDecision(panel.responses, panel.aggregates, [], "", panel.questionType),
         inputTokens: 0,
         outputTokens: 0,
         durationMs: 0,
