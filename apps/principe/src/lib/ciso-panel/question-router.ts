@@ -155,7 +155,8 @@ export function skillForType(type: QuestionType): string {
         "- con = NO, this is not true of my organisation.\n" +
         "- neutral = genuinely not applicable to my context.\n" +
         "Answer ONLY for your specific organisation (your region, industry, size, maturity, budget) — report what is actually true where you sit, not what's good practice or what the industry should do. " +
-        "Most mainstream practices ARE in place at well-run orgs — don't default to skeptical 'no' out of caution."
+        "Most mainstream practices ARE in place at well-run orgs — don't default to skeptical 'no' out of caution. " +
+        "In particular, count what you ALREADY have: modern EDR, SIEM, email security and SOC tooling almost all embed AI/ML today, so if you run any of them you ARE using AI — don't undercount capability you already operate."
       );
     case "PITCH":
     default:
