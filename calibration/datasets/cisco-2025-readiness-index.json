@@ -1,0 +1,52 @@
+{
+  "dataset_id": "cisco-2025-readiness-index",
+  "source": {
+    "name": "Cybersecurity Readiness Index 2025",
+    "publisher": "Cisco",
+    "publication_date": "2025-05-07",
+    "url": "https://www.cisco.com/site/us/en/about/newsroom/cybersecurity-readiness-index.html",
+    "doc_id": "cisco-readiness-index-2025"
+  },
+  "year": 2025,
+  "sample_size": 8000,
+  "region_coverage": ["global"],
+  "license_status": "public",
+  "methodology_notes": "Double-blind survey of 8,000 private-sector security and business leaders across 30 markets, run by an independent third party. Aggregate global figures cited. Used here as both a distributional reference and a source of paired on-task calibration questions (see calibration-map SEED_POINTS).",
+  "distributions": [
+    {
+      "question_category": "mature_readiness_tier_share",
+      "kind": "scalar",
+      "value": 0.04,
+      "unit": "percentage",
+      "context": "Only 4% of organizations are at the 'Mature' tier of readiness needed to withstand modern cyber threats"
+    },
+    {
+      "question_category": "confident_in_resilience",
+      "kind": "scalar",
+      "value": 0.34,
+      "unit": "percentage",
+      "context": "34% are very confident in the resilience of their current cybersecurity infrastructure against attacks"
+    },
+    {
+      "question_category": "use_ai_to_understand_threats",
+      "kind": "scalar",
+      "value": 0.89,
+      "unit": "percentage",
+      "context": "89% use AI to better understand threats; AI adoption is widespread for detection and response"
+    },
+    {
+      "question_category": "internal_resources_for_ai_security_assessments",
+      "kind": "scalar",
+      "value": 0.45,
+      "unit": "percentage",
+      "context": "45% have the internal resources and expertise to conduct comprehensive AI security assessments"
+    },
+    {
+      "question_category": "expect_business_disruption_from_attack_12_24mo",
+      "kind": "scalar",
+      "value": 0.73,
+      "unit": "percentage",
+      "context": "73% expect a cybersecurity incident to disrupt their business in the next 12 to 24 months"
+    }
+  ]
+}

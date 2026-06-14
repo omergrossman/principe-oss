@@ -67,6 +67,11 @@ export async function loadProjectAgents(projectId: string): Promise<RuntimePerso
       reportsTo: "",
       budget: "",
       stance: r.stance as AgenticPersona["stance"],
+      // Posture is baked into baseMarkdown at materialisation (like background/
+      // budget/reportsTo above), so the runtime prompt already carries it. It
+      // isn't persisted as a discrete column yet, so this placeholder only
+      // satisfies the type — no runtime code reads persona.posture today.
+      posture: "pragmatic",
       concerns: [],
       initiative: "",
       markdown: r.baseMarkdown,

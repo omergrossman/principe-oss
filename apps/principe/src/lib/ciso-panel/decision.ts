@@ -10,6 +10,8 @@
 // can never contradict the buy%.
 
 import type { PanelResponse, PanelAggregates } from "./ask";
+import { calibrate } from "./calibration-map";
+import type { QuestionType } from "./question-router";
 
 // Claim-neutral stances — the panel votes pro/con on whatever the question
 // proposes (a product to buy OR a strategy/claim to endorse), so the label is
@@ -38,6 +40,9 @@ export interface DecisionConfidence {
   failedCount: number;
   /** n below the statistical-viability floor — the result is directional only. */
   belowFloor: boolean;
+  /** Tier 2 — true only when the calibration map has enough data + a tight enough
+   * band to trust this question-type's correction. False ⇒ treat as directional. */
+  calibrated: boolean;
 }
 
 export interface DecisionDissent {
@@ -126,12 +131,19 @@ export function computeDecision(
   aggregates: PanelAggregates,
   topCons: string[],
   rationale: string,
+  questionType?: QuestionType,
 ): PanelDecision {
   const n = responses.length;
-  const favorFrac = n > 0 ? aggregates.proCount / n : 0; // D2: pro / total
-  const favorPct = Math.round(favorFrac * 100);
+  const rawFavorPct = n > 0 ? Math.round((aggregates.proCount / n) * 100) : 0;
+  // Tier 2 — apply the calibration map's per-type correction.
+  const cal = calibrate(questionType ?? "PITCH", rawFavorPct);
+  const favorPct = cal.calibratedPct;
+  // Two uncertainties: sampling (Wilson, given N) and calibration (the map's
+  // residual — how far the panel is from reality for this type). The honest
+  // band is the LARGER of the two.
   const [lo, hi] = wilsonInterval(aggregates.proCount, n);
-  const halfWidthPp = ((hi - lo) / 2) * 100;
+  const wilsonHalfPp = ((hi - lo) / 2) * 100;
+  const halfWidthPp = Math.max(wilsonHalfPp, cal.bandHalfWidthPp);
   return {
     recommendation: {
       stance: stanceFor(favorPct),
@@ -139,12 +151,16 @@ export function computeDecision(
       rationale: rationale.trim() || `${favorPct}% of the panel is in favor.`,
     },
     confidence: {
-      ci95: [Math.round(lo * 100), Math.round(hi * 100)],
+      ci95: [
+        Math.max(0, Math.round(favorPct - halfWidthPp)),
+        Math.min(100, Math.round(favorPct + halfWidthPp)),
+      ],
       bandHalfWidthPp: Math.round(halfWidthPp * 10) / 10,
       label: confidenceLabel(halfWidthPp),
       n,
       failedCount: aggregates.parseFailures + aggregates.apiFailures,
       belowFloor: n < PANEL_FLOOR,
+      calibrated: cal.calibrated,
     },
     dissent: {
       objection: topCons.length > 0 ? topCons[0] : null,
