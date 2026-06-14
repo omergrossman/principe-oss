@@ -1,0 +1,38 @@
+{
+  "dataset_id": "evanta-2026-ciso-priorities",
+  "source": {
+    "name": "2026 CISO Leadership Perspectives",
+    "publisher": "Evanta (a Gartner Company)",
+    "publication_date": "2026-01-01",
+    "url": "https://www.evanta.com/resources/ciso/infographic/2026-ciso-leadership-perspectives",
+    "doc_id": "evanta-ciso-perspectives-2026"
+  },
+  "year": 2026,
+  "sample_size": 1000,
+  "region_coverage": ["us", "global"],
+  "license_status": "licensed-fair-use",
+  "methodology_notes": "Gartner C-level Communities 2026 Leadership Perspective Survey, 1,000+ CISOs. Public infographic findings. Grounds strategic priorities and planned investment. 'Enabling and protecting AI' is newly the #1 functional priority, ahead of managing cyber risk and optimizing security tools.",
+  "distributions": [
+    {
+      "question_category": "ai_strategy_top_priority",
+      "kind": "scalar",
+      "value": 1,
+      "unit": "count",
+      "context": "'Enabling and protecting AI' is the #1 functional priority for CISOs in 2026 (new option this year), ahead of managing cybersecurity risk and optimizing security tools."
+    },
+    {
+      "question_category": "ai_investment_intent",
+      "kind": "scalar",
+      "value": 0.43,
+      "unit": "percentage",
+      "context": "43% of security leaders intend to allocate resources to AI products and services — their #1 planned investment area."
+    },
+    {
+      "question_category": "dlp_iam_zerotrust_investment_intent",
+      "kind": "scalar",
+      "value": 0.39,
+      "unit": "percentage",
+      "context": "39% plan to invest in DLP, identity & access management, MFA, and zero-trust initiatives."
+    }
+  ]
+}

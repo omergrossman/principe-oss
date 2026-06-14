@@ -25,6 +25,27 @@ Every dataset here contains **aggregate distributions only** — never raw indiv
 
 ---
 
+## Expansion — 2026 CISO surveys + cyber-VC surveys (added 2026-06)
+
+Seven datasets added to broaden coverage beyond the original four (Omer-sourced list). They add **new dimensions** the original corpus lacked — org position, IR readiness, strategic priorities, identity-threat reality — and a deliberately **balancing** signal on the contested consolidation/budget narratives.
+
+| Dataset | Source | Year | n | Adds | License |
+|---|---|---|---|---|---|
+| `ians-2026-state-of-ciso.json` | IANS + Artico Search | 2026 | 662 | reporting line (64% IT / 36% business), exec-title prevalence, scope-unmanageable | licensed-fair-use |
+| `evanta-2026-ciso-priorities.json` | Evanta (Gartner) | 2026 | 1000+ | AI as #1 priority, AI/DLP/IAM investment intent | licensed-fair-use |
+| `sygnia-2026-ir-readiness.json` | Sygnia | 2026 | 600+ | IR readiness (73% not ready), attacked-last-12mo, IR-plan adoption | public |
+| `sophos-2026-ciso.json` | Sophos + Cybersecurity Ventures | 2026 | — | identity-attack share (67%/71%), human-factor breach %, workforce gap | public |
+| `cribl-2025-ciso-priorities.json` | Cribl (synthesis) | 2025 | — | budget-growth slowdown, best-of-breed vs consolidation, AI budget >10% | public |
+| `glilot-2026-ciso-survey.json` | Glilot Capital (IL cyber VC) | 2026 | — | AI investment intent, vendor strategy split, AI-defense-by-2026 | public |
+| `team8-2025-ciso-village.json` | Team8 (IL cyber VC) | 2025 | 110+ | AI agents in production, AI-attack prevalence, SOC-replaced-by-AI | public |
+
+**Notes:**
+- The two **Israeli cyber-VC** datasets (Glilot, Team8) are the closest thing the corpus has to **MEA/Israel-network** grounding — relevant given the first Leg-2 respondent pool was all-MEA. They do NOT fully close the regional gap (participants are global), but they help.
+- **Not usable (checked 2026-06):** YL Ventures publishes a "State of the Cyber Nation" *ecosystem/funding* tracker, not a CISO-opinion survey; Cyberstarts has no public CISO survey. RH-ISAC (retail/hospitality) and Hitch Partners (comp/reporting) remain to be ingested — Hitch's detail is behind an interactive report.
+- **License caution:** IANS/Evanta are member-research firms; only their public press-release/infographic aggregate figures are used here (mirrors the existing Gartner posture). Confirm with counsel before any external/design-partner reliance.
+
+---
+
 ## V1 region coverage (deliberately limited)
 
 V1 is **US/Western-skewed** by design. Per Phase 3 Option C, we ship V1 with one source confirmed US-focused (Panorays is global but US-heavy; Wakefield is US-only; Gartner is global but US-skewed; DBIR is global multi-country):

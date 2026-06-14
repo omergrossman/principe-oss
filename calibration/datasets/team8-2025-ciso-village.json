@@ -1,0 +1,52 @@
+{
+  "dataset_id": "team8-2025-ciso-village",
+  "source": {
+    "name": "2025 CISO Village Survey: AI, Risk, and the Road Ahead",
+    "publisher": "Team8 (Israel-based cyber VC / company-builder)",
+    "publication_date": "2025-07-01",
+    "url": "https://team8.vc/ciso-village-survey-2025/",
+    "doc_id": "team8-ciso-village-2025"
+  },
+  "year": 2025,
+  "sample_size": 110,
+  "region_coverage": ["us", "global"],
+  "license_status": "public",
+  "methodology_notes": "110+ CISOs (significant technology + financial-services representation; Team8 is an Israeli cyber VC, so helps ground non-US / Israel-network views). Published July 2025. Most current strong signal on AI-agent adoption and AI-attack reality.",
+  "distributions": [
+    {
+      "question_category": "ai_agents_in_production",
+      "kind": "distribution",
+      "distribution": { "in_production": 0.70, "planning_2026": 0.23 },
+      "unit": "percentage",
+      "context": "Nearly 70% of enterprises already have AI agents in production; another 23% plan deployments in 2026."
+    },
+    {
+      "question_category": "ai_generated_attack_experienced",
+      "kind": "scalar",
+      "value": 0.25,
+      "unit": "percentage",
+      "context": "1 in 4 CISOs report experiencing an AI-generated attack in the past year (likely understated — AI-driven threats mimic human activity)."
+    },
+    {
+      "question_category": "soc_analyst_first_replaced_by_ai",
+      "kind": "scalar",
+      "value": 0.77,
+      "unit": "percentage",
+      "context": "77% of CISOs believe SOC analysts will be the first roles replaced by AI."
+    },
+    {
+      "question_category": "most_urgent_ai_concern",
+      "kind": "distribution",
+      "distribution": { "securing_ai_agents": 0.37, "employee_ai_tool_use": 0.36 },
+      "unit": "percentage",
+      "context": "Securing AI agents (37%) and employees' use of AI tools (36%) ranked as the most urgent AI concerns."
+    },
+    {
+      "question_category": "hardest_to_detect_issue",
+      "kind": "distribution",
+      "distribution": { "business_logic": 0.37, "privacy_data_leakage": 0.20, "design_flaws": 0.20 },
+      "unit": "percentage",
+      "context": "Hardest issues to detect today are business-logic issues (37%), privacy/data leakage (20%), and design flaws (20%) — not classic vulnerabilities."
+    }
+  ]
+}
