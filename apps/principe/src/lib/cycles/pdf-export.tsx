@@ -505,7 +505,7 @@ function CycleReport({ data }: { data: PdfCycleData }) {
             {title}
           </Text>
           <Text style={styles.meta}>
-            Panel {data.panelVersion} · {completedLabel}
+            {data.panelVersion} · {completedLabel}
             {data.durationSec !== null ? ` · ${data.durationSec}s runtime` : ""}
             {data.llmCostUsd ? ` · $${data.llmCostUsd} LLM spend` : ""}
             {" · "}cycle {data.cycleId.slice(-8)}
