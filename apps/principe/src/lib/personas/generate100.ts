@@ -24,6 +24,7 @@ export interface AgenticPersona {
   reportsTo: string;
   budget: string;
   stance: "cautious" | "balanced" | "aggressive" | "contrarian";
+  posture: "enablement-first" | "pragmatic" | "security-purist";
   concerns: string[];
   initiative: string;
   markdown: string;
@@ -173,6 +174,38 @@ const BACKGROUNDS: Array<{ label: string; coloring: string }> = [
 
 const STANCES: AgenticPersona["stance"][] = ["cautious", "balanced", "aggressive", "contrarian"];
 
+// Disposition axis — ORTHOGONAL to `stance` (which is about evaluation rigour).
+// Posture is the persona's security-vs-business worldview AND their org's
+// confidence / maturity / resourcing. Calibration (2026-06-14) showed the panel
+// was a MONOLITHIC security-skeptic: it returned ~0% on "is GenAI enablement a
+// priority?", "are you confident in your resilience?", "do you have resources
+// for AI assessments?" while 34–64% of real CISOs say yes. The panel had no
+// business-pragmatist / well-resourced CISOs to produce those yeses. This axis
+// supplies them. Distribution (~35/40/25) is set so the panel can SPLIT on
+// enablement / confidence / resourcing questions instead of collapsing to no.
+const POSTURES: AgenticPersona["posture"][] = [
+  "enablement-first",
+  "pragmatic",
+  "security-purist",
+];
+
+// Lottery weights (out of 100). Reflects that the real CISO population leans
+// pragmatic, with a substantial enablement-first minority — NOT all purists.
+const POSTURE_WEIGHTS: Record<AgenticPersona["posture"], number> = {
+  "enablement-first": 35,
+  pragmatic: 40,
+  "security-purist": 25,
+};
+
+const POSTURE_COLORING: Record<AgenticPersona["posture"], string> = {
+  "enablement-first":
+    "You treat security as a business ENABLER, not a gatekeeper. Your programme is well-funded and you're broadly confident in your org's resilience. You actively push to adopt AI, cloud and automation for velocity, and you DO treat 'enable the business safely and fast' as a top-tier priority. On 'is X a priority / are you confident / are you resourced / do you already use modern tech' questions you'll often say yes — because for your org it's true.",
+  pragmatic:
+    "You balance enablement against risk case by case. Your org has real strengths AND real gaps — confident in some areas, exposed in others; resourced for some things, not others. You adopt new tech when the business case is clear. You're the median CISO: neither a blocker nor a cheerleader, and your answers split accordingly rather than defaulting to one side.",
+  "security-purist":
+    "Security first, business convenience second. You're cautious about new tech (AI, cloud sprawl) until it's proven, candid that your org has resilience gaps and is under-resourced, and you treat 'move faster / enable more' as a risk to manage rather than a priority to chase. You often answer no to confidence, resourcing and enablement-priority questions — because for your org that's the honest answer.",
+};
+
 const STANCE_COLORING: Record<AgenticPersona["stance"], string> = {
   cautious: "Risk-averse by default. Demands proof, references, and an exit clause. When evidence is weak you say no — not maybe. When the evidence and risk story are solid, you commit; safety doesn't mean indecision.",
   balanced: "Pragmatic. Weighs evidence against operational reality. Says yes when an idea is 80%-right and addresses a real pain; says no when it's wrong-headed or the premise is broken. Neutral only when you genuinely lack information.",
@@ -262,7 +295,8 @@ function buildSystemPrompt(p: Omit<AgenticPersona, "markdown" | "systemPrompt">)
     `You are ${p.name}, an experienced CISO. ${p.tenure} in the role.`,
     `Region: ${p.region}. Industry: ${p.industry}. Company size: ${p.companySize}. Budget responsibility: ${p.budget}. Reports to: ${p.reportsTo}.`,
     `Background: ${p.background}.`,
-    `Stance: ${STANCE_COLORING[p.stance]}`,
+    `Stance (how you evaluate): ${STANCE_COLORING[p.stance]}`,
+    `Posture (your security-vs-business worldview and your org's maturity): ${POSTURE_COLORING[p.posture]}`,
     `Current top concerns: ${p.concerns.join("; ")}.`,
     `Active initiative right now: ${p.initiative}.`,
     ``,
@@ -289,7 +323,7 @@ function buildSystemPrompt(p: Omit<AgenticPersona, "markdown" | "systemPrompt">)
 }
 
 function buildMarkdown(p: Omit<AgenticPersona, "markdown" | "systemPrompt">): string {
-  return `${p.name} · ${p.region} · ${p.industry} · ${p.companySize} · ${p.tenure} as CISO. ${p.background}. Stance: ${p.stance}. Top concerns: ${p.concerns.join("; ")}. Active initiative: ${p.initiative}.`;
+  return `${p.name} · ${p.region} · ${p.industry} · ${p.companySize} · ${p.tenure} as CISO. ${p.background}. Stance: ${p.stance}. Posture: ${p.posture}. Top concerns: ${p.concerns.join("; ")}. Active initiative: ${p.initiative}.`;
 }
 
 /**
@@ -376,6 +410,17 @@ export function generatePersonas(
     stanceLottery.push(allowedStanceKeys[stanceLottery.length % allowedStanceKeys.length]);
   }
 
+  // Posture lottery sized to N from fixed weights (~35/40/25). Deterministic:
+  // built in declared order then drawn with the seeded rng like stance.
+  const postureLottery: AgenticPersona["posture"][] = [];
+  for (const p of POSTURES) {
+    const w = Math.round((POSTURE_WEIGHTS[p] / 100) * n);
+    for (let i = 0; i < w; i++) postureLottery.push(p);
+  }
+  while (postureLottery.length < n) {
+    postureLottery.push(POSTURES[postureLottery.length % POSTURES.length]);
+  }
+
   // Track name uniqueness per region.
   const usedNamesByRegion = new Map<string, Set<string>>();
   for (const r of REGIONS) usedNamesByRegion.set(r.key, new Set());
@@ -401,6 +446,7 @@ export function generatePersonas(
     const tenure = pick(TENURES, rng);
     const background = pick(BACKGROUNDS, rng);
     const stance = stanceLottery[Math.floor(rng() * stanceLottery.length)];
+    const posture = postureLottery[Math.floor(rng() * postureLottery.length)];
     const concerns = pickN(CONCERN_POOL, 2, rng);
     const initiative = pick(INITIATIVES, rng);
     const reportsTo = pick(region.reports, rng);
@@ -418,6 +464,7 @@ export function generatePersonas(
       reportsTo,
       budget,
       stance,
+      posture,
       concerns,
       initiative,
     };

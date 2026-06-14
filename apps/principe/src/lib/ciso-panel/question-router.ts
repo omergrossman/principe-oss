@@ -99,29 +99,63 @@ export async function classifyQuestion(
  * Tier 1 — the type-specific "skill": a prompt fragment appended to each
  * persona's prompt that fixes that framing's calibration bias. Empty string
  * for PITCH (the current behaviour is the baseline for that type).
+ *
+ * CRITICAL: each persona's baked system prompt defines pro/con in PITCH terms
+ * ("pro = you'd commit / buy / champion the founder's direction"). For every
+ * other type that definition is WRONG and, left unchallenged, dominates — it's
+ * why a FACTUAL "does your org use AI?" returned ~2% pro when 89% of real orgs
+ * do. So a non-PITCH skill must FIRST revoke the baked pitch definition, then
+ * install the correct one. The OVERRIDE preamble does that revocation.
  */
+const OVERRIDE =
+  "⚠️ VERDICT OVERRIDE — read carefully. The pro/con/neutral definitions in your " +
+  "instructions above are written for evaluating a FOUNDER'S PITCH. This question is " +
+  "NOT a pitch, so those definitions DO NOT APPLY. Ignore them and use ONLY the verdict " +
+  "definitions below. You are not deciding whether to buy or champion anything.";
+
 export function skillForType(type: QuestionType): string {
   switch (type) {
     case "PRIORITY":
       return (
-        "This is a PRIORITISATION question. You have FINITE budget and attention — you cannot make everything a priority. " +
-        "Weigh this honestly against your OTHER current concerns and active initiative: vote pro ONLY if you'd genuinely fund or prioritise it over the competing demands on your plate this year. " +
-        "Many sensible, good ideas are NOT among your top priorities — saying 'worthwhile but not a priority for me' is a con or neutral, not a pro."
+        OVERRIDE +
+        "\n\nThis is a PRIORITISATION question — 'is X a priority for you / would you fund X?'. " +
+        "Verdict definitions for THIS question:\n" +
+        "- pro = YES, given my finite budget and attention this genuinely is (or would be) one of my priorities this year.\n" +
+        "- con = NO, it's not a priority for me — worthwhile or not, it loses to the competing demands already on my plate.\n" +
+        "- neutral = I truly can't say without more context.\n" +
+        "Answer from YOUR seat only (your region, industry, size, current concerns and active initiative) — not what CISOs in general would say. " +
+        "You cannot prioritise everything; many good ideas are still a 'no' for you. Be willing to land on either side."
       );
     case "FORECAST":
       return (
-        "This is a FORECAST question. Give your best-judgement prediction and COMMIT to it — a forecaster takes a position. " +
-        "Do not hide in 'it depends'; vote neutral only if you genuinely have no lean either way."
+        OVERRIDE +
+        "\n\nThis is a FORECAST question — 'will X happen / become standard / be true by some time?'. " +
+        "Verdict definitions for THIS question:\n" +
+        "- pro = YES, my best prediction is this will happen / is true.\n" +
+        "- con = NO, my best prediction is it won't.\n" +
+        "- neutral = a genuine coin-flip with no lean either way.\n" +
+        "Give your best-judgement prediction from your own vantage point. Lean to whichever side you actually believe — don't force false certainty, but don't reflexively hedge either."
       );
     case "STRATEGY":
       return (
-        "This is a STRATEGY / claim question. Weigh it through your own seat, stance, and industry — the panel SHOULD disagree. " +
-        "State plainly whether you back this direction (pro) or push back on it (con)."
+        OVERRIDE +
+        "\n\nThis is a STRATEGY / claim question — 'should the approach be X / do you agree with this claim?'. " +
+        "Verdict definitions for THIS question:\n" +
+        "- pro = YES, I back this direction / agree with this claim for my organisation.\n" +
+        "- con = NO, I'd push back on this direction / disagree with the claim.\n" +
+        "- neutral = genuinely undecided or not applicable to me.\n" +
+        "Weigh it through your own seat, stance, and industry — the panel SHOULD disagree with each other here. Don't converge on the 'safe' consensus answer."
       );
     case "FACTUAL":
       return (
-        "This is a FACTUAL / behavioural question about your own organisation. Answer from your specific situation (region, industry, size, maturity): " +
-        "pro = yes / true for you, con = no / false, neutral = genuinely not applicable."
+        OVERRIDE +
+        "\n\nThis is a FACTUAL / behavioural question about YOUR OWN organisation — 'do you currently do X / is X true of you?'. " +
+        "Verdict definitions for THIS question:\n" +
+        "- pro = YES, this is true of / happens at my organisation.\n" +
+        "- con = NO, this is not true of my organisation.\n" +
+        "- neutral = genuinely not applicable to my context.\n" +
+        "Answer ONLY for your specific organisation (your region, industry, size, maturity, budget) — report what is actually true where you sit, not what's good practice or what the industry should do. " +
+        "Most mainstream practices ARE in place at well-run orgs — don't default to skeptical 'no' out of caution."
       );
     case "PITCH":
     default:
