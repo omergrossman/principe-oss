@@ -67,7 +67,13 @@ type FlowState =
   | { kind: "running"; question: string; startedAt: number }
   | { kind: "error"; message: string };
 
-export function AskForm({ disabled }: { disabled: boolean }) {
+export function AskForm({
+  disabled,
+  panelSize,
+}: {
+  disabled: boolean;
+  panelSize?: number | null;
+}) {
   const [question, setQuestion] = useState("");
   const [history, setHistory] = useState<Iteration[]>([]);
   const [flow, setFlow] = useState<FlowState>({ kind: "idle", editing: false });
@@ -181,7 +187,7 @@ export function AskForm({ disabled }: { disabled: boolean }) {
     return (
       <div className="space-y-6">
         <QuestionRecap question={flow.question} />
-        <RunningPanel startedAt={flow.startedAt} />
+        <RunningPanel startedAt={flow.startedAt} panelSize={panelSize} />
         {current && (
           <div className="opacity-60">
             <SectionHeader>Previous iteration result</SectionHeader>
@@ -323,7 +329,7 @@ function QuestionForm({
             size="md"
             disabled={disabled || submitting || question.trim().length === 0}
           >
-            {submitting ? "Asking 100 CISOs…" : editing ? "Re-ask" : "Ask the panel"}
+            {submitting ? "Asking the panel…" : editing ? "Re-ask" : "Ask the panel"}
           </Button>
         </div>
       </Card>
@@ -396,7 +402,13 @@ interface ProgressSnapshot {
 // progress when we know synthesis has started but not yet finished.
 const SYNTH_DURATION_MS = 10_000;
 
-function RunningPanel({ startedAt }: { startedAt: number }) {
+function RunningPanel({
+  startedAt,
+  panelSize,
+}: {
+  startedAt: number;
+  panelSize?: number | null;
+}) {
   const [elapsedMs, setElapsedMs] = useState(0);
   const [progress, setProgress] = useState<ProgressSnapshot>({ active: false });
 
@@ -431,7 +443,7 @@ function RunningPanel({ startedAt }: { startedAt: number }) {
   }, []);
 
   const elapsedSec = elapsedMs / 1000;
-  const phases = computeRealPhases(progress);
+  const phases = computeRealPhases(progress, panelSize);
 
   return (
     <Card>
@@ -470,8 +482,11 @@ interface PhaseRow {
  *      denom ~3s (Sprint 6 — replaced the "Rendering dashboard" synthetic
  *      placeholder, which never reflected real work)
  */
-function computeRealPhases(snap: ProgressSnapshot): PhaseRow[] {
-  const total = snap.personasTotal ?? 100;
+function computeRealPhases(
+  snap: ProgressSnapshot,
+  panelSize?: number | null,
+): PhaseRow[] {
+  const total = snap.personasTotal ?? panelSize ?? 100;
   const done = snap.personasDone ?? 0;
   const dispatchPct = total > 0 ? (done / total) * 100 : 0;
   const collectPct = Math.max(0, dispatchPct - (dispatchPct < 100 ? 6 : 0));
