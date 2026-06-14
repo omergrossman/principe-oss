@@ -12,9 +12,11 @@ import type { PanelResponse, Verdict } from "./ask";
  * new evidence warrants.
  */
 
-const MAX_HISTORY_ENTRIES = 10;
-const MAX_QUESTION_CHARS = 120;
+const MAX_HISTORY_ENTRIES = 15; // stored per persona (raised from 10 for richer memory)
+const MAX_FULL_RENDERED = 5; // how many recent entries inject FULL reasoning (token-bounded)
+const MAX_QUESTION_CHARS = 160;
 const MAX_HEADLINE_CHARS = 160;
+const MAX_REASONING_CHARS = 300; // the persona's own reasoning, stored + injected for the recent few
 
 export interface AskHistoryEntry {
   askId: string;
@@ -22,6 +24,11 @@ export interface AskHistoryEntry {
   v: Verdict;
   h: string; // headline, trimmed
   askedAt: string; // ISO date
+  // Added 2026-06 — the persona's own sentiment + full reasoning, so follow-up
+  // asks in the SAME project reflect what it actually thought before, not just
+  // its verdict. Optional: entries written before this carry only q/v/h.
+  s?: number; // sentiment 1-10
+  rsn?: string; // reasoning, trimmed
 }
 
 function isAskHistoryEntry(x: unknown): x is AskHistoryEntry {
@@ -76,11 +83,17 @@ export async function appendAskHistory(
           r.headline.length > MAX_HEADLINE_CHARS
             ? r.headline.slice(0, MAX_HEADLINE_CHARS - 1) + "…"
             : r.headline;
+        const truncR =
+          r.reasoning.length > MAX_REASONING_CHARS
+            ? r.reasoning.slice(0, MAX_REASONING_CHARS - 1) + "…"
+            : r.reasoning;
         const next: AskHistoryEntry = {
           askId,
           q: truncQ,
           v: r.verdict,
+          s: r.sentiment,
           h: truncH,
+          rsn: truncR,
           askedAt: askedAtIso,
         };
         // Newest first, cap at MAX_HISTORY_ENTRIES.
@@ -100,15 +113,22 @@ export async function appendAskHistory(
  */
 export function renderAskHistorySection(entries: AskHistoryEntry[]): string {
   if (entries.length === 0) return "";
-  const lines = entries.map((e) => {
+  // Inject the most-recent few WITH the persona's own reasoning (so it builds on
+  // what it actually argued before); older ones collapse to a one-line verdict
+  // so the prompt stays token-bounded even as a project accumulates asks.
+  const fmt = (e: AskHistoryEntry, withReason: boolean): string => {
     const date = e.askedAt.slice(0, 10); // YYYY-MM-DD
-    return `- ${date} · ${e.v.toUpperCase()} on "${e.q}" — ${e.h}`;
-  });
+    const detail = withReason && e.rsn ? ` — ${e.rsn}` : e.h ? ` — ${e.h}` : "";
+    return `- ${date} · ${e.v.toUpperCase()} on "${e.q}"${detail}`;
+  };
+  const recent = entries.slice(0, MAX_FULL_RENDERED).map((e) => fmt(e, true));
+  const older = entries.slice(MAX_FULL_RENDERED).map((e) => fmt(e, false));
   return [
-    "Your recent panel positions (most recent first):",
-    ...lines,
+    "Your own recent positions in THIS project (most recent first) — your past verdicts and the reasoning you gave. Build on them:",
+    ...recent,
+    ...(older.length ? ["", "Earlier in this project:", ...older] : []),
     "",
-    "Use these to stay consistent. EVOLUTION IS THE EXCEPTION, NOT THE DEFAULT — your past positions reflect your real-world experience and shouldn't flip easily.",
+    "Use these to stay consistent and build on what you already said. EVOLUTION IS THE EXCEPTION, NOT THE DEFAULT — your past positions reflect your real-world experience and shouldn't flip easily.",
     "",
     "Flip your verdict ONLY when the new question's evidence DIRECTLY addresses your specific prior objection — your own words from above. Generic improvements (\"we have proof now\", \"we got faster\", \"we added a feature\") do NOT address industry-fit, size-fit, compliance, or operating-model objections. If your prior con was about industry mismatch (e.g. \"you're targeting fintech, I'm utility\") then fintech-specific evidence DOES NOT translate to your context — stay con even if the founder presents new numbers.",
     "",

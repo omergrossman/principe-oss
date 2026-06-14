@@ -15,6 +15,11 @@ import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";
 import { incrementPersona, startProgress } from "./progress";
 import { loadProjectAgents, type RuntimePersona } from "@/lib/projects/load-agents";
 import { classifyQuestionThreatTypes } from "@/lib/canon";
+import {
+  classifyQuestion,
+  skillForType,
+  type QuestionType,
+} from "./question-router";
 
 // Sprint 5 — caps for persona-prompt depth sections. AC: render only
 // the 12 most-recent + most-relevant opinions to keep prompt size bounded.
@@ -85,6 +90,8 @@ export interface PanelResult {
   totalInputTokens: number;
   totalOutputTokens: number;
   durationMs: number;
+  // Tier 0 — the framing the router classified this question as.
+  questionType?: QuestionType;
 }
 
 const MODEL = ANTHROPIC_MODELS.panel;
@@ -252,6 +259,10 @@ export async function runPanelAsk(
     );
   }
   const questionThreats = classifyQuestionThreatTypes(question);
+  // Tier 0 (router) + Tier 1 (skill): classify the framing once, then append a
+  // type-specific skill to every persona's prompt to fix that framing's bias.
+  const questionType = await classifyQuestion(question, client);
+  const typeSkill = skillForType(questionType);
   const startedAt = Date.now();
 
   startProgress(firmId, personas.length);
@@ -279,6 +290,7 @@ export async function runPanelAsk(
           { insights, question, pitchDeckReferences },
         ),
         questionThreats,
+        typeSkill,
         signal,
       ),
     (result, _i, ctrl) => {
@@ -378,6 +390,7 @@ export async function runPanelAsk(
     totalInputTokens: totalInput,
     totalOutputTokens: totalOutput,
     durationMs,
+    questionType,
   };
 }
 
@@ -695,6 +708,7 @@ async function askOne(
   client: Anthropic,
   briefing: string,
   questionThreats: string[] = [],
+  skill = "",
   signal?: AbortSignal,
 ): Promise<{ text: string; inputTokens: number; outputTokens: number }> {
   // Sprint 5 — inject persona depth sections from coreOpinions +
@@ -706,9 +720,15 @@ async function askOne(
   // across questions AND evolve when new evidence warrants.
   const historySection = renderAskHistorySection(persona.askHistory);
 
-  const sections = [persona.systemPrompt, depthSection, historySection].filter(
-    (s) => s && s.length > 0,
-  );
+  // `skill` (Tier 1) is the type-specific instruction for this question's
+  // framing — placed after the persona's identity/history so it shapes HOW
+  // they answer this particular kind of question.
+  const sections = [
+    persona.systemPrompt,
+    depthSection,
+    historySection,
+    skill,
+  ].filter((s) => s && s.length > 0);
   const head = sections.join("\n\n");
   const base = briefing ? `${head}\n\n${briefing}` : head;
   // Final, emphatic format + brevity rule. Placed LAST so it's the most
