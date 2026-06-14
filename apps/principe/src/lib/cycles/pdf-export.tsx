@@ -269,8 +269,6 @@ function validationNarrative(verdict: string): string {
       return "Panel coverage is workable but uneven for this question — verdicts are usable but the credible interval is wide; treat with caution.";
     case "FAIL":
       return "Panel is a poor statistical match for this question — treat verdicts as directional impressions, not as a statistical reading. Consider re-running with a panel composition adjusted to better match the question's relevant strata.";
-    case "DIRECTIONAL":
-      return "Verdicts are directional only — the statistical validation was force-overridden by the user.";
     default:
       return "";
   }
@@ -558,9 +556,6 @@ function CycleReport({ data }: { data: PdfCycleData }) {
               {" (±"}
               {decision.confidence.bandHalfWidthPp}pp · N={decision.confidence.n}
               {")"}
-              {decision.confidence.belowFloor
-                ? " · below the 30-CISO floor — directional only"
-                : ""}
               {decision.confidence.failedCount > 0
                 ? ` · ${decision.confidence.failedCount} failed (counted as not in favour)`
                 : ""}
