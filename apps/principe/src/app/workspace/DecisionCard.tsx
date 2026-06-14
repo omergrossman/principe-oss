@@ -61,6 +61,10 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
         <p className="text-[12px] text-verdict-warn mt-1">
           Below the {PANEL_FLOOR}-CISO floor — directional only. Run a larger panel to make this meaningful.
         </p>
+      ) : conf.calibrated === false ? (
+        <p className="text-[12px] text-verdict-warn mt-1">
+          Not yet calibrated for this question type — directional. The band reflects how far the panel may be from real CISOs here; it narrows as more real-CISO reference data is collected.
+        </p>
       ) : conf.label === "Low" ? (
         <p className="text-[12px] text-ink-500 mt-1">
           Wide band — read this as directional. A larger panel narrows it.

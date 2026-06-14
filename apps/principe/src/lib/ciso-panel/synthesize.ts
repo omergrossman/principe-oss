@@ -3,6 +3,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import type { PanelResponse, PanelAggregates } from "./ask";
 import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";
 import { computeDecision, type PanelDecision } from "./decision";
+import type { QuestionType } from "./question-router";
 
 /**
  * One synthesis call that turns the 100 structured responses into an
@@ -85,6 +86,7 @@ export async function synthesizePanel(
   responses: PanelResponse[],
   aggregates: PanelAggregates,
   client: Anthropic,
+  questionType?: QuestionType,
 ): Promise<ExecSummary> {
   const started = Date.now();
   const compact = responses.map((r) => ({
@@ -140,6 +142,7 @@ export async function synthesizePanel(
       res.usage.input_tokens,
       res.usage.output_tokens,
       Date.now() - started,
+      questionType,
     );
   }
   try {
@@ -160,7 +163,7 @@ export async function synthesizePanel(
       // would drift).
       themes: arrayOfThemes(parsed.themes, responses).slice(0, 5),
       // Numbers server-side; the LLM only supplied the rationale prose.
-      decision: computeDecision(responses, aggregates, topCons, rationale),
+      decision: computeDecision(responses, aggregates, topCons, rationale, questionType),
       inputTokens: res.usage.input_tokens,
       outputTokens: res.usage.output_tokens,
       durationMs: Date.now() - started,
@@ -173,6 +176,7 @@ export async function synthesizePanel(
       res.usage.input_tokens,
       res.usage.output_tokens,
       Date.now() - started,
+      questionType,
     );
   }
 }
@@ -290,6 +294,7 @@ function fallback(
   inputTokens: number,
   outputTokens: number,
   durationMs: number,
+  questionType?: QuestionType,
 ): ExecSummary {
   return {
     summary: text.slice(0, 600) || "Synthesis output could not be parsed.",
@@ -299,7 +304,7 @@ function fallback(
     themes: [],
     // The synthesis prose failed, but the decision numbers come straight
     // from the verdicts — still valid, still worth showing.
-    decision: computeDecision(responses, aggregates, [], ""),
+    decision: computeDecision(responses, aggregates, [], "", questionType),
     inputTokens,
     outputTokens,
     durationMs,
