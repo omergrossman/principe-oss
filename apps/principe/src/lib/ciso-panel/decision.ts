@@ -12,6 +12,7 @@
 import type { PanelResponse, PanelAggregates } from "./ask";
 import { calibrate } from "./calibration-map";
 import type { QuestionType } from "./question-router";
+import type { PanelReview } from "./review";
 
 // Claim-neutral stances — the panel votes pro/con on whatever the question
 // proposes (a product to buy OR a strategy/claim to endorse), so the label is
@@ -53,6 +54,11 @@ export interface DecisionDissent {
    * primary output — for a pitch question the objections matter more than the
    * favour-%, which is only directional until the type is calibrated. */
   objections: string[];
+  /** Tier 1.5 — a risk/stakeholder/failure mode the whole panel missed, surfaced
+   * by the adversarial review pass. Null when review didn't run or found none. */
+  blindSpot?: string | null;
+  /** Tier 1.5 — true when the review judged the dissenting case the stronger one. */
+  minorityStronger?: boolean;
   /** The segment most opposed to buying, or null if there's no material dissent. */
   opposedSegment: { label: string; conPct: number; n: number } | null;
 }
@@ -137,8 +143,11 @@ export function computeDecision(
   topCons: string[],
   rationale: string,
   questionType?: QuestionType,
+  review?: PanelReview,
 ): PanelDecision {
   const n = responses.length;
+  // Reviewer-ranked objections when the review pass ran; else synthesiser order.
+  const ranked = review?.objectionsRanked ?? topCons;
   const rawFavorPct = n > 0 ? Math.round((aggregates.proCount / n) * 100) : 0;
   // Tier 2 — apply the calibration map's per-type correction.
   const cal = calibrate(questionType ?? "PITCH", rawFavorPct);
@@ -168,9 +177,13 @@ export function computeDecision(
       calibrated: cal.calibrated,
     },
     dissent: {
-      objection: topCons.length > 0 ? topCons[0] : null,
-      objections: topCons.slice(0, 3),
+      // When the review ran, use its reviewer-ranked objections; else the
+      // synthesiser's order.
+      objection: ranked.length > 0 ? ranked[0] : null,
+      objections: ranked.slice(0, 3),
       opposedSegment: mostOpposedSegment(aggregates, n),
+      blindSpot: review?.blindSpot ?? null,
+      minorityStronger: review?.minorityStronger ?? false,
     },
   };
 }
