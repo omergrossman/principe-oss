@@ -3,6 +3,7 @@ import type Anthropic from "@anthropic-ai/sdk";
 import type { PanelResponse, PanelAggregates } from "./ask";
 import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";
 import { computeDecision, type PanelDecision } from "./decision";
+import { reviewObjections } from "./review";
 import type { QuestionType } from "./question-router";
 
 /**
@@ -87,6 +88,7 @@ export async function synthesizePanel(
   aggregates: PanelAggregates,
   client: Anthropic,
   questionType?: QuestionType,
+  opts?: { deepReview?: boolean },
 ): Promise<ExecSummary> {
   const started = Date.now();
   const compact = responses.map((r) => ({
@@ -150,6 +152,12 @@ export async function synthesizePanel(
     const topCons = arrayOfStrings(parsed.topCons).slice(0, 5);
     const rationale =
       typeof parsed.recommendation === "string" ? parsed.recommendation : "";
+    // Tier 1.5 — adversarial review pass. Gated by the caller (on for
+    // directional/PITCH types). Never throws; on failure the decision keeps the
+    // synthesiser's objection order and no blind spot.
+    const review = opts?.deepReview
+      ? await reviewObjections(question, aggregates, topCons, client)
+      : undefined;
     return {
       summary:
         typeof parsed.summary === "string"
@@ -163,7 +171,7 @@ export async function synthesizePanel(
       // would drift).
       themes: arrayOfThemes(parsed.themes, responses).slice(0, 5),
       // Numbers server-side; the LLM only supplied the rationale prose.
-      decision: computeDecision(responses, aggregates, topCons, rationale, questionType),
+      decision: computeDecision(responses, aggregates, topCons, rationale, questionType, review),
       inputTokens: res.usage.input_tokens,
       outputTokens: res.usage.output_tokens,
       durationMs: Date.now() - started,
