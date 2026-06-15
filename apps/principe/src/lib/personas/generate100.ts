@@ -25,6 +25,7 @@ export interface AgenticPersona {
   budget: string;
   stance: "cautious" | "balanced" | "aggressive" | "contrarian";
   posture: "enablement-first" | "pragmatic" | "security-purist";
+  mandate: "reactive" | "embedded" | "strategic";
   concerns: string[];
   initiative: string;
   markdown: string;
@@ -231,6 +232,30 @@ const AI_POSTURE_COLORING = {
 } as const;
 type AiPosture = keyof typeof AI_POSTURE_COLORING;
 
+// Mandate axis — the persona's organisational AUTHORITY and program maturity,
+// orthogonal to posture (worldview). This is the CISO-Assembly V1.0↔V2.0 split:
+// a reactive bolt-on with no leverage vs a board-level shaper with budget power.
+// It's the lever on the willingness-vs-feasibility gap we measured on intent
+// questions ("would you move org-wide to X in 12 months?") — a reactive CISO
+// answers feasibility ("I can't drive that"), a strategic one answers willingness
+// ("yes, I'd lead it"). Distributed so the panel reflects that most CISOs are NOT
+// yet V2.0. Kept independent of size on purpose (a 400-person co can have a
+// strategic CISO; a 20k one can have a reactive bolt-on).
+const MANDATES: AgenticPersona["mandate"][] = ["reactive", "embedded", "strategic"];
+const MANDATE_WEIGHTS: Record<AgenticPersona["mandate"], number> = {
+  reactive: 40,
+  embedded: 38,
+  strategic: 22,
+};
+const MANDATE_COLORING: Record<AgenticPersona["mandate"], string> = {
+  reactive:
+    "Mandate: reactive. You bolt security onto what IT and the business hand you — limited authority, limited budget, and a real talent for defending an environment that was never designed to be defended. You answer through operational drag and feasibility: 'what can we actually do with what we've got?' You discount anything that needs organisational leverage you don't have, and you're honest that org-wide change you can't personally drive often just won't happen on the stated timeline.",
+  embedded:
+    "Mandate: embedded. You have real partnership with engineering and some budget authority, and you're integrating security into delivery — but you're not yet a board-level peer. You'll champion what you can credibly drive and defer what needs authority above your level. Your answers split case by case on how much of this you can actually own.",
+  strategic:
+    "Mandate: strategic. You run security like its CEO — a peer-level executive with budget authority who shapes the organisation and plays the long game. You answer from a shaping, willingness lens: if a direction is right you'll commit to driving it org-wide and assume you can marshal the org to get there, even if full rollout outlasts the stated window. You evaluate the direction, not whether you personally have the leverage — because you do.",
+};
+
 // Shared 2026 world the personas operate in — narrative grounding drawn from the
 // public CISO surveys in /calibration + YL Ventures' State of the Cyber Nation.
 // Context to react to through each persona's OWN seat/stance/posture, never a
@@ -332,6 +357,7 @@ function buildSystemPrompt(
     `Stance (how you evaluate): ${STANCE_COLORING[p.stance]}`,
     `Posture (your security-vs-business worldview and your org's maturity): ${POSTURE_COLORING[p.posture]}`,
     AI_POSTURE_COLORING[aiPosture],
+    MANDATE_COLORING[p.mandate],
     `Current top concerns: ${p.concerns.join("; ")}.`,
     `Active initiative right now: ${p.initiative}.`,
     ``,
@@ -360,7 +386,7 @@ function buildSystemPrompt(
 }
 
 function buildMarkdown(p: Omit<AgenticPersona, "markdown" | "systemPrompt">): string {
-  return `${p.name} · ${p.region} · ${p.industry} · ${p.companySize} · ${p.tenure} as CISO. ${p.background}. Stance: ${p.stance}. Posture: ${p.posture}. Top concerns: ${p.concerns.join("; ")}. Active initiative: ${p.initiative}.`;
+  return `${p.name} · ${p.region} · ${p.industry} · ${p.companySize} · ${p.tenure} as CISO. ${p.background}. Stance: ${p.stance}. Posture: ${p.posture}. Mandate: ${p.mandate}. Top concerns: ${p.concerns.join("; ")}. Active initiative: ${p.initiative}.`;
 }
 
 /**
@@ -458,6 +484,17 @@ export function generatePersonas(
     postureLottery.push(POSTURES[postureLottery.length % POSTURES.length]);
   }
 
+  // Mandate lottery sized to N from fixed weights (~40/38/22). Same shape as
+  // the posture lottery — deterministic, drawn with the seeded rng.
+  const mandateLottery: AgenticPersona["mandate"][] = [];
+  for (const m of MANDATES) {
+    const w = Math.round((MANDATE_WEIGHTS[m] / 100) * n);
+    for (let i = 0; i < w; i++) mandateLottery.push(m);
+  }
+  while (mandateLottery.length < n) {
+    mandateLottery.push(MANDATES[mandateLottery.length % MANDATES.length]);
+  }
+
   // Track name uniqueness per region.
   const usedNamesByRegion = new Map<string, Set<string>>();
   for (const r of REGIONS) usedNamesByRegion.set(r.key, new Set());
@@ -489,6 +526,7 @@ export function generatePersonas(
     const aiRoll = rng();
     const aiPosture: AiPosture =
       aiRoll < 0.3 ? "forward" : aiRoll < 0.75 ? "pragmatic" : "skeptic";
+    const mandate = mandateLottery[Math.floor(rng() * mandateLottery.length)];
     const concerns = pickN(CONCERN_POOL, 2, rng);
     const initiative = pick(INITIATIVES, rng);
     const reportsTo = pick(region.reports, rng);
@@ -507,6 +545,7 @@ export function generatePersonas(
       budget,
       stance,
       posture,
+      mandate,
       concerns,
       initiative,
     };
