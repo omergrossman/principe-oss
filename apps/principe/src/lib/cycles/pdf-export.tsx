@@ -560,24 +560,43 @@ function CycleReport({ data }: { data: PdfCycleData }) {
                 ? ` · ${decision.confidence.failedCount} failed (counted as not in favour)`
                 : ""}
             </Text>
-            {(decision.dissent.objection || decision.dissent.opposedSegment) && (
-              <View style={{ marginTop: 6 }}>
-                <Text style={styles.verdictLabel}>Where it splits</Text>
-                {decision.dissent.objection && (
-                  <RichText
-                    text={`Biggest objection: ${decision.dissent.objection}`}
-                    style={styles.body}
-                  />
-                )}
-                {decision.dissent.opposedSegment && (
-                  <Text style={styles.body}>
-                    Most opposed: {decision.dissent.opposedSegment.label} —{" "}
-                    {decision.dissent.opposedSegment.conPct}% con (n=
-                    {decision.dissent.opposedSegment.n})
-                  </Text>
-                )}
-              </View>
-            )}
+            {(() => {
+              // Ranked objections (top 3 from the review pass / synthesiser),
+              // falling back to the single legacy `objection` for old saved asks.
+              const objs =
+                decision.dissent.objections && decision.dissent.objections.length > 0
+                  ? decision.dissent.objections
+                  : decision.dissent.objection
+                    ? [decision.dissent.objection]
+                    : [];
+              const { blindSpot, minorityStronger, opposedSegment } = decision.dissent;
+              if (objs.length === 0 && !opposedSegment && !blindSpot) return null;
+              return (
+                <View style={{ marginTop: 6 }}>
+                  <Text style={styles.verdictLabel}>What CISOs push back on</Text>
+                  {objs.map((o, i) => (
+                    <RichText key={i} text={`${i + 1}. ${o}`} style={styles.body} />
+                  ))}
+                  {opposedSegment && (
+                    <Text style={styles.body}>
+                      Most opposed: {opposedSegment.label} — {opposedSegment.conPct}% con (n=
+                      {opposedSegment.n})
+                    </Text>
+                  )}
+                  {blindSpot && (
+                    <View style={{ marginTop: 5 }}>
+                      <Text style={styles.verdictLabel}>What the panel almost missed</Text>
+                      <RichText text={blindSpot} style={styles.body} />
+                    </View>
+                  )}
+                  {minorityStronger && (
+                    <Text style={[styles.body, { color: "#C97A1F", marginTop: 3 }]}>
+                      Contested — on review, the dissenting case is the stronger one here.
+                    </Text>
+                  )}
+                </View>
+              );
+            })()}
           </View>
         )}
 
