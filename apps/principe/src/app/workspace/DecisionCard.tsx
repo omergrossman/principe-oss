@@ -91,6 +91,24 @@ export function DecisionCard({ decision }: { decision?: PanelDecision }) {
           </p>
         ) : null}
 
+        {/* Tier 1.5 — the adversarial review pass: what no objection named. */}
+        {dissent.blindSpot ? (
+          <div className="mt-3 pl-3 border-l-2 border-l-flare-500">
+            <p className="text-[11px] text-flare-600 uppercase tracking-wide font-semibold">
+              What the panel almost missed
+            </p>
+            <p className="text-[13px] text-ink-700 mt-0.5">
+              <MarkdownLite text={dissent.blindSpot} />
+            </p>
+          </div>
+        ) : null}
+
+        {dissent.minorityStronger ? (
+          <p className="text-[12px] text-verdict-warn mt-2">
+            Contested — on review, the dissenting case is the stronger one here. Read the stance with that in mind.
+          </p>
+        ) : null}
+
         {rec.rationale ? (
           <p className="text-[13px] text-ink-600 mt-3 leading-relaxed">
             <MarkdownLite text={rec.rationale} />

@@ -13,6 +13,16 @@ import {
 } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
 import { computeDecision } from "@/lib/ciso-panel/decision";
+import { calibrate } from "@/lib/ciso-panel/calibration-map";
+import type { QuestionType } from "@/lib/ciso-panel/question-router";
+
+/** "Directional" = the calibration map hasn't earned a tight band for this type
+ * yet (PITCH today). Those answers lead with objections, so they're the ones
+ * worth running the adversarial review pass on. The probe value is arbitrary —
+ * the calibrated flag doesn't depend on it. */
+function isDirectionalType(type?: QuestionType): boolean {
+  return !calibrate(type ?? "PITCH", 50).calibrated;
+}
 import { appendAskHistory } from "@/lib/ciso-panel/ask-history";
 import {
   clearProgress,
@@ -134,12 +144,18 @@ export async function POST(req: Request) {
     markSynthesisStarted(session.firmId);
     let summary;
     try {
+      // Tier 1.5 — run the adversarial review pass on directional types (PITCH
+      // today), where the objections are the headline and worth stress-testing.
+      // Calibrated types don't need it. `deepReview` in the body forces it on.
+      const deepReview =
+        body.deepReview === true || isDirectionalType(panel.questionType);
       summary = await synthesizePanel(
         question,
         panel.responses,
         panel.aggregates,
         client,
         panel.questionType,
+        { deepReview },
       );
     } catch (synthErr) {
       // The 100 per-persona verdicts already succeeded; only the summarising
