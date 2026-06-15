@@ -147,3 +147,6 @@ vite.config.ts.timestamp-*
 
 # Database backups (bin/backup.sh)
 backups/
+
+# macOS
+.DS_Store

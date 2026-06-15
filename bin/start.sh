@@ -1,5 +1,6 @@
 #!/bin/bash
-# Principe — one-command boot.
+# Príncipe — one-command boot  ·  macOS & Linux
+# (Windows users boot via Docker Desktop / the desktop shortcut from install.ps1.)
 #
 # Generates required secrets on first run (idempotent: subsequent runs
 # reuse the existing .env.runtime), then `docker compose up -d`s the
