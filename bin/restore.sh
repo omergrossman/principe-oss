@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Príncipe — restore the database from a bin/backup.sh dump.
+# Príncipe — restore the database from a bin/backup.sh dump  ·  macOS & Linux
 #
 #   ./bin/restore.sh backups/principe-YYYYMMDD-HHMMSS.sql.gz
 #
