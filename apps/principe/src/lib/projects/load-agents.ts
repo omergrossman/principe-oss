@@ -72,6 +72,7 @@ export async function loadProjectAgents(projectId: string): Promise<RuntimePerso
       // isn't persisted as a discrete column yet, so this placeholder only
       // satisfies the type — no runtime code reads persona.posture today.
       posture: "pragmatic",
+      mandate: "embedded",
       concerns: [],
       initiative: "",
       markdown: r.baseMarkdown,
