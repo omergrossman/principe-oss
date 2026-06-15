@@ -46,8 +46,13 @@ export interface DecisionConfidence {
 }
 
 export interface DecisionDissent {
-  /** Strongest buy-blocking objection (top con), or null if none. */
+  /** Strongest buy-blocking objection (top con), or null if none. Kept for
+   * back-compat with asks saved before `objections` existed. */
   objection: string | null;
+  /** Top ranked objections (most buy-blocking first), up to 3. The wedge's
+   * primary output — for a pitch question the objections matter more than the
+   * favour-%, which is only directional until the type is calibrated. */
+  objections: string[];
   /** The segment most opposed to buying, or null if there's no material dissent. */
   opposedSegment: { label: string; conPct: number; n: number } | null;
 }
@@ -164,6 +169,7 @@ export function computeDecision(
     },
     dissent: {
       objection: topCons.length > 0 ? topCons[0] : null,
+      objections: topCons.slice(0, 3),
       opposedSegment: mostOpposedSegment(aggregates, n),
     },
   };
