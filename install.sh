@@ -1,6 +1,11 @@
 #!/usr/bin/env bash
 #
-# Príncipe — zero-to-running installer.
+# ============================================================
+#   Príncipe installer  ·  macOS & Linux
+#   Windows? Use install.ps1 in PowerShell instead.
+# ============================================================
+#
+# Zero-to-running: installs Docker if needed, clones the repo, boots the stack.
 #
 #   curl -fsSL https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.sh | bash
 #

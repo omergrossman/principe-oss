@@ -1,6 +1,11 @@
 ﻿#Requires -Version 5.1
 <#
-  Príncipe — Windows one-command installer.
+  ============================================================
+    Príncipe installer  ·  Windows (PowerShell)
+    macOS or Linux? Use install.sh in a terminal instead.
+  ============================================================
+
+  Windows one-command installer — nothing to a running app.
 
     irm https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.ps1 | iex
 

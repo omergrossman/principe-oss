@@ -70,6 +70,19 @@ irm https://raw.githubusercontent.com/omergrossman/principe-oss/main/install.ps1
 
 > Requires Windows 10 (2004+) or Windows 11 with `winget` (App Installer). On first Docker Desktop launch you may need to accept its terms once. If anything interrupts the install, just run the command again — it's safe to re-run and picks up where it left off.
 
+### Which script runs where
+
+Rule of thumb: every `.sh` is **macOS & Linux**; `.ps1` / `.cmd` are **Windows**. Each script's header banner states its OS too.
+
+| Script | Platform | What it does |
+|---|---|---|
+| `install.sh` | 🍎 macOS & 🐧 Linux | One-command install — Docker + clone + boot |
+| `install.ps1` | 🪟 Windows (PowerShell) | One-command install — WSL2 + Docker Desktop + clone + boot |
+| `bin/start.sh` | 🍎 macOS & 🐧 Linux | Boot the stack (reuses `.env.runtime`) |
+| `bin/launch.sh` | 🍎 macOS & 🐧 Linux | Desktop launcher (the Desktop icon) |
+| `bin/launch.cmd` | 🪟 Windows | Desktop launcher (the Desktop shortcut) |
+| `bin/backup.sh` · `bin/restore.sh` | 🍎 macOS & 🐧 Linux | Database backup / restore |
+
 ## Architecture
 
 Three containers, one compose file:
