@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Príncipe desktop launcher — ensure the stack is up, then open the app in the
-# browser. This is what the desktop icon (created by the installer) invokes.
+# Príncipe desktop launcher  ·  macOS & Linux  (Windows: see launch.cmd)
+# Ensure the stack is up, then open the app in the browser. This is what the
+# desktop icon (created by the installer) invokes.
 cd "$(dirname "$0")/.." || exit 1
 export PATH="/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:$PATH"
 

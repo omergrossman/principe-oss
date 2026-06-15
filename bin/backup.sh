@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Príncipe — database backup.
+# Príncipe — database backup  ·  macOS & Linux
 #
 # Dumps the Postgres database to a timestamped, gzipped SQL file under
 # ./backups/. Safe to run on a live stack. Restore with bin/restore.sh.
