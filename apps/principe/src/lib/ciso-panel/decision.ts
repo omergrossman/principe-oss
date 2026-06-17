@@ -97,8 +97,11 @@ export function wilsonInterval(successes: number, n: number, z = Z): [number, nu
  */
 export function stanceFor(proPct: number, conPct: number): DecisionStance {
   const net = proPct - conPct; // signed margin, in points
-  if (proPct >= 50 && net >= 20) return "Strong Yes";
-  if (conPct >= 50 && net <= -20) return "Strong No";
+  // "Strong" needs BOTH an outright majority on one side (≥55%) AND a decisive
+  // margin (≥30pp net) — so a slim majority or a mostly-neutral room is at most
+  // a Lean, never Strong (in either direction).
+  if (proPct >= 55 && net >= 30) return "Strong Yes";
+  if (conPct >= 55 && net <= -30) return "Strong No";
   if (net >= 10) return "Lean Yes";
   if (net <= -10) return "Lean No";
   return "Split";

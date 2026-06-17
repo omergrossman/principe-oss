@@ -59,12 +59,11 @@ describe("wilsonInterval", () => {
 
 describe("stanceFor", () => {
   it("derives stance from the pro-vs-con balance, not pro alone", () => {
-    expect(stanceFor(80, 10)).toBe("Strong Yes"); // majority pro, net +70
-    expect(stanceFor(50, 5)).toBe("Strong Yes"); // pro 50, net +45
-    expect(stanceFor(45, 20)).toBe("Lean Yes"); // net +25, pro < 50
+    expect(stanceFor(80, 10)).toBe("Strong Yes"); // clear majority + decisive margin
+    expect(stanceFor(45, 20)).toBe("Lean Yes"); // net +25, pro < 55
     expect(stanceFor(40, 38)).toBe("Split"); // net +2 — near-even
     expect(stanceFor(20, 35)).toBe("Lean No"); // net −15
-    expect(stanceFor(10, 60)).toBe("Strong No"); // con majority, net −50
+    expect(stanceFor(10, 65)).toBe("Strong No"); // con majority + decisive margin
     expect(stanceFor(0, 90)).toBe("Strong No"); // unanimous con
   });
 
@@ -72,6 +71,12 @@ describe("stanceFor", () => {
     // 30% pro / 8% con / 62% neutral — only 8% actually oppose → Lean Yes.
     expect(stanceFor(30, 8)).toBe("Lean Yes");
     expect(stanceFor(30, 8)).not.toBe("Strong No");
+  });
+
+  it("a slim majority is a Lean, not a Strong (no over-claiming either way)", () => {
+    expect(stanceFor(52, 17)).toBe("Lean Yes"); // 52% pro is not a "Strong"
+    expect(stanceFor(52, 17)).not.toBe("Strong Yes");
+    expect(stanceFor(17, 52)).toBe("Lean No");
   });
 });
 

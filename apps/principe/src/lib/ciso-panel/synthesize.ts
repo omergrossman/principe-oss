@@ -55,8 +55,8 @@ You receive a founder's question, 100 structured responses from agentic CISOs (e
 
 Output EXACTLY this JSON shape, no prose around it:
 {
-  "summary": "<3-4 short sentences. Lead with the verdict. State the split. State what the strongest signal is. Don't waffle.>",
-  "recommendation": "<ONE sentence the reader sees first: the call plus the single biggest reason. Match the question — for a product/pitch e.g. 'Lean no — most wouldn't adopt, blocked by integration risk'; for a strategy or claim e.g. 'Lean yes — the panel favors detection-first, though regulated sectors push back.' Do NOT invent a percentage; the system computes the number.>",
+  "summary": "<3-4 short sentences describing the STATE OF THE ROOM factually: how the panel splits (how many would back it, how many actively object, how many stay neutral), the strongest signal, and the main blocker. Do NOT assert a verdict LABEL ('strong/lean yes/no', 'split') or a percentage — the system computes, labels, and displays the stance and the numbers right next to this. Explain WHY the room landed where it did. Don't waffle.>",
+  "recommendation": "<ONE sentence: the single biggest REASON the panel landed where it did — NOT the call itself. The system computes the stance label and the % and shows them beside this line, so do NOT state a verdict label or a number here, or it may contradict the computed stance. Give the driver. For a pitch e.g. 'Most wouldn't adopt — integration risk is the dominant blocker.'; for a strategy/claim e.g. 'The panel favors detection-first, though regulated sectors push back.'>",
   "topPros": ["<5 distinct, specific pro arguments drawn from the actual responses. Each is one sentence, specific. NOT 'CISOs like the speed.' YES 'EU banking CISOs would adopt because the DORA evidence pipeline maps to their existing audit cadence.'>"],
   "topCons": ["<5 distinct, specific con arguments. Same specificity bar.>"],
   "insights": [
