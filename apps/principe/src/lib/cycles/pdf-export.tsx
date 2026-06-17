@@ -240,13 +240,20 @@ function RichText({
   text: string;
   style?: RichStyle | RichStyle[];
 }) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+  // Match **double** and *single* asterisk emphasis — the model emits either,
+  // and the product convention is bold, so both render bold. Newline-excluded so
+  // *-bullets/lone asterisks pass through unchanged.
+  const parts = text.split(/(\*\*[^*\n]+?\*\*|\*[^*\n]+?\*)/g);
   return (
     <Text style={style}>
       {parts.map((p, i) =>
-        p.startsWith("**") && p.endsWith("**") && p.length > 4 ? (
+        p.length > 4 && p.startsWith("**") && p.endsWith("**") ? (
           <Text key={i} style={{ fontWeight: 700 }}>
             {p.slice(2, -2)}
+          </Text>
+        ) : p.length > 2 && p.startsWith("*") && p.endsWith("*") ? (
+          <Text key={i} style={{ fontWeight: 700 }}>
+            {p.slice(1, -1)}
           </Text>
         ) : (
           p
