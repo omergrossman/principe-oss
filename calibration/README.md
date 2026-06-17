@@ -14,12 +14,16 @@ Every dataset here contains **aggregate distributions only** — never raw indiv
 
 ---
 
-## V1 sources (4 datasets)
+## V1 sources (3 datasets)
+
+> Removed 2026-06-17: `gartner-2026-threats.json` (Gartner note G00852689). It carried
+> proprietary, page-cited Gartner survey statistics under a "licensed — not redistributed"
+> flag, which is incompatible with this being a PUBLIC repo. Its calibration coverage should
+> be rebuilt only from public primaries (Verizon DBIR, IBM X-Force, NIST, CISA KEV, etc.).
 
 | Dataset | Source | Year | Sample size | License posture |
 |---|---|---|---|---|
 | `verizon-2026-dbir.json` | Verizon 2026 DBIR | 2025-2026 (Nov 1, 2024 - Oct 31, 2025) | ~22,000 confirmed breaches, ~31,000 incidents, 145 countries | Public report — citable for analysis; aggregate stats are widely cited industry-wide |
-| `gartner-2026-threats.json` | Gartner "How to Respond to the 2026-2027 Threat Landscape" (G00852689) | 2026 | Synthesized from multiple Gartner CISO surveys + market data | **Licensed** — restricted to personal use of subscriber. Aggregate stats extracted for internal calibration use; not redistributed. License-compliance follow-up tracked. |
 | `panorays-2026-ciso.json` | Panorays 2026 CISO Survey (Global Surveyz) | 2025-2026 | 200 CISOs across finance / insurance / professional services / tech / healthcare / software | Public summary findings — citable |
 | `wakefield-2026-ciso-ai.json` | Wakefield Research CISO/AI Survey | 2026 | 200 CISOs at companies with $500M+ revenue | Public summary findings — citable |
 
