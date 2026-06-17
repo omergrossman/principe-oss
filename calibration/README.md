@@ -16,8 +16,8 @@ Every dataset here contains **aggregate distributions only** — never raw indiv
 
 ## V1 sources (3 datasets)
 
-> Removed 2026-06-17: `gartner-2026-threats.json` (Gartner note G00852689). It carried
-> proprietary, page-cited Gartner survey statistics under a "licensed — not redistributed"
+> Removed 2026-06-17: `gartner-2026-threats.json` (a paywalled Gartner research note). It
+> carried proprietary, page-cited Gartner survey statistics under a "licensed — not redistributed"
 > flag, which is incompatible with this being a PUBLIC repo. Its calibration coverage should
 > be rebuilt only from public primaries (Verizon DBIR, IBM X-Force, NIST, CISA KEV, etc.).
 
