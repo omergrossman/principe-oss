@@ -58,14 +58,20 @@ describe("wilsonInterval", () => {
 });
 
 describe("stanceFor", () => {
-  it("maps % in favor to the five stances at the thresholds", () => {
-    expect(stanceFor(80)).toBe("Strong Yes");
-    expect(stanceFor(66)).toBe("Strong Yes");
-    expect(stanceFor(60)).toBe("Lean Yes");
-    expect(stanceFor(50)).toBe("Split");
-    expect(stanceFor(40)).toBe("Lean No");
-    expect(stanceFor(33)).toBe("Strong No");
-    expect(stanceFor(0)).toBe("Strong No");
+  it("derives stance from the pro-vs-con balance, not pro alone", () => {
+    expect(stanceFor(80, 10)).toBe("Strong Yes"); // majority pro, net +70
+    expect(stanceFor(50, 5)).toBe("Strong Yes"); // pro 50, net +45
+    expect(stanceFor(45, 20)).toBe("Lean Yes"); // net +25, pro < 50
+    expect(stanceFor(40, 38)).toBe("Split"); // net +2 — near-even
+    expect(stanceFor(20, 35)).toBe("Lean No"); // net −15
+    expect(stanceFor(10, 60)).toBe("Strong No"); // con majority, net −50
+    expect(stanceFor(0, 90)).toBe("Strong No"); // unanimous con
+  });
+
+  it("a mostly-neutral panel with little opposition is NOT a No", () => {
+    // 30% pro / 8% con / 62% neutral — only 8% actually oppose → Lean Yes.
+    expect(stanceFor(30, 8)).toBe("Lean Yes");
+    expect(stanceFor(30, 8)).not.toBe("Strong No");
   });
 });
 
@@ -79,11 +85,11 @@ describe("confidenceLabel", () => {
 });
 
 describe("computeDecision", () => {
-  it("favor% = pro / total (neutrals + failures count as not-in-favor)", () => {
-    // 17 pro out of 50 total → 34% → Lean No
+  it("favor% = pro / total; stance comes from the pro-vs-con balance", () => {
+    // 17 pro / 20 con / 13 neutral out of 50 → favor 34%; pro−con = −6 → Split (near-even).
     const d = computeDecision(responses(50), agg({ proCount: 17, conCount: 20, neutralCount: 13 }), [], "");
     expect(d.recommendation.favorPct).toBe(34);
-    expect(d.recommendation.stance).toBe("Lean No");
+    expect(d.recommendation.stance).toBe("Split");
     expect(d.confidence.belowFloor).toBe(false);
   });
 

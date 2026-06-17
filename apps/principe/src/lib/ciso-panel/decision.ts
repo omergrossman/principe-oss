@@ -87,13 +87,21 @@ export function wilsonInterval(successes: number, n: number, z = Z): [number, nu
   return [Math.max(0, center - margin), Math.min(1, center + margin)];
 }
 
-/** Stance from the % in favor — fixed thresholds, tunable in one place. */
-export function stanceFor(favorPct: number): DecisionStance {
-  if (favorPct >= 66) return "Strong Yes";
-  if (favorPct >= 55) return "Lean Yes";
-  if (favorPct >= 45) return "Split";
-  if (favorPct >= 34) return "Lean No";
-  return "Strong No";
+/**
+ * Stance from the pro-vs-con BALANCE — not from "% in favor" alone. Neutrals
+ * mean "no conviction", not "against": a mostly-neutral panel lands in Split or
+ * a soft Lean, never "Strong". A "No" requires real opposition (con), not just
+ * absence of support — so 30% pro / 8% con / 62% neutral is "Lean Yes", not
+ * "Strong No". "Strong" requires an outright majority actively on one side.
+ * Thresholds tunable in one place.
+ */
+export function stanceFor(proPct: number, conPct: number): DecisionStance {
+  const net = proPct - conPct; // signed margin, in points
+  if (proPct >= 50 && net >= 20) return "Strong Yes";
+  if (conPct >= 50 && net <= -20) return "Strong No";
+  if (net >= 10) return "Lean Yes";
+  if (net <= -10) return "Lean No";
+  return "Split";
 }
 
 /** High/Moderate/Low from the CI half-width. Tunable cutoffs (D3). */
@@ -149,6 +157,7 @@ export function computeDecision(
   // Reviewer-ranked objections when the review pass ran; else synthesiser order.
   const ranked = review?.objectionsRanked ?? topCons;
   const rawFavorPct = n > 0 ? Math.round((aggregates.proCount / n) * 100) : 0;
+  const conPct = n > 0 ? Math.round((aggregates.conCount / n) * 100) : 0;
   // Tier 2 — apply the calibration map's per-type correction.
   const cal = calibrate(questionType ?? "PITCH", rawFavorPct);
   const favorPct = cal.calibratedPct;
@@ -160,7 +169,7 @@ export function computeDecision(
   const halfWidthPp = Math.max(wilsonHalfPp, cal.bandHalfWidthPp);
   return {
     recommendation: {
-      stance: stanceFor(favorPct),
+      stance: stanceFor(favorPct, conPct),
       favorPct,
       rationale: rationale.trim() || `${favorPct}% of the panel is in favor.`,
     },
