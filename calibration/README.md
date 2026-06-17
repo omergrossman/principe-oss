@@ -35,8 +35,8 @@ Seven datasets added to broaden coverage beyond the original four (Omer-sourced 
 
 | Dataset | Source | Year | n | Adds | License |
 |---|---|---|---|---|---|
-| `ians-2026-state-of-ciso.json` | IANS + Artico Search | 2026 | 662 | reporting line (64% IT / 36% business), exec-title prevalence, scope-unmanageable | licensed-fair-use |
-| `evanta-2026-ciso-priorities.json` | Evanta (Gartner) | 2026 | 1000+ | AI as #1 priority, AI/DLP/IAM investment intent | licensed-fair-use |
+| `ians-2026-state-of-ciso.json` | IANS + Artico Search | 2026 | 662 | reporting line (64% IT / 36% business), exec-title prevalence, scope-unmanageable | public (public infographic / press release only) |
+| `evanta-2026-ciso-priorities.json` | Evanta (Gartner) | 2026 | 1000+ | AI as #1 priority, AI/DLP/IAM investment intent | public (public infographic / press release only) |
 | `sygnia-2026-ir-readiness.json` | Sygnia | 2026 | 600+ | IR readiness (73% not ready), attacked-last-12mo, IR-plan adoption | public |
 | `sophos-2026-ciso.json` | Sophos + Cybersecurity Ventures | 2026 | — | identity-attack share (67%/71%), human-factor breach %, workforce gap | public |
 | `cribl-2025-ciso-priorities.json` | Cribl (synthesis) | 2025 | — | budget-growth slowdown, best-of-breed vs consolidation, AI budget >10% | public |

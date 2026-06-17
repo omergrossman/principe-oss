@@ -10,8 +10,8 @@
   "year": 2026,
   "sample_size": 662,
   "region_coverage": ["us", "global"],
-  "license_status": "licensed-fair-use",
-  "methodology_notes": "Sixth annual IANS + Artico Search CISO Compensation and Budget Research Study. 662 CISOs across industries and org sizes; data collected April–November 2025. Aggregate findings from the public press release; full report is member-restricted. Grounds the CISO's organizational position and influence.",
+  "license_status": "public",
+  "methodology_notes": "Sixth annual IANS + Artico Search CISO Compensation and Budget Research Study. 662 CISOs across industries and org sizes; data collected April–November 2025. Aggregate findings from the PUBLIC press release ONLY; the member-restricted full report is not extracted. Grounds the CISO's organizational position and influence.",
   "distributions": [
     {
       "question_category": "ciso_reporting_line",
