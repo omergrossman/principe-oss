@@ -1,16 +1,16 @@
 [
   {
-    "url": "https://www.gartner.com/research/threat-landscape-2025-2026",
-    "title": "Gartner — How to Respond to the 2025-2026 Threat Landscape (category summary)",
+    "url": "synthesis://market/how-to-respond-to-the-2025-2026-threat-landscape",
+    "title": "How to Respond to the 2025-2026 Threat Landscape (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
+    "licensePosture": "OPEN",
     "applicableFrameworks": [],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Gartner",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "market_report",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "Executive Cyber Risk",
       "publication_or_update_date": "2025 (annual cadence)",
       "key_concepts": [
@@ -44,31 +44,33 @@
       "mappings": {
         "ATTACK": [],
         "D3FEND": [],
-        "NIST": ["CSF v2"],
+        "NIST": [
+          "CSF v2"
+        ],
         "OWASP": [],
         "CSA": []
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Gartner's annual threat landscape framing for executive audiences. Synthesizes the dominant macro threats, regulatory shifts, and recommended posture changes for the year ahead. The reference document boards and CISO peer groups cite for setting the year's risk narrative."
     },
-    "content": "Gartner Threat Landscape — Executive-Facing Annual Framing (Category Summary)\n\nGartner's annual threat landscape research is the executive-facing synthesis of the year's dominant cyber risks. It is consumed primarily by CISOs preparing board materials, audit committees framing the risk narrative, and risk-committee members needing a vetted external reference for the threats they should be funding against.\n\nWhat this category typically covers (my own summary of category positioning)\n\nThe annual report tends to enumerate the macro threats that will dominate the coming year — currently AI-augmented attacks and defenses, ransomware that targets availability rather than just data, identity-based attacks that bypass perimeter controls, supply chain and third-party concentration risk, regulatory escalation (SEC cyber rules, EU DORA, NIS2, sectoral cyber-resilience regulations), and the maturation of operational technology as a target.\n\nThe defender-side framing centers on a set of recommended postures: threat-informed defense (using MITRE ATT&CK as the anchor), Continuous Threat Exposure Management (CTEM) as the replacement for traditional vulnerability management, identity-first security architecture (replacing perimeter-first), operational resilience as a board outcome (separate from IT availability), and AI governance integrated with cyber risk.\n\nHow CISOs use this category\n\nThe report functions as an external anchor for budget conversations. \"Gartner identifies X as a top threat for the coming year\" is a more durable budget argument than \"my team thinks X matters,\" especially in audit-committee settings where members default to external validation. The report's threat ordering also shapes peer-group conversations — CISOs benchmark whether their program addresses the named threats and how their peers are responding.\n\nHow this differs from threat-intel feeds\n\nUnlike threat-intelligence reports (Mandiant, CrowdStrike, Microsoft, Palo Alto Unit 42), Gartner's threat landscape is not based on first-party telemetry. It is a synthesis of analyst conversations with end-users and vendors, peer-reviewed against multiple data sources. The value is not in identifying new TTPs (the intel vendors do that faster) but in establishing the prioritization narrative that audit committees and boards adopt.\n\nWhy it matters as a KB entry\n\nFor CISO agents, this category represents the framing that executives bring into security conversations. When a CFO asks \"is our cyber program addressing AI risk,\" the question is almost certainly downstream of a Gartner-shaped narrative. Agents that understand this category can speak to the executive framing rather than only the technical detail."
+    "content": "Gartner Threat Landscape — Executive-Facing Annual Framing (Category Summary) Gartner's annual threat landscape research is the executive-facing synthesis of the year's dominant cyber risks. It is consumed primarily by CISOs preparing board materials, audit committees framing the risk narrative, and risk-committee members needing a vetted external reference for the threats they should be funding against. What this category typically covers (my own summary of category positioning) The annual report tends to enumerate the macro threats that will dominate the coming year — currently AI-augmented attacks and defenses, ransomware that targets availability rather than just data, identity-based attacks that bypass perimeter controls, supply chain and third-party concentration risk, regulatory escalation (SEC cyber rules, EU DORA, NIS2, sectoral cyber-resilience regulations), and the maturation of operational technology as a target. The defender-side framing centers on a set of recommended postures: threat-informed defense (using MITRE ATT&CK as the anchor), Continuous Threat Exposure Management (CTEM) as the replacement for traditional vulnerability management, identity-first security architecture (replacing perimeter-first), operational resilience as a board outcome (separate from IT availability), and AI governance integrated with cyber risk. How CISOs use this category The report functions as an external anchor for budget conversations. \"Gartner identifies X as a top threat for the coming year\" is a more durable budget argument than \"my team thinks X matters,\" especially in audit-committee settings where members default to external validation. The report's threat ordering also shapes peer-group conversations — CISOs benchmark whether their program addresses the named threats and how their peers are responding. How this differs from threat-intel feeds Unlike threat-intelligence reports (Mandiant, CrowdStrike, Microsoft, Palo Alto Unit 42), Gartner's threat landscape is not based on first-party telemetry. It is a synthesis of analyst conversations with end-users and vendors, peer-reviewed against multiple data sources. The value is not in identifying new TTPs (the intel vendors do that faster) but in establishing the prioritization narrative that audit committees and boards adopt. Why it matters as a KB entry For CISO agents, this category represents the framing that executives bring into security conversations. When a CFO asks \"is our cyber program addressing AI risk,\" the question is almost certainly downstream of a Gartner-shaped narrative. Agents that understand this category can speak to the executive framing rather than only the technical detail."
   },
   {
-    "url": "https://www.gartner.com/research/mq-siem-2025",
-    "title": "Gartner — Magic Quadrant for SIEM, 2025 (category summary)",
+    "url": "synthesis://market/siem-2025",
+    "title": "SIEM, 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
+    "licensePosture": "OPEN",
     "applicableFrameworks": [],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Gartner",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "SecOps",
       "publication_or_update_date": "2025 (annual)",
       "key_concepts": [
-        "Magic Quadrant axes: Completeness of Vision (x) and Ability to Execute (y)",
+        "vendor-ranking axes: vision (x) and execution (y)",
         "Four quadrants: Leaders, Challengers, Visionaries, Niche Players",
         "SIEM market converging with XDR — vendors compete across both categories",
         "Cloud-native SIEM and data lake architectures replacing on-prem deployments",
@@ -83,7 +85,21 @@
         "SOAR integration or native automation",
         "Threat intelligence integration"
       ],
-      "representative_vendors": ["Microsoft Sentinel", "Splunk (Cisco)", "IBM QRadar", "Google Chronicle", "Elastic Security", "Exabeam", "Securonix", "Sumo Logic", "LogRhythm", "Devo", "Gurucul", "Logpoint", "Rapid7 InsightIDR"],
+      "representative_vendors": [
+        "Microsoft Sentinel",
+        "Splunk (Cisco)",
+        "IBM QRadar",
+        "Google Chronicle",
+        "Elastic Security",
+        "Exabeam",
+        "Securonix",
+        "Sumo Logic",
+        "LogRhythm",
+        "Devo",
+        "Gurucul",
+        "Logpoint",
+        "Rapid7 InsightIDR"
+      ],
       "threats_or_risks": [
         "SIEM blind spots in cloud/SaaS log sources",
         "Alert fatigue and analyst burnout",
@@ -96,29 +112,43 @@
         "Tiered data retention strategy (hot/warm/cold)"
       ],
       "mappings": {
-        "ATTACK": ["broad coverage — SIEM is the primary instrumentation layer"],
-        "D3FEND": ["Log-File Analysis", "Authentication Event Analysis", "Process Lineage Analysis"],
-        "NIST": ["CSF v2 DETECT, RESPOND"],
+        "ATTACK": [
+          "broad coverage — SIEM is the primary instrumentation layer"
+        ],
+        "D3FEND": [
+          "Log-File Analysis",
+          "Authentication Event Analysis",
+          "Process Lineage Analysis"
+        ],
+        "NIST": [
+          "CSF v2 DETECT, RESPOND"
+        ],
         "OWASP": [],
-        "CSA": ["LOG", "SEF"]
+        "CSA": [
+          "LOG",
+          "SEF"
+        ]
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Gartner's annual ranking of SIEM vendors. The reference for SecOps tool evaluation and the most-cited document in SIEM procurement processes. 2025 reflects convergence with XDR and the rise of cloud-native data lake architectures."
     },
-    "content": "Gartner Magic Quadrant for SIEM, 2025 — Market Position and Category Trends (Category Summary)\n\nThe SIEM Magic Quadrant is the most-cited external reference in SecOps tooling decisions. It positions vendors on two axes — Completeness of Vision and Ability to Execute — and assigns each to one of four quadrants (Leaders, Challengers, Visionaries, Niche Players). The Quadrant placement frequently dictates which vendors get shortlisted in enterprise procurement.\n\nMarket trends shaping 2025 (my summary based on publicly visible market signals)\n\nThe SIEM category in 2025 is mid-consolidation. Splunk's acquisition by Cisco is operating at scale; Microsoft Sentinel continues to expand share by bundling into the broader Microsoft Defender suite; Google Chronicle has gained traction with cloud-native enterprises on a data lake architecture; IBM QRadar's market position has compressed under the dual pressure from Microsoft and emerging cloud-native players.\n\nCommon SIEM/XDR Leader-quadrant vendors (representative): Microsoft Sentinel, Splunk (Cisco), IBM QRadar, Google Chronicle. Common Challengers and Visionaries (representative): Elastic Security, Exabeam, Securonix, Sumo Logic, Devo, Gurucul, Rapid7 InsightIDR. Specific quadrant placement varies year to year.\n\nThe most consequential market trend is the convergence with XDR. Vendors that started as SIEM are adding endpoint and identity telemetry natively; vendors that started as EDR (CrowdStrike, SentinelOne, Microsoft Defender) are extending into SIEM territory. The procurement question is no longer \"SIEM vs XDR\" but \"how integrated is the vendor's full SecOps stack.\"\n\nPricing model evolution\n\nData-volume licensing has come under sustained pressure. The pattern: customers exceed budgeted volume in year 2 of contracts, get hit with 50-200% overages, and become motivated buyers for the next vendor's cheaper architecture. Splunk's Edge Processor, Microsoft Sentinel's data lake tier, and Chronicle's flat-fee model are all responses to this dynamic. CISOs evaluating SIEM now require multi-year TCO modeling that accounts for likely data growth, not just current usage.\n\nAI-assisted analysis as differentiator\n\nEvery vendor in this category now claims AI-assisted investigation. The differentiation is moving from \"do you have AI\" to \"what specifically does it do well\" — natural-language query, automated alert triage, hypothesis generation during investigation, automated rule tuning. CISOs differentiate by demoing actual analyst workflows, not by reading marketing.\n\nWhy CISOs reference this category\n\nThe MQ is the procurement spine. RFPs reference current Leaders for the must-include shortlist. Procurement justifies vendor selection by citing MQ position. Board members ask \"is our SIEM a Leader.\" Even when CISOs disagree with specific placements, the document shapes the conversation. Agents that understand this category understand the procurement gravity SecOps tooling decisions operate under."
+    "content": "Gartner SIEM vendor-ranking analysis, 2025 — Market Position and Category Trends (Category Summary) The SIEM analyst vendor-ranking analysis is the most-cited external reference in SecOps tooling decisions. It positions vendors on two axes — vision and execution — and assigns each to one of four quadrants (leader, challenger, visionary, and niche tiers). The Quadrant placement frequently dictates which vendors get shortlisted in enterprise procurement. Market trends shaping 2025 (my summary based on publicly visible market signals) The SIEM category in 2025 is mid-consolidation. Splunk's acquisition by Cisco is operating at scale; Microsoft Sentinel continues to expand share by bundling into the broader Microsoft Defender suite; Google Chronicle has gained traction with cloud-native enterprises on a data lake architecture; IBM QRadar's market position has compressed under the dual pressure from Microsoft and emerging cloud-native players. Common SIEM/XDR Leader-quadrant vendors (representative): Microsoft Sentinel, Splunk (Cisco), IBM QRadar, Google Chronicle. Common Challengers and Visionaries (representative): Elastic Security, Exabeam, Securonix, Sumo Logic, Devo, Gurucul, Rapid7 InsightIDR. Specific quadrant placement varies year to year. The most consequential market trend is the convergence with XDR. Vendors that started as SIEM are adding endpoint and identity telemetry natively; vendors that started as EDR (CrowdStrike, SentinelOne, Microsoft Defender) are extending into SIEM territory. The procurement question is no longer \"SIEM vs XDR\" but \"how integrated is the vendor's full SecOps stack.\" Pricing model evolution Data-volume licensing has come under sustained pressure. The pattern: customers exceed budgeted volume in year 2 of contracts, get hit with 50-200% overages, and become motivated buyers for the next vendor's cheaper architecture. Splunk's Edge Processor, Microsoft Sentinel's data lake tier, and Chronicle's flat-fee model are all responses to this dynamic. CISOs evaluating SIEM now require multi-year TCO modeling that accounts for likely data growth, not just current usage. AI-assisted analysis as differentiator Every vendor in this category now claims AI-assisted investigation. The differentiation is moving from \"do you have AI\" to \"what specifically does it do well\" — natural-language query, automated alert triage, hypothesis generation during investigation, automated rule tuning. CISOs differentiate by demoing actual analyst workflows, not by reading marketing. Why CISOs reference this category That ranking analysis is the procurement spine. RFPs reference current Leaders for the must-include shortlist. Procurement justifies vendor selection by citing ranking position. Board members ask \"is our SIEM a Leader.\" Even when CISOs disagree with specific placements, the document shapes the conversation. Agents that understand this category understand the procurement gravity SecOps tooling decisions operate under."
   },
   {
-    "url": "https://www.gartner.com/research/mq-sse-2025",
-    "title": "Gartner — Magic Quadrant for Security Service Edge, 2025 (category summary)",
+    "url": "synthesis://market/security-service-edge-2025",
+    "title": "Security Service Edge, 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
-    "applicableFrameworks": ["SASE", "Zero Trust"],
+    "licensePosture": "OPEN",
+    "applicableFrameworks": [
+      "SASE",
+      "Zero Trust"
+    ],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Gartner",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "Zero Trust / Network Security",
       "publication_or_update_date": "2025 (annual)",
       "key_concepts": [
@@ -136,7 +166,20 @@
         "DNS-layer security",
         "Browser isolation"
       ],
-      "representative_vendors": ["Zscaler", "Netskope", "Palo Alto Networks (Prisma Access)", "Cisco (Umbrella, Duo)", "Cloudflare", "Forcepoint", "iboss", "Skyhigh Security", "Lookout", "Versa Networks", "Cato Networks", "Broadcom (Symantec)"],
+      "representative_vendors": [
+        "Zscaler",
+        "Netskope",
+        "Palo Alto Networks (Prisma Access)",
+        "Cisco (Umbrella, Duo)",
+        "Cloudflare",
+        "Forcepoint",
+        "iboss",
+        "Skyhigh Security",
+        "Lookout",
+        "Versa Networks",
+        "Cato Networks",
+        "Broadcom (Symantec)"
+      ],
       "threats_or_risks": [
         "VPN exposure (CVE-driven mass exploitation of enterprise VPN appliances)",
         "Unmanaged SaaS sprawl",
@@ -149,29 +192,45 @@
         "SWG for web and DNS-layer threat blocking"
       ],
       "mappings": {
-        "ATTACK": ["T1078 Valid Accounts", "T1190 Exploit Public-Facing Application", "T1567 Exfiltration Over Web Service"],
-        "D3FEND": ["Network Isolation", "Authorization Event Analysis"],
-        "NIST": ["CSF v2 PROTECT", "SP 800-207 Zero Trust"],
+        "ATTACK": [
+          "T1078 Valid Accounts",
+          "T1190 Exploit Public-Facing Application",
+          "T1567 Exfiltration Over Web Service"
+        ],
+        "D3FEND": [
+          "Network Isolation",
+          "Authorization Event Analysis"
+        ],
+        "NIST": [
+          "CSF v2 PROTECT",
+          "SP 800-207 Zero Trust"
+        ],
         "OWASP": [],
-        "CSA": ["IAM", "IPY", "IVS"]
+        "CSA": [
+          "IAM",
+          "IPY",
+          "IVS"
+        ]
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Gartner's ranking of Security Service Edge platforms — the integrated SWG+CASB+ZTNA category that's replacing legacy VPN and standalone web security tools. The procurement anchor for Zero Trust network architectures."
     },
-    "content": "Gartner Magic Quadrant for Security Service Edge (SSE), 2025 — Category Summary\n\nSSE is the Gartner-coined category covering the cloud-delivered security services that converge in modern Zero Trust architectures: Secure Web Gateway (SWG), Cloud Access Security Broker (CASB), Zero Trust Network Access (ZTNA), and increasingly Firewall-as-a-Service (FWaaS), DNS security, and browser isolation. SSE is the security half of SASE; SD-WAN is the network half.\n\nMarket structure\n\nThe SSE category emerged from the fact that enterprises were buying SWG, CASB, and ZTNA from different vendors and getting fragmented policy enforcement. The Magic Quadrant tracks which vendors have unified these into a single platform with consistent policy, identity, and data classification across the components.\n\nRepresentative vendors typically cited at the Leader level: Zscaler (the longest-tenured cloud-native SSE pure-play), Netskope (CASB-anchored breadth), Palo Alto Networks Prisma Access (bundled with the broader Cortex/Prisma platform), Cisco (Umbrella + Duo + ThousandEyes integration). Active Challengers and Visionaries: Cloudflare (cloud-native architecture with networking heritage), Forcepoint, iboss, Skyhigh Security, Lookout, Versa Networks, Cato Networks, Broadcom Symantec.\n\nThe VPN-replacement dynamic\n\nThe market motion driving SSE adoption is VPN exhaustion. Successive years of mass-exploitation of enterprise VPN appliance vulnerabilities (Pulse Secure, Citrix NetScaler, Fortinet, Ivanti) have eroded confidence in legacy remote-access VPN. ZTNA — identity-aware, per-application access without exposing the network — is the structural replacement. SSE vendors with strong ZTNA offerings have captured the largest share of new spend.\n\nCASB and DLP convergence\n\nThe CASB component of SSE is where data security plays out. Inline CASB inspects SaaS traffic for DLP policy violations (data classification, sensitivity labels, exfiltration patterns) and surfaces shadow IT — unsanctioned SaaS use discovered from traffic flows. The maturity of a vendor's DLP rule library and incident workflow is now a primary differentiation.\n\nIntegration with identity\n\nSSE platforms are increasingly integrated with the customer's identity provider (Okta, Azure AD/Entra, Ping). Policy decisions reference identity claims (department, role, risk score, device posture) rather than network location. The depth of this integration — including just-in-time access, step-up auth, and continuous evaluation — separates Leaders from Challengers.\n\nWhy CISOs reference this category\n\nSSE procurement is one of the largest line items in enterprise network security. The MQ is the procurement anchor and the basis for the multi-vendor bake-off. CISOs use it to justify the migration from legacy proxy/VPN architectures and to defend the platform-consolidation argument to procurement teams skeptical of single-vendor lock-in."
+    "content": "Gartner analyst vendor-ranking analysis for Security Service Edge (SSE), 2025 — Category Summary SSE is the Gartner-coined category covering the cloud-delivered security services that converge in modern Zero Trust architectures: Secure Web Gateway (SWG), Cloud Access Security Broker (CASB), Zero Trust Network Access (ZTNA), and increasingly Firewall-as-a-Service (FWaaS), DNS security, and browser isolation. SSE is the security half of SASE; SD-WAN is the network half. Market structure The SSE category emerged from the fact that enterprises were buying SWG, CASB, and ZTNA from different vendors and getting fragmented policy enforcement. The analyst vendor-ranking analysis tracks which vendors have unified these into a single platform with consistent policy, identity, and data classification across the components. Representative vendors typically cited at the Leader level: Zscaler (the longest-tenured cloud-native SSE pure-play), Netskope (CASB-anchored breadth), Palo Alto Networks Prisma Access (bundled with the broader Cortex/Prisma platform), Cisco (Umbrella + Duo + ThousandEyes integration). Active Challengers and Visionaries: Cloudflare (cloud-native architecture with networking heritage), Forcepoint, iboss, Skyhigh Security, Lookout, Versa Networks, Cato Networks, Broadcom Symantec. The VPN-replacement dynamic The market motion driving SSE adoption is VPN exhaustion. Successive years of mass-exploitation of enterprise VPN appliance vulnerabilities (Pulse Secure, Citrix NetScaler, Fortinet, Ivanti) have eroded confidence in legacy remote-access VPN. ZTNA — identity-aware, per-application access without exposing the network — is the structural replacement. SSE vendors with strong ZTNA offerings have captured the largest share of new spend. CASB and DLP convergence The CASB component of SSE is where data security plays out. Inline CASB inspects SaaS traffic for DLP policy violations (data classification, sensitivity labels, exfiltration patterns) and surfaces shadow IT — unsanctioned SaaS use discovered from traffic flows. The maturity of a vendor's DLP rule library and incident workflow is now a primary differentiation. Integration with identity SSE platforms are increasingly integrated with the customer's identity provider (Okta, Azure AD/Entra, Ping). Policy decisions reference identity claims (department, role, risk score, device posture) rather than network location. The depth of this integration — including just-in-time access, step-up auth, and continuous evaluation — separates Leaders from Challengers. Why CISOs reference this category SSE procurement is one of the largest line items in enterprise network security. That ranking analysis is the procurement anchor and the basis for the multi-vendor bake-off. CISOs use it to justify the migration from legacy proxy/VPN architectures and to defend the platform-consolidation argument to procurement teams skeptical of single-vendor lock-in."
   },
   {
-    "url": "https://www.gartner.com/research/mq-exposure-mgmt-2025",
-    "title": "Gartner — Magic Quadrant for Exposure Assessment Platforms, 2025 (category summary)",
+    "url": "synthesis://market/exposure-assessment-platforms-2025",
+    "title": "Exposure Assessment Platforms, 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
-    "applicableFrameworks": ["CTEM"],
+    "licensePosture": "OPEN",
+    "applicableFrameworks": [
+      "CTEM"
+    ],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Gartner",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "Exposure Management",
       "publication_or_update_date": "2025",
       "key_concepts": [
@@ -189,7 +248,23 @@
         "Breach and attack simulation (BAS) integration",
         "Exposure validation"
       ],
-      "representative_vendors": ["Tenable", "Qualys", "Rapid7", "Wiz", "CrowdStrike Falcon Exposure Management", "Microsoft Defender External Attack Surface Management", "Palo Alto Cortex Xpanse", "Censys", "Bitsight", "SecurityScorecard", "Pentera", "Cymulate", "AttackIQ", "XM Cyber", "Picus Security"],
+      "representative_vendors": [
+        "Tenable",
+        "Qualys",
+        "Rapid7",
+        "Wiz",
+        "CrowdStrike Falcon Exposure Management",
+        "Microsoft Defender External Attack Surface Management",
+        "Palo Alto Cortex Xpanse",
+        "Censys",
+        "Bitsight",
+        "SecurityScorecard",
+        "Pentera",
+        "Cymulate",
+        "AttackIQ",
+        "XM Cyber",
+        "Picus Security"
+      ],
       "threats_or_risks": [
         "Unknown internet-facing assets (shadow IT, M&A inheritance)",
         "Vulnerability backlog growing faster than remediation capacity",
@@ -202,29 +277,42 @@
         "Pentest-on-demand replacing annual exercises"
       ],
       "mappings": {
-        "ATTACK": ["T1595 Active Scanning", "T1190 Exploit Public-Facing Application"],
-        "D3FEND": ["Software Inventory", "Software Composition Analysis"],
-        "NIST": ["CSF v2 IDENTIFY, PROTECT"],
+        "ATTACK": [
+          "T1595 Active Scanning",
+          "T1190 Exploit Public-Facing Application"
+        ],
+        "D3FEND": [
+          "Software Inventory",
+          "Software Composition Analysis"
+        ],
+        "NIST": [
+          "CSF v2 IDENTIFY, PROTECT"
+        ],
         "OWASP": [],
-        "CSA": ["TVM"]
+        "CSA": [
+          "TVM"
+        ]
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Gartner's ranking of exposure assessment platforms — the category that has absorbed traditional vulnerability management plus attack surface management, attack path analysis, and breach simulation. Anchored by the CTEM program framework."
     },
-    "content": "Gartner Magic Quadrant for Exposure Assessment Platforms, 2025 — Category Summary\n\nExposure Assessment Platforms (EAP) is the Gartner category that has absorbed and extended traditional vulnerability management. The shift reflects an industry consensus that scanning for CVEs in isolation no longer matches how breaches actually happen — what matters is exposure: the combination of vulnerability, exploitability, reachability, and business impact.\n\nWhat the category covers\n\nEAP encompasses External Attack Surface Management (EASM, finding unknown internet-facing assets), Cyber Asset Attack Surface Management (CAASM, normalizing asset inventory across cloud and on-prem), traditional vulnerability assessment, attack path analysis (graphing identity and trust relationships to surface privilege-escalation routes), exposure validation (proving exploitability via Breach and Attack Simulation), and prioritization that accounts for reachability, exploitability, and business impact rather than CVSS alone.\n\nRepresentative Leader-quadrant vendors: Tenable (with Tenable One unifying VM + EASM + identity exposure), Qualys (broadening from VM to TotalCloud + EASM), Rapid7 (InsightVM + Surface Command), Wiz (cloud-native pure-play with rapid growth into broader exposure). Often-cited Challengers and Visionaries: CrowdStrike Falcon Exposure Management, Microsoft Defender EASM, Palo Alto Cortex Xpanse, Censys, Bitsight, SecurityScorecard, plus the validation-focused vendors Pentera, Cymulate, AttackIQ, XM Cyber, Picus Security.\n\nContinuous Threat Exposure Management (CTEM)\n\nThe program-level concept Gartner has paired with this category is CTEM — a continuous, iterative program with five steps: Scoping, Discovery, Prioritization, Validation, Mobilization. CTEM is methodology-agnostic but EAP vendors are positioning their platforms as CTEM enablers. The shift is from periodic vulnerability scanning to continuous exposure management with validated prioritization.\n\nThe collapse of patch SLAs\n\nA recurring theme: the time from CVE disclosure to active exploitation has compressed dramatically (a recurring theme in the security lectures corpus — Sega App's Verifier's Law). Traditional vulnerability programs operating on monthly or quarterly cycles cannot keep up. EAP vendors that surface only the exposures that are reachable AND exploitable AND impactful let security teams focus remediation capacity where it actually matters.\n\nWhy CISOs reference this category\n\nEAP is the modernization story for the legacy vulnerability management line item. CISOs use the category to justify replacing or augmenting incumbent VM (often Tenable or Qualys at this stage) with platforms that integrate the additional exposure dimensions. The MQ is the procurement anchor; the CTEM framework is the program design template."
+    "content": "Gartner analyst vendor-ranking analysis for Exposure Assessment Platforms, 2025 — Category Summary Exposure Assessment Platforms (EAP) is the Gartner category that has absorbed and extended traditional vulnerability management. The shift reflects an industry consensus that scanning for CVEs in isolation no longer matches how breaches actually happen — what matters is exposure: the combination of vulnerability, exploitability, reachability, and business impact. What the category covers EAP encompasses External Attack Surface Management (EASM, finding unknown internet-facing assets), Cyber Asset Attack Surface Management (CAASM, normalizing asset inventory across cloud and on-prem), traditional vulnerability assessment, attack path analysis (graphing identity and trust relationships to surface privilege-escalation routes), exposure validation (proving exploitability via Breach and Attack Simulation), and prioritization that accounts for reachability, exploitability, and business impact rather than CVSS alone. Representative Leader-quadrant vendors: Tenable (with Tenable One unifying VM + EASM + identity exposure), Qualys (broadening from VM to TotalCloud + EASM), Rapid7 (InsightVM + Surface Command), Wiz (cloud-native pure-play with rapid growth into broader exposure). Often-cited Challengers and Visionaries: CrowdStrike Falcon Exposure Management, Microsoft Defender EASM, Palo Alto Cortex Xpanse, Censys, Bitsight, SecurityScorecard, plus the validation-focused vendors Pentera, Cymulate, AttackIQ, XM Cyber, Picus Security. Continuous Threat Exposure Management (CTEM) The program-level concept Gartner has paired with this category is CTEM — a continuous, iterative program with five steps: Scoping, Discovery, Prioritization, Validation, Mobilization. CTEM is methodology-agnostic but EAP vendors are positioning their platforms as CTEM enablers. The shift is from periodic vulnerability scanning to continuous exposure management with validated prioritization. The collapse of patch SLAs A recurring theme: the time from CVE disclosure to active exploitation has compressed dramatically (a recurring theme in the security lectures corpus — Sega App's Verifier's Law). Traditional vulnerability programs operating on monthly or quarterly cycles cannot keep up. EAP vendors that surface only the exposures that are reachable AND exploitable AND impactful let security teams focus remediation capacity where it actually matters. Why CISOs reference this category EAP is the modernization story for the legacy vulnerability management line item. CISOs use the category to justify replacing or augmenting incumbent VM (often Tenable or Qualys at this stage) with platforms that integrate the additional exposure dimensions. That ranking analysis is the procurement anchor; the CTEM framework is the program design template."
   },
   {
-    "url": "https://www.gartner.com/research/ai-security-platforms-2025",
-    "title": "Gartner — AI Security Platforms / AI Security Strategy (category summary)",
+    "url": "synthesis://market/ai-security-platforms-ai-security-strategy",
+    "title": "AI Security Platforms / AI Security Strategy (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
-    "applicableFrameworks": ["NIST AI RMF", "OWASP LLM Top 10"],
+    "licensePosture": "OPEN",
+    "applicableFrameworks": [
+      "NIST AI RMF",
+      "OWASP LLM Top 10"
+    ],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Gartner",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "AI Security",
       "publication_or_update_date": "2025 (emerging category)",
       "key_concepts": [
@@ -244,7 +332,21 @@
         "Model security scanning (vulnerability assessment of foundation models)",
         "AI agent tool-use scoping and audit"
       ],
-      "representative_vendors": ["Lakera", "Protect AI", "HiddenLayer", "Robust Intelligence (Cisco)", "Lasso Security", "Prompt Security", "CalypsoAI", "Cranium", "Patronus AI", "Mindgard", "WhyLabs", "Holistic AI", "Credo AI"],
+      "representative_vendors": [
+        "Lakera",
+        "Protect AI",
+        "HiddenLayer",
+        "Robust Intelligence (Cisco)",
+        "Lasso Security",
+        "Prompt Security",
+        "CalypsoAI",
+        "Cranium",
+        "Patronus AI",
+        "Mindgard",
+        "WhyLabs",
+        "Holistic AI",
+        "Credo AI"
+      ],
       "threats_or_risks": [
         "Prompt injection (direct and indirect)",
         "Training data poisoning",
@@ -260,32 +362,40 @@
       ],
       "mappings": {
         "ATTACK": [],
-        "D3FEND": ["Input Validation", "Output Validation"],
-        "NIST": ["AI RMF GenAI Profile", "AI 600-1"],
-        "OWASP": ["LLM Top 10"],
+        "D3FEND": [
+          "Input Validation",
+          "Output Validation"
+        ],
+        "NIST": [
+          "AI RMF GenAI Profile",
+          "AI 600-1"
+        ],
+        "OWASP": [
+          "LLM Top 10"
+        ],
         "CSA": []
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Gartner's framing of the emerging AI security platform category. AI TRiSM is the program frame; AI Security Posture Management (AISPM) and LLM gateways are the dominant tool categories. Vendor landscape is fragmented and consolidating rapidly."
     },
-    "content": "Gartner AI Security Platforms / AI Security Strategy — Emerging Category (Category Summary)\n\nAI Security is the fastest-emerging analyst category in cybersecurity, with the vendor landscape and analyst framing both still in flux. Gartner has published multiple pieces under the umbrella of AI TRiSM (AI Trust, Risk, and Security Management) — a program-level frame — and has begun tracking specific tool categories including AI Security Posture Management (AISPM) and LLM gateways.\n\nAI TRiSM as program frame\n\nAI TRiSM is Gartner's positioning that AI risk management is a cross-functional program spanning AI explainability, ModelOps, AI application security, model privacy, and content anomaly detection. It complements rather than replaces NIST AI RMF — TRiSM is the operating model; AI RMF is the policy framework.\n\nTool categories emerging\n\nLLM Gateways / Prompt Firewalls: inline policy enforcement points that inspect prompts (block prompt injection, redact PII/secrets) and outputs (block policy violations, ensure schema compliance, detect hallucination indicators). Representative vendors: Lakera, Lasso Security, Prompt Security, CalypsoAI, Protect AI, Robust Intelligence (acquired by Cisco), HiddenLayer.\n\nAI Security Posture Management (AISPM): discovers AI usage across the enterprise, inventories AI systems (models, agents, RAG pipelines), assesses risk posture against frameworks like NIST AI RMF and OWASP LLM Top 10, monitors for drift. Representative vendors: Cranium, WhyLabs, Holistic AI, Mindgard.\n\nAI Governance Platforms: support the GOVERN function of NIST AI RMF — policy authoring, use-case registration and approval, risk assessment, evidence collection. Representative: Credo AI, Holistic AI, Cranium.\n\nModel Security Scanning: vulnerability assessment of foundation models and AI artifacts (notebooks, pickle files, embeddings). Representative: Protect AI, HiddenLayer.\n\nMarket structure\n\nThe vendor landscape is highly fragmented. Many startups (often funded in 2023-24) are competing in overlapping spaces. Consolidation is starting — Cisco's acquisition of Robust Intelligence, Palo Alto's organic build-out, CrowdStrike's announcements in the space. By 2026-27 expect significant M&A as established security platforms acquire the leading AI security pure-plays.\n\nWhy CISOs reference this category\n\nThe AI Security category is where CISOs go for vendor evaluation in a market they often don't yet have internal expertise in. The Gartner research provides shortlists and category definitions even when the analyst's own perspective is still maturing. For CISO agents, this category represents the procurement frontier where executive pressure to \"do something about AI risk\" lands first."
+    "content": "Gartner AI Security Platforms / AI Security Strategy — Emerging Category (Category Summary) AI Security is the fastest-emerging analyst category in cybersecurity, with the vendor landscape and analyst framing both still in flux. Gartner has published multiple pieces under the umbrella of AI TRiSM (AI Trust, Risk, and Security Management) — a program-level frame — and has begun tracking specific tool categories including AI Security Posture Management (AISPM) and LLM gateways. AI TRiSM as program frame AI TRiSM is Gartner's positioning that AI risk management is a cross-functional program spanning AI explainability, ModelOps, AI application security, model privacy, and content anomaly detection. It complements rather than replaces NIST AI RMF — TRiSM is the operating model; AI RMF is the policy framework. Tool categories emerging LLM Gateways / Prompt Firewalls: inline policy enforcement points that inspect prompts (block prompt injection, redact PII/secrets) and outputs (block policy violations, ensure schema compliance, detect hallucination indicators). Representative vendors: Lakera, Lasso Security, Prompt Security, CalypsoAI, Protect AI, Robust Intelligence (acquired by Cisco), HiddenLayer. AI Security Posture Management (AISPM): discovers AI usage across the enterprise, inventories AI systems (models, agents, RAG pipelines), assesses risk posture against frameworks like NIST AI RMF and OWASP LLM Top 10, monitors for drift. Representative vendors: Cranium, WhyLabs, Holistic AI, Mindgard. AI Governance Platforms: support the GOVERN function of NIST AI RMF — policy authoring, use-case registration and approval, risk assessment, evidence collection. Representative: Credo AI, Holistic AI, Cranium. Model Security Scanning: vulnerability assessment of foundation models and AI artifacts (notebooks, pickle files, embeddings). Representative: Protect AI, HiddenLayer. Market structure The vendor landscape is highly fragmented. Many startups (often funded in 2023-24) are competing in overlapping spaces. Consolidation is starting — Cisco's acquisition of Robust Intelligence, Palo Alto's organic build-out, CrowdStrike's announcements in the space. By 2026-27 expect significant M&A as established security platforms acquire the leading AI security pure-plays. Why CISOs reference this category The AI Security category is where CISOs go for vendor evaluation in a market they often don't yet have internal expertise in. The Gartner research provides shortlists and category definitions even when the analyst's own perspective is still maturing. For CISO agents, this category represents the procurement frontier where executive pressure to \"do something about AI risk\" lands first."
   },
   {
-    "url": "https://www.forrester.com/research/security-analytics-wave-q2-2025",
-    "title": "Forrester — The Forrester Wave: Security Analytics Platforms, Q2 2025 (category summary)",
+    "url": "synthesis://market/security-analytics-platforms-q2-2025",
+    "title": "Security Analytics Platforms, Q2 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
+    "licensePosture": "OPEN",
     "applicableFrameworks": [],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Forrester",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "SecOps",
       "publication_or_update_date": "2025 Q2",
       "key_concepts": [
-        "Forrester Wave methodology: Strategy, Current Offering, Market Presence",
+        "analyst evaluation methodology: Strategy, Current Offering, Market Presence",
         "Leaders, Strong Performers, Contenders, Challengers segmentation",
         "Security analytics broader than SIEM — includes XDR, UEBA, data lake architectures",
         "Detection content quality and threat coverage weighted heavily",
@@ -299,7 +409,20 @@
         "Threat intel integration",
         "Detection-as-code workflows"
       ],
-      "representative_vendors": ["Microsoft Sentinel", "Splunk (Cisco)", "Google Chronicle", "IBM QRadar", "Elastic Security", "Exabeam", "Securonix", "Devo", "Sumo Logic", "Vectra AI", "Gurucul", "Anvilogic"],
+      "representative_vendors": [
+        "Microsoft Sentinel",
+        "Splunk (Cisco)",
+        "Google Chronicle",
+        "IBM QRadar",
+        "Elastic Security",
+        "Exabeam",
+        "Securonix",
+        "Devo",
+        "Sumo Logic",
+        "Vectra AI",
+        "Gurucul",
+        "Anvilogic"
+      ],
       "threats_or_risks": [
         "Detection gaps in cloud-native services",
         "Identity and SaaS telemetry blind spots",
@@ -311,29 +434,39 @@
         "Threat-hunting program supported by long-retention data lake"
       ],
       "mappings": {
-        "ATTACK": ["broad coverage"],
-        "D3FEND": ["Log-File Analysis", "Authentication Event Analysis"],
-        "NIST": ["CSF v2 DETECT, RESPOND"],
+        "ATTACK": [
+          "broad coverage"
+        ],
+        "D3FEND": [
+          "Log-File Analysis",
+          "Authentication Event Analysis"
+        ],
+        "NIST": [
+          "CSF v2 DETECT, RESPOND"
+        ],
         "OWASP": [],
-        "CSA": ["LOG", "SEF"]
+        "CSA": [
+          "LOG",
+          "SEF"
+        ]
       },
-      "source_url": "[redacted]",
-      "summary": "Forrester's counterpart to the Gartner SIEM MQ. Wider scope (XDR and data-lake architectures included), weighting that favors detection-content depth over platform breadth. Used as a procurement second opinion alongside Gartner."
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
+      "summary": "Forrester's counterpart to the Gartner SIEM ranking analysis. Wider scope (XDR and data-lake architectures included), weighting that favors detection-content depth over platform breadth. Used as a procurement second opinion alongside Gartner."
     },
-    "content": "Forrester Wave — Security Analytics Platforms, Q2 2025 (Category Summary)\n\nForrester's Wave for Security Analytics is the second major analyst evaluation for what Gartner calls SIEM (and increasingly XDR). The Wave methodology differs: vendors are scored on Strategy (where they're going), Current Offering (what they can do today), and Market Presence (size and adoption), with the Wave graphic positioning vendors in Leaders, Strong Performers, Contenders, and Challengers segments.\n\nWhere this differs from the Gartner MQ\n\nForrester's Wave for Security Analytics scopes the category more broadly than SIEM alone — it tends to include XDR platforms, data-lake-architected security analytics, and identity-focused UEBA more centrally. The criteria weighting also typically favors detection content quality and threat coverage over breadth-of-platform integrations. Customers using Forrester as their procurement anchor tend to weight detection effectiveness more heavily; customers using Gartner tend to weight platform consolidation more heavily.\n\nRepresentative Leader-tier vendors (overlap with Gartner SIEM MQ Leaders): Microsoft Sentinel, Splunk (Cisco), Google Chronicle, IBM QRadar. Common Strong Performers and Contenders: Elastic Security, Exabeam, Securonix, Devo, Sumo Logic, Vectra AI, Gurucul, Anvilogic.\n\nDetection content as the moat\n\nThe Forrester evaluation typically gives heavier weight to detection-content depth — the size and quality of the included rule library, the frequency of content updates from the vendor's threat research team, the ease of customizing or authoring detections. This reflects Forrester's research direction that detection content is the durable moat for SecOps platforms (the underlying telemetry plumbing is becoming commoditized).\n\nDetection-as-code adoption\n\nA secondary differentiator Forrester tracks: support for detection-as-code workflows — version-controlled detection rules, CI/CD for content, peer review on detection changes. Vendors that natively support this pattern (Splunk, Google Chronicle, Elastic) score better with engineering-led security teams than vendors that require GUI-based rule editing.\n\nWhy CISOs reference this category\n\nThe Wave is the procurement second opinion. RFPs frequently require shortlists drawn from both the Gartner MQ Leaders and the Forrester Wave Leaders, which is how vendors like Exabeam, Securonix, and Google Chronicle build credibility against the incumbents. CISOs use the divergence between the two frameworks (where they recommend different vendors) as a signal for deeper evaluation rather than as a contradiction to resolve."
+    "content": "Forrester analyst evaluation — Security Analytics Platforms, Q2 2025 (Category Summary) Forrester's evaluation for Security Analytics is the second major analyst evaluation for what Gartner calls SIEM (and increasingly XDR). The evaluation methodology differs: vendors are scored on Strategy (where they're going), Current Offering (what they can do today), and Market Presence (size and adoption), with the analyst evaluation graphic positioning vendors in leader, strong-performer, contender, and challenger tiers segments. Where this differs from the Gartner ranking analysis Forrester's evaluation for Security Analytics scopes the category more broadly than SIEM alone — it tends to include XDR platforms, data-lake-architected security analytics, and identity-focused UEBA more centrally. The criteria weighting also typically favors detection content quality and threat coverage over breadth-of-platform integrations. Customers using Forrester as their procurement anchor tend to weight detection effectiveness more heavily; customers using Gartner tend to weight platform consolidation more heavily. Representative Leader-tier vendors (overlap with Gartner SIEM top-ranked vendors): Microsoft Sentinel, Splunk (Cisco), Google Chronicle, IBM QRadar. Common Strong Performers and Contenders: Elastic Security, Exabeam, Securonix, Devo, Sumo Logic, Vectra AI, Gurucul, Anvilogic. Detection content as the moat The Forrester evaluation typically gives heavier weight to detection-content depth — the size and quality of the included rule library, the frequency of content updates from the vendor's threat research team, the ease of customizing or authoring detections. This reflects Forrester's research direction that detection content is the durable moat for SecOps platforms (the underlying telemetry plumbing is becoming commoditized). Detection-as-code adoption A secondary differentiator Forrester tracks: support for detection-as-code workflows — version-controlled detection rules, CI/CD for content, peer review on detection changes. Vendors that natively support this pattern (Splunk, Google Chronicle, Elastic) score better with engineering-led security teams than vendors that require GUI-based rule editing. Why CISOs reference this category The evaluation is the procurement second opinion. RFPs frequently require shortlists drawn from both the Gartner top-ranked vendors and the Forrester analyst evaluation Leaders, which is how vendors like Exabeam, Securonix, and Google Chronicle build credibility against the incumbents. CISOs use the divergence between the two frameworks (where they recommend different vendors) as a signal for deeper evaluation rather than as a contradiction to resolve."
   },
   {
-    "url": "https://www.forrester.com/research/mdr-wave-q1-2025",
-    "title": "Forrester — The Forrester Wave: Managed Detection and Response, Q1 2025 (category summary)",
+    "url": "synthesis://market/managed-detection-and-response-q1-2025",
+    "title": "Managed Detection and Response, Q1 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
+    "licensePosture": "OPEN",
     "applicableFrameworks": [],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Forrester",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "services_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "SecOps Services",
       "publication_or_update_date": "2025 Q1",
       "key_concepts": [
@@ -351,7 +484,23 @@
         "Compliance reporting overlay",
         "Onboarding and integration support"
       ],
-      "representative_vendors": ["CrowdStrike Falcon Complete", "Arctic Wolf", "Sophos MDR", "SentinelOne Vigilance", "Red Canary", "Expel", "Rapid7 MDR", "Trustwave", "Secureworks (Sophos)", "Trellix MDR", "Bitdefender MDR", "Huntress", "Pondurance", "Mandiant Managed Defense (Google)", "deepwatch"],
+      "representative_vendors": [
+        "CrowdStrike Falcon Complete",
+        "Arctic Wolf",
+        "Sophos MDR",
+        "SentinelOne Vigilance",
+        "Red Canary",
+        "Expel",
+        "Rapid7 MDR",
+        "Trustwave",
+        "Secureworks (Sophos)",
+        "Trellix MDR",
+        "Bitdefender MDR",
+        "Huntress",
+        "Pondurance",
+        "Mandiant Managed Defense (Google)",
+        "deepwatch"
+      ],
       "threats_or_risks": [
         "Mid-market organizations lacking 24/7 SOC capacity",
         "Talent shortage preventing internal SOC build",
@@ -363,34 +512,47 @@
         "Service-level agreements on time-to-respond"
       ],
       "mappings": {
-        "ATTACK": ["broad coverage via underlying EDR/SIEM"],
-        "D3FEND": ["Authentication Event Analysis", "Process Lineage Analysis", "Network Traffic Analysis"],
-        "NIST": ["CSF v2 DETECT, RESPOND"],
+        "ATTACK": [
+          "broad coverage via underlying EDR/SIEM"
+        ],
+        "D3FEND": [
+          "Authentication Event Analysis",
+          "Process Lineage Analysis",
+          "Network Traffic Analysis"
+        ],
+        "NIST": [
+          "CSF v2 DETECT, RESPOND"
+        ],
         "OWASP": [],
-        "CSA": ["SEF"]
+        "CSA": [
+          "SEF"
+        ]
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Forrester's evaluation of Managed Detection and Response providers. The dominant category for mid-market and lean-team enterprise SOCs. Mix of vendor-specific MDR (built on the vendor's own EDR) and vendor-agnostic MDR providers."
     },
-    "content": "Forrester Wave — Managed Detection and Response (MDR), Q1 2025 (Category Summary)\n\nMDR is the dominant managed-security-services category for organizations that don't have the staffing to operate a 24/7 SOC internally. The Forrester Wave is the authoritative evaluation of MDR providers, scoring them across Strategy, Current Offering, and Market Presence with attention to detection content, analyst experience, response capability, and integration breadth.\n\nVendor-specific vs vendor-agnostic\n\nA central market split: vendor-specific MDR — services built on top of a specific EDR/XDR platform — versus vendor-agnostic MDR — services that work across whatever telemetry the customer already has. Vendor-specific representatives: CrowdStrike Falcon Complete, SentinelOne Vigilance, Microsoft Defender Experts. Vendor-agnostic representatives: Arctic Wolf, Red Canary, Expel, Pondurance, Huntress, deepwatch. Sophos, Trustwave, Rapid7 sit in both camps depending on configuration.\n\nThe pricing question\n\nMDR pricing models vary widely — per-endpoint, per-user, per-asset, flat-rate. The hidden cost is integration: MDRs that require the customer to deploy specific EDR or that integrate poorly with the customer's existing identity provider, cloud telemetry, and email security generate hidden cost in onboarding and ongoing tuning. CISOs evaluating MDR are increasingly weighting onboarding-time-to-value as heavily as price.\n\nIdentity, cloud, OT extensions\n\nThe MDR scope has expanded beyond endpoint over the last three years. Leaders now include identity-tier detection (suspicious authentication patterns, MFA bypass attempts), cloud-tier detection (CSP misconfiguration, lateral movement across cloud accounts), and increasingly OT-tier detection (industrial protocols, ICS-CERT signatures). Vendors limited to endpoint-only struggle in the Wave.\n\nResponse capability differentiation\n\nA significant differentiator: what \"response\" actually means. Some MDRs only alert; others execute containment actions (isolate host, disable account, block IP) under pre-authorized playbooks; the most mature provide remediation guidance and even direct remediation. The Wave gives credit for the higher-end response capability.\n\nMid-market dominance\n\nMDR is structurally the default model for mid-market organizations (~500-2000 employees) lacking the budget to build internal SOC. For larger enterprises, MDR is increasingly a tiered supplement — internal SOC during business hours, MDR for off-hours coverage. The Wave reflects this evolution by including providers that support both operating models.\n\nWhy CISOs reference this category\n\nMDR selection is one of the most consequential vendor decisions a CISO makes — it determines who responds to incidents at 3am. The Wave is the procurement anchor. CISOs use it to assemble shortlists, validate references, and structure RFPs. The Forrester evaluation tends to give analyst experience and customer satisfaction more weight than the Gartner alternatives, making it especially useful for evaluating mid-tier providers without huge marketing budgets."
+    "content": "Forrester analyst evaluation — Managed Detection and Response (MDR), Q1 2025 (Category Summary) MDR is the dominant managed-security-services category for organizations that don't have the staffing to operate a 24/7 SOC internally. Forrester's analyst evaluation of is the authoritative evaluation of MDR providers, scoring them across strategy, current capability, and market presence with attention to detection content, analyst experience, response capability, and integration breadth. Vendor-specific vs vendor-agnostic A central market split: vendor-specific MDR — services built on top of a specific EDR/XDR platform — versus vendor-agnostic MDR — services that work across whatever telemetry the customer already has. Vendor-specific representatives: CrowdStrike Falcon Complete, SentinelOne Vigilance, Microsoft Defender Experts. Vendor-agnostic representatives: Arctic Wolf, Red Canary, Expel, Pondurance, Huntress, deepwatch. Sophos, Trustwave, Rapid7 sit in both camps depending on configuration. The pricing question MDR pricing models vary widely — per-endpoint, per-user, per-asset, flat-rate. The hidden cost is integration: MDRs that require the customer to deploy specific EDR or that integrate poorly with the customer's existing identity provider, cloud telemetry, and email security generate hidden cost in onboarding and ongoing tuning. CISOs evaluating MDR are increasingly weighting onboarding-time-to-value as heavily as price. Identity, cloud, OT extensions The MDR scope has expanded beyond endpoint over the last three years. Leaders now include identity-tier detection (suspicious authentication patterns, MFA bypass attempts), cloud-tier detection (CSP misconfiguration, lateral movement across cloud accounts), and increasingly OT-tier detection (industrial protocols, ICS-CERT signatures). Vendors limited to endpoint-only struggle in the analyst evaluation. Response capability differentiation A significant differentiator: what \"response\" actually means. Some MDRs only alert; others execute containment actions (isolate host, disable account, block IP) under pre-authorized playbooks; the most mature provide remediation guidance and even direct remediation. The evaluation gives credit for the higher-end response capability. Mid-market dominance MDR is structurally the default model for mid-market organizations (~500-2000 employees) lacking the budget to build internal SOC. For larger enterprises, MDR is increasingly a tiered supplement — internal SOC during business hours, MDR for off-hours coverage. The evaluation reflects this evolution by including providers that support both operating models. Why CISOs reference this category MDR selection is one of the most consequential vendor decisions a CISO makes — it determines who responds to incidents at 3am. The evaluation is the procurement anchor. CISOs use it to assemble shortlists, validate references, and structure RFPs. The Forrester evaluation tends to give analyst experience and customer satisfaction more weight than the Gartner alternatives, making it especially useful for evaluating mid-tier providers without huge marketing budgets."
   },
   {
-    "url": "https://www.forrester.com/research/zero-trust-platforms-wave-q3-2025",
-    "title": "Forrester — The Forrester Wave: Zero Trust Platforms, Q3 2025 (category summary)",
+    "url": "synthesis://market/zero-trust-platforms-q3-2025",
+    "title": "Zero Trust Platforms, Q3 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
-    "applicableFrameworks": ["Zero Trust", "NIST SP 800-207"],
+    "licensePosture": "OPEN",
+    "applicableFrameworks": [
+      "Zero Trust",
+      "NIST SP 800-207"
+    ],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Forrester",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "publication_or_update_date": "2025 Q3",
       "primary_domain": "Zero Trust",
       "key_concepts": [
         "Forrester invented the Zero Trust concept (John Kindervag, 2010)",
-        "ZTX (Zero Trust eXtended) framework — seven pillars: Workforce, Workload, Device, Network, Data, Visibility & Analytics, Automation & Orchestration",
+        "extended Zero Trust framework — seven pillars: Workforce, Workload, Device, Network, Data, Visibility & Analytics, Automation & Orchestration",
         "Distinguishes Zero Trust as architecture from Zero Trust as marketing label",
         "Integrated platforms vs single-pillar best-of-breed",
         "Identity-centric Zero Trust as the practical operating model"
@@ -404,41 +566,65 @@
         "Data classification and protection",
         "Policy authoring and enforcement consistency across pillars"
       ],
-      "representative_vendors": ["Microsoft (Entra + Defender + Purview)", "Cisco (Duo + Umbrella + ISE + Secure Workload)", "Palo Alto Networks (Prisma + Cortex)", "Zscaler", "Cloudflare", "Akamai", "Cyolo", "Appgate", "Okta (workforce identity ZT)", "Ping Identity"],
+      "representative_vendors": [
+        "Microsoft (Entra + Defender + Purview)",
+        "Cisco (Duo + Umbrella + ISE + Secure Workload)",
+        "Palo Alto Networks (Prisma + Cortex)",
+        "Zscaler",
+        "Cloudflare",
+        "Akamai",
+        "Cyolo",
+        "Appgate",
+        "Okta (workforce identity ZT)",
+        "Ping Identity"
+      ],
       "threats_or_risks": [
         "Lateral movement after initial credential compromise",
         "VPN and flat-network exposure",
         "Insider threat in network-trust models"
       ],
       "defensive_controls": [
-        "Multi-pillar Zero Trust architecture mapped to ZTX",
+        "Multi-pillar Zero Trust architecture mapped to extended Zero Trust",
         "Identity as the new perimeter",
         "Microsegmentation for workload-to-workload"
       ],
       "mappings": {
-        "ATTACK": ["T1078 Valid Accounts", "T1021 Remote Services"],
-        "D3FEND": ["Network Isolation", "Authentication Event Analysis", "Authorization Event Analysis"],
-        "NIST": ["SP 800-207 Zero Trust Architecture", "CSF v2"],
+        "ATTACK": [
+          "T1078 Valid Accounts",
+          "T1021 Remote Services"
+        ],
+        "D3FEND": [
+          "Network Isolation",
+          "Authentication Event Analysis",
+          "Authorization Event Analysis"
+        ],
+        "NIST": [
+          "SP 800-207 Zero Trust Architecture",
+          "CSF v2"
+        ],
         "OWASP": [],
-        "CSA": ["IAM", "IVS"]
+        "CSA": [
+          "IAM",
+          "IVS"
+        ]
       },
-      "source_url": "[redacted]",
-      "summary": "Forrester's evaluation of platforms claiming to deliver Zero Trust outcomes across multiple pillars of the ZTX framework. Forrester invented Zero Trust as a concept; their evaluation tends to be skeptical of marketing-label adoption and rigorous about architectural coverage."
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
+      "summary": "Forrester's evaluation of platforms claiming to deliver Zero Trust outcomes across multiple pillars of the extended Zero Trust framework. Forrester invented Zero Trust as a concept; their evaluation tends to be skeptical of marketing-label adoption and rigorous about architectural coverage."
     },
-    "content": "Forrester Wave — Zero Trust Platforms, Q3 2025 (Category Summary)\n\nForrester is the analyst house that invented Zero Trust — John Kindervag coined the term in 2010 and Forrester has owned the conceptual framework ever since. Their Zero Trust Platforms Wave is therefore the most rigorous evaluation of which vendors actually deliver Zero Trust as architecture versus those who have adopted the label as marketing.\n\nZTX framework — seven pillars\n\nForrester's Zero Trust eXtended (ZTX) framework defines seven pillars: Workforce (humans), Workload (apps, APIs, services), Device, Network, Data, Visibility & Analytics, and Automation & Orchestration. A true Zero Trust platform must operate across multiple pillars with consistent policy and enforcement; vendors that excel in only one pillar are categorized as point solutions, not platforms.\n\nWhat the Wave evaluates\n\nThe Wave assesses each platform on: identity-based access policy depth, continuous trust evaluation (per-request decisioning, not just at session start), microsegmentation across pillars (especially workload-to-workload), device posture verification, encrypted east-west traffic, data classification and protection, and policy authoring consistency across the pillars.\n\nVendor landscape\n\nThe Leader tier is dominated by platforms with multi-pillar reach: Microsoft (Entra + Defender + Purview as the most-integrated multi-pillar story), Cisco (Duo + Umbrella + ISE + Secure Workload), Palo Alto Networks (Prisma + Cortex), Zscaler (strong on SSE pillars; expanding into Workload), Cloudflare (rapid expansion across pillars), Akamai (workload-anchored), Cyolo and Appgate as ZTNA-anchored entrants, plus identity-pillar specialists Okta and Ping that pair with network-pillar providers for full-stack coverage.\n\nThe marketing-vs-architecture rigor\n\nForrester's evaluation is famously skeptical of vendors that adopt the Zero Trust label without architectural depth. A vendor that does identity-based access only and calls itself Zero Trust will score lower on Strategy than a vendor with multi-pillar coverage even if the latter's identity capability is less mature. This makes the Wave especially valuable for procurement: it surfaces the platform integration gaps that single-pillar best-of-breed approaches leave.\n\nIdentity as the practical center\n\nThe pragmatic operating model that has emerged: identity is the practical center of Zero Trust. Policy decisions reference identity claims (role, device posture, risk score, recent behavior). Network controls (ZTNA, microsegmentation) enforce based on identity. Data controls (DLP) reference identity context. CISOs running Zero Trust programs typically prioritize identity-pillar maturity before extending to other pillars.\n\nWhy CISOs reference this category\n\nZero Trust is the dominant architectural narrative for security modernization. Boards ask about it; auditors ask about it; CISOs need a credible story. The Wave provides the architectural rigor missing from vendor marketing, and the ZTX framework provides a vocabulary CISOs use to structure their multi-year roadmaps. CISOs use the Wave to differentiate vendors that have done the integration work from vendors that have done the marketing work."
+    "content": "Forrester analyst evaluation — Zero Trust Platforms, Q3 2025 (Category Summary) Forrester is the analyst house that invented Zero Trust — John Kindervag coined the term in 2010 and Forrester has owned the conceptual framework ever since. Their Zero Trust Platforms evaluation is therefore the most rigorous evaluation of which vendors actually deliver Zero Trust as architecture versus those who have adopted the label as marketing. extended Zero Trust framework — seven pillars Forrester's extended Zero Trust framework defines seven pillars: Workforce (humans), Workload (apps, APIs, services), Device, Network, Data, Visibility & Analytics, and Automation & Orchestration. A true Zero Trust platform must operate across multiple pillars with consistent policy and enforcement; vendors that excel in only one pillar are categorized as point solutions, not platforms. What the analyst evaluation evaluates The evaluation assesses each platform on: identity-based access policy depth, continuous trust evaluation (per-request decisioning, not just at session start), microsegmentation across pillars (especially workload-to-workload), device posture verification, encrypted east-west traffic, data classification and protection, and policy authoring consistency across the pillars. Vendor landscape The Leader tier is dominated by platforms with multi-pillar reach: Microsoft (Entra + Defender + Purview as the most-integrated multi-pillar story), Cisco (Duo + Umbrella + ISE + Secure Workload), Palo Alto Networks (Prisma + Cortex), Zscaler (strong on SSE pillars; expanding into Workload), Cloudflare (rapid expansion across pillars), Akamai (workload-anchored), Cyolo and Appgate as ZTNA-anchored entrants, plus identity-pillar specialists Okta and Ping that pair with network-pillar providers for full-stack coverage. The marketing-vs-architecture rigor Forrester's evaluation is famously skeptical of vendors that adopt the Zero Trust label without architectural depth. A vendor that does identity-based access only and calls itself Zero Trust will score lower on Strategy than a vendor with multi-pillar coverage even if the latter's identity capability is less mature. This makes the analyst evaluation especially valuable for procurement: it surfaces the platform integration gaps that single-pillar best-of-breed approaches leave. Identity as the practical center The pragmatic operating model that has emerged: identity is the practical center of Zero Trust. Policy decisions reference identity claims (role, device posture, risk score, recent behavior). Network controls (ZTNA, microsegmentation) enforce based on identity. Data controls (DLP) reference identity context. CISOs running Zero Trust programs typically prioritize identity-pillar maturity before extending to other pillars. Why CISOs reference this category Zero Trust is the dominant architectural narrative for security modernization. Boards ask about it; auditors ask about it; CISOs need a credible story. The evaluation provides the architectural rigor missing from vendor marketing, and the extended Zero Trust framework provides a vocabulary CISOs use to structure their multi-year roadmaps. CISOs use the analyst evaluation to differentiate vendors that have done the integration work from vendors that have done the marketing work."
   },
   {
-    "url": "https://www.forrester.com/research/cnapp-wave-q1-2026",
-    "title": "Forrester — The Forrester Wave: CNAPP, Q1 2026 (category summary)",
+    "url": "synthesis://market/cnapp-q1-2026",
+    "title": "CNAPP, Q1 2026 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
+    "licensePosture": "OPEN",
     "applicableFrameworks": [],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Forrester",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "vendor_landscape",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "Cloud Security",
       "publication_or_update_date": "2026 Q1",
       "key_concepts": [
@@ -458,7 +644,21 @@
         "Cloud Detection and Response (CDR)",
         "Application Security Posture Management (ASPM) overlap"
       ],
-      "representative_vendors": ["Wiz", "Palo Alto Prisma Cloud", "Microsoft Defender for Cloud", "CrowdStrike Falcon Cloud Security", "Orca Security", "Lacework (Fortinet)", "Sysdig", "Tenable Cloud Security (Ermetic)", "Aqua Security", "Trend Micro Cloud One", "Check Point CloudGuard", "Snyk (DevSecOps overlap)", "SentinelOne PingSafe"],
+      "representative_vendors": [
+        "Wiz",
+        "Palo Alto Prisma Cloud",
+        "Microsoft Defender for Cloud",
+        "CrowdStrike Falcon Cloud Security",
+        "Orca Security",
+        "Lacework (Fortinet)",
+        "Sysdig",
+        "Tenable Cloud Security (Ermetic)",
+        "Aqua Security",
+        "Trend Micro Cloud One",
+        "Check Point CloudGuard",
+        "Snyk (DevSecOps overlap)",
+        "SentinelOne PingSafe"
+      ],
       "threats_or_risks": [
         "Cloud misconfiguration leading to data exposure",
         "Excessive cloud permissions and privilege escalation paths",
@@ -472,29 +672,43 @@
         "Identity attack-path remediation"
       ],
       "mappings": {
-        "ATTACK": ["Cloud, Containers, IaaS tactics"],
-        "D3FEND": ["Cloud Configuration Auditing", "Container Scanning"],
-        "NIST": ["CSF v2 PROTECT, DETECT"],
+        "ATTACK": [
+          "Cloud, Containers, IaaS tactics"
+        ],
+        "D3FEND": [
+          "Cloud Configuration Auditing",
+          "Container Scanning"
+        ],
+        "NIST": [
+          "CSF v2 PROTECT, DETECT"
+        ],
         "OWASP": [],
-        "CSA": ["IVS", "AIS", "IAM"]
+        "CSA": [
+          "IVS",
+          "AIS",
+          "IAM"
+        ]
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Forrester's evaluation of Cloud-Native Application Protection Platforms — the converged category that has absorbed CSPM, CWPP, CIEM, container security, and IaC scanning. Most disrupted-by-startups category in security tooling."
     },
-    "content": "Forrester Wave — Cloud-Native Application Protection Platform (CNAPP), Q1 2026 (Category Summary)\n\nCNAPP is the converged category that has absorbed what used to be five separate cloud security categories: Cloud Security Posture Management (CSPM), Cloud Workload Protection (CWPP), Cloud Infrastructure Entitlement Management (CIEM), Container and Kubernetes security, and Infrastructure-as-Code scanning. The Forrester Wave is the rigorous evaluation of which platforms have actually achieved this convergence versus those still operating as bundled-but-disconnected modules.\n\nMarket structure — most disrupted by startups\n\nCNAPP is the cloud-security category most disrupted by recent startups. Wiz, founded 2020, achieved Leader status faster than any cybersecurity vendor in recent memory and became the procurement reference for cloud-native organizations. Orca Security, Sysdig, and Lacework (now Fortinet) similarly built strong positions from agentless or eBPF-anchored architectures. Incumbent challengers Palo Alto Prisma Cloud, Microsoft Defender for Cloud, CrowdStrike Falcon Cloud Security, Trend Micro, and Check Point CloudGuard compete by leveraging broader-platform integration.\n\nKey differentiators in the 2026 Wave\n\nCode-to-cloud visibility: connecting source-repo IaC to deployed cloud resources to deployed workloads. Vendors that surface \"this vulnerable image came from this Dockerfile in this repo, deployed to this cluster\" win on remediation velocity. Wiz and Snyk lead here; Palo Alto has invested heavily in catching up.\n\nIdentity attack-path analysis: graphing cloud IAM relationships to find privilege-escalation paths invisible to per-resource posture checks. CIEM-anchored vendors (Tenable Cloud Security / Ermetic, Wiz, Orca) and identity attack-path specialists (XM Cyber) lead this dimension.\n\nRuntime protection vs configuration-time prevention: the philosophical split. Configuration-time vendors emphasize preventing risky deployments via IaC scanning and CI/CD gates; runtime vendors emphasize detecting and stopping attacks in-flight. Mature CNAPP platforms do both; the Wave evaluates the integration quality between the two.\n\nMulti-cloud coverage\n\nMulti-cloud (AWS + Azure + GCP at minimum, often Oracle and Alibaba added) is table stakes. Vendors that started single-cloud or that integrate poorly with non-flagship clouds are positioned in Strong Performer or Contender tiers rather than Leader.\n\nApplication Security overlap\n\nThe edge of CNAPP increasingly overlaps with Application Security Posture Management (ASPM) — connecting application security findings (SAST, SCA, DAST) to runtime cloud context. Vendors like Snyk operate on both sides; Wiz has been extending into ASPM territory.\n\nWhy CISOs reference this category\n\nCNAPP is one of the highest-spend cloud security categories. Procurement decisions are consequential. The Wave is the second opinion to the Gartner equivalent; the two together drive most enterprise CNAPP shortlisting. CISOs use the Wave to structure RFPs and to defend procurement decisions against \"why didn't we go with [incumbent]\" pushback — the Wave's documentation of capability differences is the durable answer."
+    "content": "Forrester analyst evaluation — Cloud-Native Application Protection Platform (CNAPP), Q1 2026 (Category Summary) CNAPP is the converged category that has absorbed what used to be five separate cloud security categories: Cloud Security Posture Management (CSPM), Cloud Workload Protection (CWPP), Cloud Infrastructure Entitlement Management (CIEM), Container and Kubernetes security, and Infrastructure-as-Code scanning. Forrester's analyst evaluation of is the rigorous evaluation of which platforms have actually achieved this convergence versus those still operating as bundled-but-disconnected modules. Market structure — most disrupted by startups CNAPP is the cloud-security category most disrupted by recent startups. Wiz, founded 2020, achieved Leader status faster than any cybersecurity vendor in recent memory and became the procurement reference for cloud-native organizations. Orca Security, Sysdig, and Lacework (now Fortinet) similarly built strong positions from agentless or eBPF-anchored architectures. Incumbent challengers Palo Alto Prisma Cloud, Microsoft Defender for Cloud, CrowdStrike Falcon Cloud Security, Trend Micro, and Check Point CloudGuard compete by leveraging broader-platform integration. Key differentiators in the 2026 evaluation Code-to-cloud visibility: connecting source-repo IaC to deployed cloud resources to deployed workloads. Vendors that surface \"this vulnerable image came from this Dockerfile in this repo, deployed to this cluster\" win on remediation velocity. Wiz and Snyk lead here; Palo Alto has invested heavily in catching up. Identity attack-path analysis: graphing cloud IAM relationships to find privilege-escalation paths invisible to per-resource posture checks. CIEM-anchored vendors (Tenable Cloud Security / Ermetic, Wiz, Orca) and identity attack-path specialists (XM Cyber) lead this dimension. Runtime protection vs configuration-time prevention: the philosophical split. Configuration-time vendors emphasize preventing risky deployments via IaC scanning and CI/CD gates; runtime vendors emphasize detecting and stopping attacks in-flight. Mature CNAPP platforms do both; the analyst evaluation evaluates the integration quality between the two. Multi-cloud coverage Multi-cloud (AWS + Azure + GCP at minimum, often Oracle and Alibaba added) is table stakes. Vendors that started single-cloud or that integrate poorly with non-flagship clouds are positioned in Strong Performer or Contender tiers rather than Leader. Application Security overlap The edge of CNAPP increasingly overlaps with Application Security Posture Management (ASPM) — connecting application security findings (SAST, SCA, DAST) to runtime cloud context. Vendors like Snyk operate on both sides; Wiz has been extending into ASPM territory. Why CISOs reference this category CNAPP is one of the highest-spend cloud security categories. Procurement decisions are consequential. The evaluation is the second opinion to the Gartner equivalent; the two together drive most enterprise CNAPP shortlisting. CISOs use the analyst evaluation to structure RFPs and to defend procurement decisions against \"why didn't we go with [incumbent]\" pushback — the analyst evaluation's documentation of capability differences is the durable answer."
   },
   {
-    "url": "https://www.forrester.com/research/state-of-appsec-2025",
-    "title": "Forrester — State of Application Security, 2025 (category summary)",
+    "url": "synthesis://market/state-of-application-security-2025",
+    "title": "State of Application Security, 2025 (market landscape — original synthesis)",
     "category": "analyst",
     "region": "global",
-    "licensePosture": "LICENSED_REPORT",
-    "applicableFrameworks": ["NIST SSDF", "OWASP ASVS"],
+    "licensePosture": "OPEN",
+    "applicableFrameworks": [
+      "NIST SSDF",
+      "OWASP ASVS"
+    ],
     "applicableIndustries": [],
     "richMetadata": {
-      "source_org": "Forrester",
+      "source_org": "Príncipe category synthesis",
       "resource_type": "state_of_industry",
-      "license_posture": "LICENSED_REPORT",
+      "license_posture": "OPEN",
       "primary_domain": "AppSec",
       "publication_or_update_date": "2025 (annual)",
       "key_concepts": [
@@ -516,7 +730,24 @@
         "Secret scanning",
         "AI-code review and AI-generated-code scanning"
       ],
-      "representative_vendors": ["Snyk", "Checkmarx", "Synopsys (Black Duck)", "Veracode", "GitHub Advanced Security", "GitLab", "Sonatype", "JFrog", "Mend", "Apiiro (ASPM)", "Cycode", "Legit Security", "Endor Labs", "Aikido Security", "Semgrep", "Wiz Code"],
+      "representative_vendors": [
+        "Snyk",
+        "Checkmarx",
+        "Synopsys (Black Duck)",
+        "Veracode",
+        "GitHub Advanced Security",
+        "GitLab",
+        "Sonatype",
+        "JFrog",
+        "Mend",
+        "Apiiro (ASPM)",
+        "Cycode",
+        "Legit Security",
+        "Endor Labs",
+        "Aikido Security",
+        "Semgrep",
+        "Wiz Code"
+      ],
       "threats_or_risks": [
         "Vulnerable open-source dependencies (log4shell-class events)",
         "Compromised package registries (npm, PyPI typosquatting and account takeover)",
@@ -532,15 +763,30 @@
         "Developer security training tied to actual findings (vs generic awareness)"
       ],
       "mappings": {
-        "ATTACK": ["T1195 Supply Chain Compromise", "T1078.004 Cloud Accounts"],
-        "D3FEND": ["Software Composition Analysis", "Code Signing"],
-        "NIST": ["SSDF v1.1", "CSF v2 IDENTIFY, PROTECT"],
-        "OWASP": ["Top 10", "ASVS", "Threat Modeling Cheat Sheet"],
-        "CSA": ["AIS"]
+        "ATTACK": [
+          "T1195 Supply Chain Compromise",
+          "T1078.004 Cloud Accounts"
+        ],
+        "D3FEND": [
+          "Software Composition Analysis",
+          "Code Signing"
+        ],
+        "NIST": [
+          "SSDF v1.1",
+          "CSF v2 IDENTIFY, PROTECT"
+        ],
+        "OWASP": [
+          "Top 10",
+          "ASVS",
+          "Threat Modeling Cheat Sheet"
+        ],
+        "CSA": [
+          "AIS"
+        ]
       },
-      "source_url": "[redacted]",
+      "source_url": "Original category synthesis from public market knowledge — not derived from licensed analyst reports",
       "summary": "Forrester's annual synthesis of the AppSec market state. Tracks tool adoption, program maturity, supply chain threat evolution, and the impact of AI-generated code on AppSec. The annual document that anchors AppSec program planning conversations."
     },
-    "content": "Forrester State of Application Security, 2025 (Category Summary)\n\nForrester's annual State of AppSec report is the synthesis of where the application security market is heading: which tool categories are converging, where investment is flowing, what threats are emerging, and how mature programs are structured. It is consumed by AppSec leaders building multi-year roadmaps and by CISOs making the case for AppSec investment against competing priorities.\n\nMacro themes shaping 2025\n\nSupply chain as the dominant threat vector: post-SolarWinds and log4shell, supply chain attacks have remained the highest-impact AppSec threat class. The 2025 framing extends to package-registry compromise (npm and PyPI typosquatting and account takeover), CI/CD pipeline attacks, and AI training data poisoning.\n\nAI-generated code complications: the explosion of GitHub Copilot, Cursor, Claude Code, and similar AI coding assistants has produced an AppSec consequence — developers ship more code than ever, often code they wrote less actively. AI-generated code introduces vulnerabilities developers may not recognize (overly broad library imports, insecure defaults, subtle injection flaws). New tool categories are emerging to scan AI-generated code specifically.\n\nShift-left fatigue: the AppSec industry has spent a decade pushing security into the developer workflow. The result, as of 2025, is developer overload — too many tools, too many findings, too much noise. ASPM (Application Security Posture Management) has emerged as the consolidation layer that aggregates findings across SAST, SCA, DAST, secrets scanning, and IaC into a single prioritized backlog. ASPM vendors (Apiiro, Cycode, Legit Security, Endor Labs) are growing rapidly.\n\nSBOM mandates driving program priorities: US OMB M-22-18 and the EU Cyber Resilience Act (CRA) have made SBOM (Software Bill of Materials) generation and management a compliance requirement for enterprise software. SBOM is no longer optional — vendors selling to federal or EU customers must produce and maintain them.\n\nTool category landscape\n\nSAST (static analysis): the established baseline — Checkmarx, Veracode, Synopsys (now Black Duck), Semgrep, GitHub Advanced Security.\nSCA (open-source dependency analysis): Snyk, Sonatype, Mend, Black Duck, Endor Labs.\nDAST and API security: Veracode DAST, Invicti, Salt Security, Noname (Akamai).\nSecret scanning: GitHub Advanced Security, GitGuardian, TruffleHog.\nIaC scanning: Snyk IaC, Checkov, Tenable IaC Security, Wiz Code.\nASPM (the consolidation layer): Apiiro, Cycode, Legit Security, Endor Labs, Aikido Security, Wiz Code (extension).\n\nDeveloper training\n\nA recurring Forrester theme: generic developer-security training has largely failed. What works is training tied to actual findings the developer has produced — a real vulnerability in their own code, with explanation and remediation guidance, is 10x more effective than annual OWASP-Top-10 awareness training. Tool vendors (Snyk Learn, Veracode Verified, Secure Code Warrior) are converging on this delivery model.\n\nWhy CISOs reference this category\n\nThe State of AppSec is the annual narrative anchor for AppSec program planning. CISOs use it to: defend AppSec budget growth (\"Forrester data shows AppSec spend up X% — we're underinvested relative to peers\"); justify ASPM as the consolidation purchase (\"the State of report identifies tool sprawl as the #1 AppSec pain point\"); structure board conversations about AI code risk and software supply chain. Agents that understand this category can speak to the strategic narrative AppSec leaders bring into security conversations."
+    "content": "Forrester State of Application Security, 2025 (Category Summary) Forrester's annual State of AppSec report is the synthesis of where the application security market is heading: which tool categories are converging, where investment is flowing, what threats are emerging, and how mature programs are structured. It is consumed by AppSec leaders building multi-year roadmaps and by CISOs making the case for AppSec investment against competing priorities. Macro themes shaping 2025 Supply chain as the dominant threat vector: post-SolarWinds and log4shell, supply chain attacks have remained the highest-impact AppSec threat class. The 2025 framing extends to package-registry compromise (npm and PyPI typosquatting and account takeover), CI/CD pipeline attacks, and AI training data poisoning. AI-generated code complications: the explosion of GitHub Copilot, Cursor, Claude Code, and similar AI coding assistants has produced an AppSec consequence — developers ship more code than ever, often code they wrote less actively. AI-generated code introduces vulnerabilities developers may not recognize (overly broad library imports, insecure defaults, subtle injection flaws). New tool categories are emerging to scan AI-generated code specifically. Shift-left fatigue: the AppSec industry has spent a decade pushing security into the developer workflow. The result, as of 2025, is developer overload — too many tools, too many findings, too much noise. ASPM (Application Security Posture Management) has emerged as the consolidation layer that aggregates findings across SAST, SCA, DAST, secrets scanning, and IaC into a single prioritized backlog. ASPM vendors (Apiiro, Cycode, Legit Security, Endor Labs) are growing rapidly. SBOM mandates driving program priorities: US OMB M-22-18 and the EU Cyber Resilience Act (CRA) have made SBOM (Software Bill of Materials) generation and management a compliance requirement for enterprise software. SBOM is no longer optional — vendors selling to federal or EU customers must produce and maintain them. Tool category landscape SAST (static analysis): the established baseline — Checkmarx, Veracode, Synopsys (now Black Duck), Semgrep, GitHub Advanced Security.\nSCA (open-source dependency analysis): Snyk, Sonatype, Mend, Black Duck, Endor Labs.\nDAST and API security: Veracode DAST, Invicti, Salt Security, Noname (Akamai).\nSecret scanning: GitHub Advanced Security, GitGuardian, TruffleHog.\nIaC scanning: Snyk IaC, Checkov, Tenable IaC Security, Wiz Code.\nASPM (the consolidation layer): Apiiro, Cycode, Legit Security, Endor Labs, Aikido Security, Wiz Code (extension). Developer training A recurring Forrester theme: generic developer-security training has largely failed. What works is training tied to actual findings the developer has produced — a real vulnerability in their own code, with explanation and remediation guidance, is 10x more effective than annual OWASP-Top-10 awareness training. Tool vendors (Snyk Learn, Veracode Verified, Secure Code Warrior) are converging on this delivery model. Why CISOs reference this category The State of AppSec is the annual narrative anchor for AppSec program planning. CISOs use it to: defend AppSec budget growth (\"Forrester data shows AppSec spend up X% — we're underinvested relative to peers\"); justify ASPM as the consolidation purchase (\"the State of report identifies tool sprawl as the #1 AppSec pain point\"); structure board conversations about AI code risk and software supply chain. Agents that understand this category can speak to the strategic narrative AppSec leaders bring into security conversations."
   }
 ]
