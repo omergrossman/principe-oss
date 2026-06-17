@@ -10,8 +10,8 @@
   "year": 2026,
   "sample_size": 1000,
   "region_coverage": ["us", "global"],
-  "license_status": "licensed-fair-use",
-  "methodology_notes": "Gartner C-level Communities 2026 Leadership Perspective Survey, 1,000+ CISOs. Public infographic findings. Grounds strategic priorities and planned investment. 'Enabling and protecting AI' is newly the #1 functional priority, ahead of managing cyber risk and optimizing security tools.",
+  "license_status": "public",
+  "methodology_notes": "Aggregate findings from Evanta's PUBLIC infographic (linked above), 1,000+ CISOs. Public summary figures only — the underlying member survey is not extracted. Grounds strategic priorities and planned investment. 'Enabling and protecting AI' is newly the #1 functional priority, ahead of managing cyber risk and optimizing security tools.",
   "distributions": [
     {
       "question_category": "ai_strategy_top_priority",

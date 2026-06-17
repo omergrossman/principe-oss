@@ -14,12 +14,16 @@ Every dataset here contains **aggregate distributions only** — never raw indiv
 
 ---
 
-## V1 sources (4 datasets)
+## V1 sources (3 datasets)
+
+> Removed 2026-06-17: `gartner-2026-threats.json` (Gartner note G00852689). It carried
+> proprietary, page-cited Gartner survey statistics under a "licensed — not redistributed"
+> flag, which is incompatible with this being a PUBLIC repo. Its calibration coverage should
+> be rebuilt only from public primaries (Verizon DBIR, IBM X-Force, NIST, CISA KEV, etc.).
 
 | Dataset | Source | Year | Sample size | License posture |
 |---|---|---|---|---|
 | `verizon-2026-dbir.json` | Verizon 2026 DBIR | 2025-2026 (Nov 1, 2024 - Oct 31, 2025) | ~22,000 confirmed breaches, ~31,000 incidents, 145 countries | Public report — citable for analysis; aggregate stats are widely cited industry-wide |
-| `gartner-2026-threats.json` | Gartner "How to Respond to the 2026-2027 Threat Landscape" (G00852689) | 2026 | Synthesized from multiple Gartner CISO surveys + market data | **Licensed** — restricted to personal use of subscriber. Aggregate stats extracted for internal calibration use; not redistributed. License-compliance follow-up tracked. |
 | `panorays-2026-ciso.json` | Panorays 2026 CISO Survey (Global Surveyz) | 2025-2026 | 200 CISOs across finance / insurance / professional services / tech / healthcare / software | Public summary findings — citable |
 | `wakefield-2026-ciso-ai.json` | Wakefield Research CISO/AI Survey | 2026 | 200 CISOs at companies with $500M+ revenue | Public summary findings — citable |
 
@@ -31,8 +35,8 @@ Seven datasets added to broaden coverage beyond the original four (Omer-sourced 
 
 | Dataset | Source | Year | n | Adds | License |
 |---|---|---|---|---|---|
-| `ians-2026-state-of-ciso.json` | IANS + Artico Search | 2026 | 662 | reporting line (64% IT / 36% business), exec-title prevalence, scope-unmanageable | licensed-fair-use |
-| `evanta-2026-ciso-priorities.json` | Evanta (Gartner) | 2026 | 1000+ | AI as #1 priority, AI/DLP/IAM investment intent | licensed-fair-use |
+| `ians-2026-state-of-ciso.json` | IANS + Artico Search | 2026 | 662 | reporting line (64% IT / 36% business), exec-title prevalence, scope-unmanageable | public (public infographic / press release only) |
+| `evanta-2026-ciso-priorities.json` | Evanta (Gartner) | 2026 | 1000+ | AI as #1 priority, AI/DLP/IAM investment intent | public (public infographic / press release only) |
 | `sygnia-2026-ir-readiness.json` | Sygnia | 2026 | 600+ | IR readiness (73% not ready), attacked-last-12mo, IR-plan adoption | public |
 | `sophos-2026-ciso.json` | Sophos + Cybersecurity Ventures | 2026 | — | identity-attack share (67%/71%), human-factor breach %, workforce gap | public |
 | `cribl-2025-ciso-priorities.json` | Cribl (synthesis) | 2025 | — | budget-growth slowdown, best-of-breed vs consolidation, AI budget >10% | public |
