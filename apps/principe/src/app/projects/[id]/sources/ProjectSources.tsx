@@ -326,8 +326,11 @@ function UploadZone({
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
-    for (const f of Array.from(files)) {
-      setUploads((u) => [...u, { name: f.name, state: "pending" }]);
+    const batch = Array.from(files);
+    // Reset the status list when a new upload starts, so a stale error from a
+    // previous attempt clears the moment a new file is dropped/selected.
+    setUploads(batch.map((f) => ({ name: f.name, state: "pending" as const })));
+    for (const f of batch) {
       try {
         const fd = new FormData();
         fd.append("file", f);
