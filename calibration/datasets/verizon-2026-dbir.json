@@ -24,7 +24,7 @@
       },
       "unit": "percentage",
       "context": "Vulnerability exploitation rose to 31% of initial access vector (up from 20% prior period). Phishing stable at 16%. Credential abuse 13% as initial vector but 39% somewhere in attack chain.",
-      "page_reference": "Verizon DBIR 2026 + Gartner [redacted] p. 1"
+      "page_reference": "Verizon DBIR 2026"
     },
     {
       "question_category": "credential_abuse_attack_chain_presence",
