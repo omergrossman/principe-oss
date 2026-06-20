@@ -2,6 +2,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 
 /**
  * In-app "What's New" center — a megaphone in the TopBar (so it's present
@@ -128,6 +129,12 @@ export function NewsBell({ isAdmin = false }: { isAdmin?: boolean }) {
   const [open, setOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
   const [video, setVideo] = useState<string | null>(null);
+  // Portal target only exists client-side. The slide-over is rendered into
+  // document.body (not here) because the TopBar's backdrop-blur makes it a
+  // containing block for position:fixed — without the portal the overlay
+  // would be clipped to the 64px top bar instead of filling the viewport.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
   // Local per-device read set, layered on the server high-water mark for
   // instant per-item dot clearing. State (not a ref) so reads during render
   // are legit and updates re-render.
@@ -262,7 +269,9 @@ export function NewsBell({ isAdmin = false }: { isAdmin?: boolean }) {
         )}
       </button>
 
-      {open && (
+      {mounted &&
+        open &&
+        createPortal(
         <div className="fixed inset-0 z-50">
           <div
             className="absolute inset-0 bg-ink-900/30 backdrop-blur-[1px]"
@@ -369,10 +378,13 @@ export function NewsBell({ isAdmin = false }: { isAdmin?: boolean }) {
               })}
             </div>
           </aside>
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
 
-      {video && (
+      {mounted &&
+        video &&
+        createPortal(
         <div
           className="fixed inset-0 z-[60] flex items-center justify-center bg-ink-900/70 p-6"
           onClick={() => setVideo(null)}
@@ -384,8 +396,9 @@ export function NewsBell({ isAdmin = false }: { isAdmin?: boolean }) {
             className="max-h-full max-w-3xl w-full rounded-lg shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           />
-        </div>
-      )}
+        </div>,
+          document.body,
+        )}
     </>
   );
 }
