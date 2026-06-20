@@ -42,6 +42,10 @@ model User {
   createdAt       DateTime         @default(now())
   updatedAt       DateTime         @updatedAt
   lastSignInAt    DateTime?
+  // High-water mark for the in-app "What's New" center. Every NewsItem
+  // whose `date` is newer than this is unread for this user; "Mark all
+  // read" advances it to now. Null = everything is unread.
+  lastNewsSeenAt  DateTime?
   passkeys        Passkey[]
   memberships     Membership[]
   invitationsSent Invitation[]     @relation("InvitedBy")
@@ -92,11 +96,17 @@ model Firm {
   slug                  String         @unique
   status                TenantStatus   @default(ACTIVE)
   region                String         @default("us")  // us / eu-west / eu-central / uk / apac / anz
-  // Knowledge-update consent. FALSE (default) = manual: an available
-  // update installs only when the admin clicks "Update now". TRUE =
-  // automatic. Default manual so no instance ever pulls a knowledge push
-  // without explicit opt-in.
-  autoUpdate             Boolean        @default(false)
+  // Knowledge-update consent. TRUE (default) = automatic: an available
+  // update installs on its own. FALSE = manual: it installs only when the
+  // admin clicks "Update now". Default automatic so a fresh install stays
+  // current; an admin can switch to manual to gate every push.
+  autoUpdate             Boolean        @default(true)
+  // News-feed consent — same manual/automatic semantics as autoUpdate, for
+  // the in-app "What's New" center. Default automatic.
+  autoNews               Boolean        @default(true)
+  // Version string of the last-installed news.json (timestamp from the
+  // signed feed). Drives "news update available" in Settings.
+  newsVersion            String?
   // BYO Anthropic key — AES-256-GCM ciphertext (base64), iv:ct:tag tuple.
   // Last 4 chars of the plaintext stored separately for UI display only.
   anthropicKeyCiphertext String?
@@ -843,5 +853,36 @@ model BundleInstall {
   installedAt  DateTime @default(now())
 
   @@index([installedAt])
+}
+
+/// In-app "What's New" feed item. Authored in principe-feed
+/// (news/items.json), published as a signed news.json artifact, and
+/// applied here by lib/news/apply.ts with snapshot semantics: the feed is
+/// the full current set, so an id absent from a later news.json is removed.
+/// `id` is the stable id from the feed (idempotent upsert). Global, not
+/// firm-scoped — a single-tenant OSS instance shares one feed.
+model NewsItem {
+  id          String    @id
+  // Editorial date (YYYY-MM-DD from the feed). Drives ordering and the
+  // per-user unread compare against User.lastNewsSeenAt.
+  date        DateTime
+  // feature | calibration | security | release | research | tip
+  tag         String
+  // app | both (web-only items are filtered out before publish).
+  channel     String
+  title       String
+  summary     String?
+  // Markdown body for the expand-in-place card.
+  body        String
+  // Optional launch target (blog URL, external URL, or video).
+  link        String?
+  // blog | external | video — inferred by the feed; null = expand-only.
+  kind        String?
+  expiresAt   DateTime?
+  // When this row was first applied locally / last updated.
+  publishedAt DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([date])
 }
 
