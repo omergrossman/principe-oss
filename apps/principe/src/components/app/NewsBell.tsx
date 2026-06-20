@@ -224,7 +224,10 @@ export function NewsBell({ isAdmin = false }: { isAdmin?: boolean }) {
     <>
       <button
         type="button"
-        onClick={() => setOpen(true)}
+        onClick={() => {
+          setOpen(true);
+          void loadList(); // refresh on open so an open tab never goes stale
+        }}
         aria-label={
           unreadCount > 0
             ? `What's new — ${unreadCount} unread`
