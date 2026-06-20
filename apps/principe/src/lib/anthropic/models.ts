@@ -2,9 +2,9 @@
 /**
  * Centralised Anthropic model identifiers.
  *
- * One source of truth for which model serves which task. Changing the
- * panel model here updates both the 100-agent fan-out and the
- * downstream synthesis.
+ * One source of truth for which model serves which task. `panel` drives
+ * the 100-agent fan-out; `synthesis` drives the single downstream
+ * synthesis pass — independent knobs, set per task.
  */
 
 export const ANTHROPIC_MODELS = {
