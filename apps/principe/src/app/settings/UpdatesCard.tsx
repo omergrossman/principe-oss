@@ -187,15 +187,15 @@ export function UpdatesCard() {
             <p className="text-[12px] text-ink-500 leading-relaxed mb-3">
               Your panel is running on the knowledge corpus shipped with
               this install. Connect an update source to receive new
-              knowledge — you&apos;ll choose whether it installs manually
-              (the default) or automatically.
+              knowledge — it installs automatically by default, or switch
+              to manual to gate every push.
             </p>
           )}
 
           {check.mode === "remote" && (
             <div className="space-y-3">
-              {/* Manual vs automatic — default manual so nothing installs
-                  without explicit consent. */}
+              {/* Manual vs automatic — default automatic so a fresh install
+                  stays current; switch to manual to gate every push. */}
               <div className="flex items-center justify-between gap-3">
                 <div>
                   <p className="text-[13px] font-medium text-ink-900">Update mode</p>

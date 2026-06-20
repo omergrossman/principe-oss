@@ -2,6 +2,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { initialsFor } from "@/lib/user/display";
+import { NewsBell } from "./NewsBell";
 
 interface TopBarProps {
   /** Resolved display name (never an email). */
@@ -12,9 +13,11 @@ interface TopBarProps {
    * hide the link rather than show a control that silently bounces them.
    */
   isAdmin?: boolean;
+  /** Whether there's an authenticated session — gates the news megaphone. */
+  signedIn?: boolean;
 }
 
-export function TopBar({ displayName, isAdmin = false }: TopBarProps) {
+export function TopBar({ displayName, isAdmin = false, signedIn = false }: TopBarProps) {
   const initials = initialsFor(displayName);
   return (
     <div className="sticky top-0 z-10 bg-canvas/90 backdrop-blur-sm border-b border-ink-100">
@@ -53,6 +56,7 @@ export function TopBar({ displayName, isAdmin = false }: TopBarProps) {
               Sign out
             </Button>
           </form>
+          {signedIn && <NewsBell isAdmin={isAdmin} />}
           <Link
             href="/profile"
             title={`${displayName} — edit profile`}
