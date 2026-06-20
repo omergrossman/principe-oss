@@ -20,6 +20,11 @@ const csp = [
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
+  // News-feed demo/walkthrough videos are hosted on the marketing site and
+  // play in the in-app "What's New" lightbox. Media can't execute, so this
+  // is a narrow, scoped allowance; everything else stays 'self'. A
+  // self-hoster pointing news links elsewhere adjusts this origin.
+  "media-src 'self' https://www.principe.cloud",
   "font-src 'self'",
   "connect-src 'self'",
   "worker-src 'self' blob:",
