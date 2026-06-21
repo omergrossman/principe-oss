@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import { requireAuth } from "@/lib/auth/require-auth";
 import { AppTopBar } from "@/components/app/AppTopBar";
+import { StayInTouch } from "@/components/app/StayInTouch";
 
 /**
  * /about — the Eddington story + acknowledgements.
@@ -98,6 +99,10 @@ export default async function AboutPage() {
                 bio="The chair is open. Until a co-founder CTO joins, Claude is holding the keyboard — pair-programming the agents, drafting the runbooks, and shipping the prototypes. If you read code like a story and care about getting validation right, the chair is yours."
               />
             </div>
+          </section>
+
+          <section className="mt-16">
+            <StayInTouch />
           </section>
 
           <section className="mt-16 pt-8 border-t border-ink-100">

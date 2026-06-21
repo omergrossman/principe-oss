@@ -11,6 +11,9 @@ import {
   StyleSheet,
   renderToBuffer,
   Font,
+  Link,
+  Svg,
+  Circle,
 } from "@react-pdf/renderer";
 import type { PanelDecision } from "@/lib/ciso-panel/decision";
 
@@ -20,6 +23,16 @@ type RichStyle = Parameters<typeof StyleSheet.create>[0][string];
 
 // react-pdf doesn't ship system fonts. Use the embedded Helvetica
 // (default) — adequate for executive reports; consistent across platforms.
+
+// Brand tokens (from globals.css @theme) — kept distinct from the report
+// PALETTE so the wordmark reads as the real Príncipe mark, not the
+// report's neutral greyscale.
+const BRAND = {
+  ink900: "#0A1430", // central disc + wordmark
+  ink700: "#1A2854", // corona rays
+  flare600: "#E0671E", // corona ring
+  flare100: "#FFE8D5", // outer glow
+};
 
 const PALETTE = {
   ink900: "#11141a",
@@ -43,6 +56,21 @@ const styles = StyleSheet.create({
     fontSize: 10,
     color: PALETTE.ink700,
     fontFamily: "Helvetica",
+  },
+  // Top-left brand lockup. textDecoration:"none" keeps the wrapping Link
+  // invisible — it reads as the logo, but the whole mark is clickable.
+  logoRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginBottom: 14,
+    textDecoration: "none",
+  },
+  logoWordmark: {
+    fontSize: 14,
+    fontWeight: 700,
+    color: BRAND.ink900,
+    letterSpacing: -0.2,
   },
   header: {
     borderBottomWidth: 2,
@@ -477,6 +505,36 @@ function deriveTitle(
   return `Executive Report — ${date}`;
 }
 
+/**
+ * Príncipe brand lockup for the top-left of the report — the "diamond ring"
+ * eclipse mark from the app TopBar: a dark moon disc, a faint grey ring, and
+ * an orange corona burst at the upper-right. Rebuilt as react-pdf SVG
+ * primitives (crisp at any zoom, no image asset to bundle) beside the
+ * wordmark. The whole mark is wrapped in a visually-silent Link to the
+ * marketing site — reads as a logo but is clickable in the exported PDF.
+ */
+function PrincipeLogo({ size = 18 }: { size?: number }) {
+  return (
+    <Link src="https://principe.cloud" style={styles.logoRow}>
+      <Svg width={size} height={size} viewBox="0 0 24 24">
+        <Circle
+          cx="12"
+          cy="12"
+          r="10.5"
+          fill="none"
+          stroke={BRAND.ink900}
+          strokeWidth={1.2}
+          opacity={0.55}
+        />
+        <Circle cx="12" cy="12" r="7.5" fill={BRAND.ink900} />
+        <Circle cx="17.3" cy="6.7" r="3.6" fill={BRAND.flare600} opacity={0.18} />
+        <Circle cx="17.3" cy="6.7" r="2.4" fill={BRAND.flare600} />
+      </Svg>
+      <Text style={styles.logoWordmark}>Príncipe</Text>
+    </Link>
+  );
+}
+
 function CycleReport({ data }: { data: PdfCycleData }) {
   const verdictKind = data.verdict?.kind ?? "—";
   const verdictBg = verdictColour(verdictKind);
@@ -489,6 +547,8 @@ function CycleReport({ data }: { data: PdfCycleData }) {
   return (
     <Document title={title}>
       <Page size="A4" style={styles.page} wrap>
+        <PrincipeLogo />
+
         {data.isInvalid && (
           <View style={styles.invalidBanner}>
             <Text>STATISTICALLY INVALID — verdict force-overridden</Text>
