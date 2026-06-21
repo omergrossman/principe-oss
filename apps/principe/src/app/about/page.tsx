@@ -2,6 +2,7 @@
 import { requireAuth } from "@/lib/auth/require-auth";
 import { AppTopBar } from "@/components/app/AppTopBar";
 import { StayInTouch } from "@/components/app/StayInTouch";
+import { APP_VERSION, RELEASE_URL } from "@/lib/version";
 
 /**
  * /about — the Eddington story + acknowledgements.
@@ -121,6 +122,18 @@ export default async function AboutPage() {
           </section>
 
           <footer className="mt-12 pt-8 border-t border-ink-100 text-[12px] text-ink-300 font-mono">
+            <p className="mb-3">
+              Príncipe{" "}
+              <a
+                href={RELEASE_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-flare-600 hover:underline"
+              >
+                v{APP_VERSION}
+              </a>{" "}
+              · open source (AGPL-3.0)
+            </p>
             <p>
               Eddington&apos;s 1919 photographic plate is the image you saw on
               the launch screen. The original is in the archive of the Royal

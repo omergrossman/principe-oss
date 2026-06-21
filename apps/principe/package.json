@@ -1,6 +1,6 @@
 {
   "name": "principe",
-  "version": "0.1.0-pre",
+  "version": "1.0.0",
   "private": true,
   "license": "AGPL-3.0-or-later",
   "description": "Self-hosted CISO panel simulator (Next.js app)",

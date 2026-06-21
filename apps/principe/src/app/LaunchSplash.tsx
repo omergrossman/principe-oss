@@ -3,6 +3,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { APP_VERSION } from "@/lib/version";
 
 type Step =
   | { kind: "creating"; current: number }
@@ -155,6 +156,12 @@ export function LaunchSplash() {
         style={{ fontSize: "clamp(11px, 1.5vh, 14px)" }}
       >
         prove what&apos;s coming before reality runs the experiment
+      </p>
+      <p
+        className="mt-3 text-canvas/40 font-mono text-center"
+        style={{ fontSize: "11px", letterSpacing: "0.08em" }}
+      >
+        v{APP_VERSION}
       </p>
 
       <div className="mt-6 w-full max-w-md space-y-2">
