@@ -73,6 +73,8 @@ export default async function SettingsPage() {
 
         <NewsUpdatesCard />
 
+        <StayInTouchCard />
+
         <MonthlyCostCard firmId={session.firmId} />
       </main>
     </>
@@ -168,6 +170,30 @@ async function MonthlyCostCard({ firmId }: { firmId: string }) {
           })}
         </div>
       )}
+    </Card>
+  );
+}
+
+/**
+ * Settings entry that points operators to the full "Stay in touch" card on
+ * the About page. Links out only — captures and sends nothing.
+ */
+function StayInTouchCard() {
+  return (
+    <Card className="mb-6">
+      <h2 className="text-[16px] font-semibold text-ink-900 mb-1">
+        Stay in touch
+      </h2>
+      <p className="text-[13px] text-ink-500 leading-relaxed max-w-md mb-3">
+        Get the occasional note on where Príncipe is heading, or send an idea or
+        bug — all on the website. Nothing is captured or sent from this install.
+      </p>
+      <a
+        href="/about#stay-in-touch-heading"
+        className="text-[13px] text-flare-600 font-medium underline underline-offset-2 hover:text-flare-500"
+      >
+        Open Stay in touch on the About page →
+      </a>
     </Card>
   );
 }
