@@ -3,6 +3,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { createPortal } from "react-dom";
+import DOMPurify from "dompurify";
 
 /**
  * In-app "What's New" center — a megaphone in the TopBar (so it's present
@@ -115,6 +116,62 @@ function inline(s: string): string {
       /\[([^\]]+?)\]\((https?:\/\/[^\s)]+)\)/g,
       '<a href="$2" target="_blank" rel="noopener" class="text-flare-600 underline">$1</a>',
     );
+}
+
+/**
+ * Defense-in-depth sanitize of the regex-rendered markdown before it reaches
+ * the `dangerouslySetInnerHTML` sink. The body is ed25519-signed, but the
+ * hand-rolled HTML re-injection in `inline()` is fragile, so we run the output
+ * through DOMPurify with a tight whitelist matching ONLY what renderMarkdown
+ * emits, and harden every anchor.
+ *
+ * DOMPurify only runs in the browser (needs a DOM). NewsBell is a client
+ * component, so this is always invoked client-side. The hook is registered
+ * once, guarded for the browser, so SSR import never touches a missing DOM.
+ */
+const ALLOWED_TAGS = [
+  "a",
+  "strong",
+  "em",
+  "code",
+  "br",
+  "p",
+  "ul",
+  "li",
+];
+const ALLOWED_ATTR = ["href", "target", "rel", "class"];
+
+let hookRegistered = false;
+function ensureHook() {
+  if (hookRegistered || typeof window === "undefined") return;
+  // Harden anchors: only http(s) hrefs survive, and every link opens in a new
+  // tab with no window.opener / referrer leakage.
+  DOMPurify.addHook("afterSanitizeAttributes", (node) => {
+    if (node.tagName !== "A") return;
+    const href = node.getAttribute("href") ?? "";
+    let safe = false;
+    try {
+      const proto = new URL(href, window.location.href).protocol;
+      safe = proto === "http:" || proto === "https:";
+    } catch {
+      safe = false;
+    }
+    if (!safe) {
+      node.removeAttribute("href");
+      return;
+    }
+    node.setAttribute("target", "_blank");
+    node.setAttribute("rel", "noopener noreferrer");
+  });
+  hookRegistered = true;
+}
+
+function sanitizeMarkdown(md: string): string {
+  ensureHook();
+  return DOMPurify.sanitize(renderMarkdown(md), {
+    ALLOWED_TAGS,
+    ALLOWED_ATTR,
+  });
 }
 
 function moreLabel(it: NewsItem): string {
@@ -365,7 +422,7 @@ export function NewsBell({ isAdmin = false }: { isAdmin?: boolean }) {
                         {isOpen && (
                           <div
                             className="text-[12.5px] text-ink-700 leading-relaxed mt-2 news-md"
-                            dangerouslySetInnerHTML={{ __html: renderMarkdown(it.body) }}
+                            dangerouslySetInnerHTML={{ __html: sanitizeMarkdown(it.body) }}
                           />
                         )}
                         <span className="inline-block mt-1.5 text-[12px] font-medium text-ink-500 group-hover:text-ink-700">

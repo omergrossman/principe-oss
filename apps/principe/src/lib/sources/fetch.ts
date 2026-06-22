@@ -2,7 +2,14 @@
 import crypto from "node:crypto";
 import net from "node:net";
 import dns from "node:dns/promises";
+import type { LookupFunction } from "node:net";
 import ipaddr from "ipaddr.js";
+import { Agent, fetch as undiciFetch } from "undici";
+
+// We use undici's own `fetch` (not Node's global) so the `dispatcher` we pass
+// belongs to the SAME undici instance that performs the request. Node's global
+// fetch ships a separate, bundled undici, and passing a standalone-undici
+// dispatcher to it throws UND_ERR_INVALID_ARG.
 
 /**
  * Lightweight URL fetcher + text extractor.
@@ -31,15 +38,22 @@ export async function fetchUrlAsText(url: string): Promise<FetchedSource> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
 
-  let res: Response;
+  let res: Awaited<ReturnType<typeof undiciFetch>>;
   let current = url;
+  // The dispatcher whose socket carries the response we ultimately return —
+  // kept alive until the body is fully read, then closed in `finally`.
+  let liveDispatcher: Agent | null = null;
   try {
     // Manual redirect handling so we re-run the SSRF guard on EVERY hop —
     // `redirect: "follow"` would let a public URL bounce to an internal one
-    // unchecked. Cap the hop count.
+    // unchecked. Cap the hop count. Each hop is fetched through a dispatcher
+    // pinned to the IP(s) we just validated, so the socket cannot re-resolve
+    // to a different (private) address.
     for (let hop = 0; ; hop++) {
-      await assertSafeUrl(current);
-      const r = await fetch(current, {
+      const validated = await assertSafeUrl(current);
+      const dispatcher = pinnedDispatcher(validated);
+      liveDispatcher = dispatcher;
+      const r = await undiciFetch(current, {
         headers: {
           "User-Agent": USER_AGENT,
           Accept:
@@ -47,9 +61,13 @@ export async function fetchUrlAsText(url: string): Promise<FetchedSource> {
         },
         signal: controller.signal,
         redirect: "manual",
+        dispatcher,
       });
       const location = r.headers.get("location");
       if (r.status >= 300 && r.status < 400 && location) {
+        // Done with this hop's socket; the next hop is validated+pinned anew.
+        liveDispatcher = null;
+        void dispatcher.close().catch(() => dispatcher.destroy());
         if (hop >= MAX_REDIRECTS) throw new Error("Too many redirects.");
         current = new URL(location, current).toString();
         continue;
@@ -57,25 +75,79 @@ export async function fetchUrlAsText(url: string): Promise<FetchedSource> {
       res = r;
       break;
     }
+
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status} ${res.statusText}`);
+    }
+
+    const contentType = res.headers.get("content-type") ?? "";
+    const isHtml = contentType.includes("html");
+    const raw = await res.text();
+
+    const title = isHtml ? extractTitle(raw) : null;
+    const publishedAt = isHtml ? extractPublishedAt(raw) : null;
+    const stripped = isHtml ? stripHtml(raw) : raw;
+    const text = normaliseWhitespace(stripped).slice(0, MAX_TEXT_CHARS);
+    const contentHash = crypto.createHash("sha256").update(text).digest("hex");
+
+    return { text, contentHash, title, publishedAt };
   } finally {
     clearTimeout(timer);
+    if (liveDispatcher) {
+      void liveDispatcher.close().catch(() => liveDispatcher!.destroy());
+    }
   }
+}
 
-  if (!res.ok) {
-    throw new Error(`HTTP ${res.status} ${res.statusText}`);
-  }
+/**
+ * Build an undici dispatcher pinned to a set of pre-validated IPs. The custom
+ * `lookup` short-circuits DNS resolution at connect time, returning ONLY the
+ * IP(s) `assertSafeUrl` already validated for this exact hostname — so the
+ * socket physically cannot connect to a different (private) address even if
+ * the attacker's DNS rebinds in the TOCTOU window.
+ *
+ * The URL hostname is left untouched on the request, so undici still uses it
+ * for the TLS `servername` (SNI) and the `Host` header: we connect to the
+ * validated IP but present the original hostname, keeping cert validation and
+ * virtual-host routing correct.
+ */
+function pinnedDispatcher(validated: ValidatedTarget): Agent {
+  const lookup: LookupFunction = (hostname, options, callback) => {
+    // Only the hostname we validated may be pinned; anything else (which
+    // should never happen for a single connect) is refused.
+    if (hostname !== validated.host) {
+      callback(
+        new Error(`Refusing unexpected lookup for ${hostname}.`),
+        // @ts-expect-error error path: address/family unused
+        undefined,
+        undefined,
+      );
+      return;
+    }
+    if (options && options.all) {
+      callback(
+        null,
+        validated.addresses.map((address) => ({
+          address,
+          family: net.isIP(address),
+        })),
+      );
+      return;
+    }
+    const first = validated.addresses[0];
+    callback(null, first, net.isIP(first));
+  };
 
-  const contentType = res.headers.get("content-type") ?? "";
-  const isHtml = contentType.includes("html");
-  const raw = await res.text();
+  return new Agent({
+    connect: { lookup },
+  });
+}
 
-  const title = isHtml ? extractTitle(raw) : null;
-  const publishedAt = isHtml ? extractPublishedAt(raw) : null;
-  const stripped = isHtml ? stripHtml(raw) : raw;
-  const text = normaliseWhitespace(stripped).slice(0, MAX_TEXT_CHARS);
-  const contentHash = crypto.createHash("sha256").update(text).digest("hex");
-
-  return { text, contentHash, title, publishedAt };
+interface ValidatedTarget {
+  /** The (normalised) hostname presented to the server for SNI/Host. */
+  host: string;
+  /** The pre-validated, public IP(s) the socket is allowed to connect to. */
+  addresses: string[];
 }
 
 /**
@@ -84,13 +156,13 @@ export async function fetchUrlAsText(url: string): Promise<FetchedSource> {
  * name that resolves to a private IP), encoded IP literals (decimal/hex/octal),
  * and IPv4-mapped IPv6. Run on the initial URL and on every redirect hop.
  *
- * Residual: there is still a small TOCTOU window between this DNS lookup and
- * the socket connect (classic DNS-rebinding). Fully closing it needs a custom
- * dispatcher that pins the connection to the validated IP; this guard closes
- * the redirect, encoding, and public-name->private-IP vectors, which are the
- * exploitable ones in practice.
+ * Returns the validated target (the hostname undici will present plus the
+ * public IP(s) the socket may connect to). The DNS-rebinding TOCTOU window is
+ * now CLOSED: the caller feeds these IPs into a pinned undici dispatcher
+ * (`pinnedDispatcher`) whose `lookup` returns ONLY these addresses, so the
+ * socket cannot re-resolve to a different IP between this check and connect.
  */
-async function assertSafeUrl(rawUrl: string): Promise<void> {
+async function assertSafeUrl(rawUrl: string): Promise<ValidatedTarget> {
   let parsed: URL;
   try {
     parsed = new URL(rawUrl);
@@ -101,6 +173,10 @@ async function assertSafeUrl(rawUrl: string): Promise<void> {
     throw new Error(`Unsupported protocol: ${parsed.protocol}`);
   }
 
+  // `urlHost` is what undici passes to the connect-time lookup (the URL's own
+  // hostname, brackets stripped for IPv6). `host` is the canonicalised form we
+  // classify (decimal/hex/octal IPv4 decoded).
+  const urlHost = parsed.hostname.toLowerCase().replace(/^\[|\]$/g, "");
   const host = normaliseHost(parsed.hostname);
   if (host === "localhost" || host.endsWith(".local")) {
     throw new Error("Refusing to fetch a loopback/local host.");
@@ -112,7 +188,9 @@ async function assertSafeUrl(rawUrl: string): Promise<void> {
     if (isPrivateOrReservedIp(host)) {
       throw new Error(`Refusing to fetch private/reserved address (${host}).`);
     }
-    return;
+    // An IP literal can't rebind; undici connects to it directly. Pin to the
+    // canonical IP and present it as the host (it's already an address).
+    return { host: urlHost, addresses: [host] };
   }
 
   let addrs: { address: string }[];
@@ -129,6 +207,7 @@ async function assertSafeUrl(rawUrl: string): Promise<void> {
       );
     }
   }
+  return { host: urlHost, addresses: addrs.map((a) => a.address) };
 }
 
 /** Normalise a URL hostname: strip IPv6 brackets, decode integer IPv4 forms. */
