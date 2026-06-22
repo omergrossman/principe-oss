@@ -25,10 +25,11 @@ const PITCHES = [
   "Would you buy a core security control from a pre-Series-A startup (≤20 employees) if it clearly outperformed the incumbents in a head-to-head proof of concept?",
 ];
 
-// Real CISO "% in favor" (pro / 10) from the survey, per pitch. 10 respondents
-// with regions relabelled per Omer: omer.grossman→US, idanhalaly7→APAC, giving a
-// 7 MEA / 2 US / 1 APAC mix (was all-MEA). pro = "Definitely/Probably would".
-const REAL = [20, 50, 60, 20, 70, 60, 90, 60];
+// Real CISO "% in favor" (pro / 12) from the survey, per pitch. 12 respondents
+// with genuine self-reported regions: 9 MEA / 2 US (dliniado, melissa) / 1 APAC
+// (tommy) — real geographic spread now, no relabelling. Recomputed 2026-06-22
+// from all 12 responses. pro = "Definitely/Probably would".
+const REAL = [25, 42, 58, 17, 58, 58, 92, 67];
 const LABEL = [
   "MDR displacement",
   "Autonomous AI SOC auto-close",
@@ -41,7 +42,7 @@ const LABEL = [
 ];
 
 const MIX: PanelComposition = {
-  regionWeights: { mea: 70, us: 20, apac: 10 }, // matches the 7 MEA / 2 US / 1 APAC respondent pool
+  regionWeights: { mea: 75, us: 17, apac: 8 }, // matches the 9 MEA / 2 US / 1 APAC respondent pool
   industries: [],
   stanceWeights: { cautious: 0.25, balanced: 0.25, aggressive: 0.25, contrarian: 0.25 },
   sizeMin: SIZE_BANDS[0],
@@ -88,7 +89,7 @@ async function main() {
   const mae = gaps.length ? Math.round(gaps.reduce((x, y) => x + y, 0) / gaps.length) : null;
   const within15 = gaps.filter((g) => g <= 15).length;
 
-  console.log("\n\n===== LEG-2 CALIBRATION (MIX panel (7MEA/2US/1APAC) N=" + N + " vs 10 real CISOs) =====");
+  console.log("\n\n===== LEG-2 CALIBRATION (MIX panel (9MEA/2US/1APAC) N=" + N + " vs 12 real CISOs) =====");
   console.log("Q  | pitch                          | panel | real | gap");
   for (const r of rows) {
     const p = r.panel === null ? "FAIL" : `${r.panel}%`;
@@ -97,7 +98,7 @@ async function main() {
     );
   }
   console.log(`\nMean absolute gap (MAE): ${mae}pp   ·   within 15pp: ${within15}/${scored.length}`);
-  console.log("RESULT_JSON " + JSON.stringify({ n_real: 10, panelN: N, mae, within15, rows }));
+  console.log("RESULT_JSON " + JSON.stringify({ n_real: 12, panelN: N, mae, within15, rows }));
 }
 
 main()
