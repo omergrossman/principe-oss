@@ -15,9 +15,19 @@ export default function ReAuthPage() {
   const [status, setStatus] = useState<"idle" | "running" | "error">("idle");
   const [error, setError] = useState("");
 
+  // Password re-auth (the additive alternative to a passkey assertion).
+  const [password, setPassword] = useState("");
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [pwError, setPwError] = useState("");
+
   useEffect(() => {
-    // Auto-trigger on mount — re-auth is friction; minimise it.
-    void handleReAuth();
+    // Auto-trigger the passkey ceremony on mount when supported — re-auth is
+    // friction; minimise it. Falls back to the password form below.
+    const hasPasskey =
+      typeof window !== "undefined" &&
+      typeof window.PublicKeyCredential !== "undefined";
+    if (hasPasskey) void handleReAuth();
+    else setStatus("error");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -48,6 +58,27 @@ export default function ReAuthPage() {
     }
   }
 
+  async function handlePasswordReAuth(e: React.FormEvent) {
+    e.preventDefault();
+    setPwSubmitting(true);
+    setPwError("");
+    try {
+      const res = await fetch("/api/auth/re-auth/password", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.verified) {
+        throw new Error(data.error ?? "Incorrect password.");
+      }
+      router.push(next);
+    } catch (err) {
+      setPwError(err instanceof Error ? err.message : "Incorrect password.");
+      setPwSubmitting(false);
+    }
+  }
+
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
@@ -55,31 +86,63 @@ export default function ReAuthPage() {
           Confirm it&apos;s you
         </h1>
         <p className="text-[14px] text-ink-500 mb-6 leading-relaxed">
-          This action requires fresh authentication. Use your passkey to confirm.
+          This action requires fresh authentication. Use your passkey, or
+          re-enter your password.
         </p>
+
         {status === "running" && (
-          <p className="text-[13px] text-ink-300 font-mono">
+          <p className="text-[13px] text-ink-300 font-mono mb-4">
             Waiting for passkey…
           </p>
         )}
         {status === "error" && (
           <>
-            <div
-              className="mb-4 p-3 rounded-md bg-verdict-fail/10 text-verdict-fail text-[13px]"
-              role="alert"
-            >
-              {error}
-            </div>
+            {error && (
+              <div
+                className="mb-3 p-3 rounded-md bg-verdict-fail/10 text-verdict-fail text-[13px]"
+                role="alert"
+              >
+                {error}
+              </div>
+            )}
             <Button
-              variant="primary"
+              variant="secondary"
               size="lg"
-              className="w-full"
+              className="w-full mb-4"
               onClick={handleReAuth}
             >
-              Try again
+              Try passkey again
             </Button>
           </>
         )}
+
+        <form onSubmit={handlePasswordReAuth} className="space-y-3">
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
+            autoComplete="current-password"
+            className="w-full h-10 px-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20"
+          />
+          {pwError && (
+            <div
+              className="p-3 rounded-md bg-verdict-fail/10 text-verdict-fail text-[13px]"
+              role="alert"
+            >
+              {pwError}
+            </div>
+          )}
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            className="w-full"
+            disabled={password.length === 0 || pwSubmitting}
+          >
+            {pwSubmitting ? "Confirming…" : "Confirm with password"}
+          </Button>
+        </form>
       </Card>
     </main>
   );

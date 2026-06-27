@@ -5,6 +5,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { prisma } from "@/lib/db/prisma";
 import { createSession } from "@/lib/session";
 import { encryptSecret, last4 } from "@/lib/secrets";
+import { hashPassword, MIN_PASSWORD_LENGTH } from "@/lib/auth/password";
 
 /**
  * POST /api/setup
@@ -17,6 +18,8 @@ import { encryptSecret, last4 } from "@/lib/secrets";
  *   workspaceName  string  (≥2 chars)
  *   adminName      string  (≥2 chars)
  *   adminEmail     string  (valid email)
+ *   adminPassword  string  (optional; ≥8 chars if set) — enables password
+ *                          sign-in alongside the passkey enrolled next.
  *   anthropicKey   string  (starts with sk-ant-)
  *
  * Response 200:  { ok: true, redirectTo: "/onboarding/enroll-passkey" }
@@ -29,6 +32,7 @@ interface SetupBody {
   workspaceName?: unknown;
   adminName?: unknown;
   adminEmail?: unknown;
+  adminPassword?: unknown;
   anthropicKey?: unknown;
 }
 
@@ -76,6 +80,8 @@ export async function POST(req: NextRequest) {
     typeof body.adminEmail === "string"
       ? body.adminEmail.trim().toLowerCase()
       : "";
+  const adminPassword =
+    typeof body.adminPassword === "string" ? body.adminPassword : "";
   const anthropicKey =
     typeof body.anthropicKey === "string" ? body.anthropicKey.trim() : "";
 
@@ -94,6 +100,16 @@ export async function POST(req: NextRequest) {
   if (!EMAIL_RE.test(adminEmail)) {
     return NextResponse.json(
       { error: "Please enter a valid email." },
+      { status: 400 },
+    );
+  }
+  // Password is optional (passkey enrolment follows setup), but if the admin
+  // sets one it must meet the minimum length.
+  if (adminPassword && adminPassword.length < MIN_PASSWORD_LENGTH) {
+    return NextResponse.json(
+      {
+        error: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+      },
       { status: 400 },
     );
   }
@@ -125,6 +141,7 @@ export async function POST(req: NextRequest) {
 
   const slug = slugify(workspaceName);
   const ciphertext = encryptSecret(anthropicKey);
+  const passwordHash = adminPassword ? await hashPassword(adminPassword) : null;
 
   try {
     const { user, membership, firm } = await prisma.$transaction(
@@ -133,7 +150,12 @@ export async function POST(req: NextRequest) {
           // Completing the wizard IS the first sign-in — stamp
           // lastSignInAt so the Members admin view shows "last seen
           // today" instead of "never signed in".
-          data: { email: adminEmail, name: adminName, lastSignInAt: new Date() },
+          data: {
+            email: adminEmail,
+            name: adminName,
+            passwordHash,
+            lastSignInAt: new Date(),
+          },
         });
         const firm = await tx.firm.create({
           data: {

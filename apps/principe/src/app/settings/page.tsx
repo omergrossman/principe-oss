@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/Card";
 import { Pill } from "@/components/ui/Pill";
 import { AppTopBar } from "@/components/app/AppTopBar";
 import { AnthropicKeyForm } from "./AnthropicKeyForm";
+import { PasswordForm } from "./PasswordForm";
 import { UpdatesCard } from "./UpdatesCard";
 import { NewsUpdatesCard } from "./NewsUpdatesCard";
 import { projectDisplayName } from "@/lib/projects/describe";
@@ -14,14 +15,20 @@ export const dynamic = "force-dynamic";
 export default async function SettingsPage() {
   const session = await requireRole("VC_ADMIN", "PRINCIPE_ADMIN");
 
-  const firm = await prisma.firm.findUnique({
-    where: { id: session.firmId },
-    select: {
-      name: true,
-      region: true,
-      anthropicKeyLast4: true,
-    },
-  });
+  const [firm, currentUser] = await Promise.all([
+    prisma.firm.findUnique({
+      where: { id: session.firmId },
+      select: {
+        name: true,
+        region: true,
+        anthropicKeyLast4: true,
+      },
+    }),
+    prisma.user.findUnique({
+      where: { id: session.userId },
+      select: { passwordHash: true },
+    }),
+  ]);
 
   return (
     <>
@@ -67,6 +74,23 @@ export default async function SettingsPage() {
             connected={Boolean(firm?.anthropicKeyLast4)}
             last4={firm?.anthropicKeyLast4 ?? null}
           />
+        </Card>
+
+        <Card className="mb-6">
+          <div className="flex items-start justify-between mb-2">
+            <div>
+              <h2 className="text-[18px] font-semibold text-ink-900 mb-1">
+                Password
+              </h2>
+              <p className="text-[13px] text-ink-500 leading-relaxed max-w-md">
+                An alternative to your passkey. Set one to sign in with email +
+                password on devices without your passkey. Stored as a salted
+                scrypt hash — never in plaintext.
+              </p>
+            </div>
+            <PasswordStatus hasPassword={Boolean(currentUser?.passwordHash)} />
+          </div>
+          <PasswordForm hasPassword={Boolean(currentUser?.passwordHash)} />
         </Card>
 
         <UpdatesCard />
@@ -195,6 +219,21 @@ function StayInTouchCard() {
         Open Stay in touch on the About page →
       </a>
     </Card>
+  );
+}
+
+function PasswordStatus({ hasPassword }: { hasPassword: boolean }) {
+  if (!hasPassword) {
+    return (
+      <span className="inline-flex items-center h-6 px-2 rounded-pill text-[11px] font-medium border bg-ink-100/40 text-ink-500 border-ink-100">
+        not set
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center h-6 px-2 rounded-pill text-[11px] font-medium border bg-verdict-pass/12 text-verdict-pass border-verdict-pass/30 font-mono">
+      set
+    </span>
   );
 }
 

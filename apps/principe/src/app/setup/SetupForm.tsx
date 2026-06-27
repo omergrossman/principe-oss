@@ -6,10 +6,14 @@ import { useRouter } from "next/navigation";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 
+// Keep in sync with MIN_PASSWORD_LENGTH in lib/auth/password.ts.
+const MIN_PASSWORD_LENGTH = 8;
+
 interface FormState {
   workspaceName: string;
   adminName: string;
   adminEmail: string;
+  adminPassword: string;
   anthropicKey: string;
 }
 
@@ -19,6 +23,7 @@ export function SetupForm() {
     workspaceName: "",
     adminName: "",
     adminEmail: "",
+    adminPassword: "",
     anthropicKey: "",
   });
   const [submitting, setSubmitting] = useState(false);
@@ -28,10 +33,16 @@ export function SetupForm() {
     setState((s) => ({ ...s, [key]: value }));
   }
 
+  // Password is optional, but if typed it must meet the minimum length.
+  const passwordOk =
+    state.adminPassword.length === 0 ||
+    state.adminPassword.length >= MIN_PASSWORD_LENGTH;
+
   const ready =
     state.workspaceName.trim().length >= 2 &&
     state.adminName.trim().length >= 2 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(state.adminEmail.trim()) &&
+    passwordOk &&
     state.anthropicKey.trim().startsWith("sk-ant-");
 
   async function handleSubmit(e: React.FormEvent) {
@@ -47,6 +58,7 @@ export function SetupForm() {
           workspaceName: state.workspaceName.trim(),
           adminName: state.adminName.trim(),
           adminEmail: state.adminEmail.trim().toLowerCase(),
+          adminPassword: state.adminPassword,
           anthropicKey: state.anthropicKey.trim(),
         }),
       });
@@ -116,6 +128,31 @@ export function SetupForm() {
             />
           </label>
         </div>
+        <label className="block mt-3">
+          <span className="text-[11px] uppercase tracking-wide font-medium text-ink-500 mb-1 block">
+            Password{" "}
+            <span className="text-ink-300 normal-case tracking-normal">
+              · optional
+            </span>
+          </span>
+          <input
+            type="password"
+            value={state.adminPassword}
+            onChange={(e) => set("adminPassword", e.target.value)}
+            placeholder="At least 8 characters"
+            autoComplete="new-password"
+            className="w-full h-10 px-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20"
+          />
+          <span className="text-[11px] text-ink-500 leading-relaxed mt-1 block">
+            Sets a password you can sign in with. You&apos;ll also enroll a
+            passkey next — either works. Leave blank to use a passkey only.
+          </span>
+          {!passwordOk && (
+            <span className="text-[11px] text-verdict-fail mt-1 block">
+              Password must be at least {MIN_PASSWORD_LENGTH} characters.
+            </span>
+          )}
+        </label>
       </Card>
 
       <Card>

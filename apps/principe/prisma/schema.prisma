@@ -46,6 +46,12 @@ model User {
   // whose `date` is newer than this is unread for this user; "Mark all
   // read" advances it to now. Null = everything is unread.
   lastNewsSeenAt  DateTime?
+  // Optional password credential (scrypt hash, `scrypt$salt$hash`). An
+  // alternative to passkeys: set at first-run setup or later in Settings →
+  // Security. Null = this user signs in with a passkey only. Passkeys remain
+  // the default; password is an additive fallback for devices/users without
+  // an authenticator. See lib/auth/password.ts.
+  passwordHash    String?
   passkeys        Passkey[]
   memberships     Membership[]
   invitationsSent Invitation[]     @relation("InvitedBy")

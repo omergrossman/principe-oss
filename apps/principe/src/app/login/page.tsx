@@ -19,14 +19,21 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [webauthnSupported, setWebauthnSupported] = useState<boolean | null>(null);
 
+  // Password sign-in (the additive alternative to passkeys).
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [pwSubmitting, setPwSubmitting] = useState(false);
+  const [pwError, setPwError] = useState("");
+
   useEffect(() => {
     const ok =
       typeof window !== "undefined" &&
       typeof window.PublicKeyCredential !== "undefined";
     setWebauthnSupported(ok);
     if (!ok) {
-      setStatus("error");
-      setError("This browser doesn't support passkeys.");
+      // No passkey support is not a dead end anymore — password sign-in is
+      // always available below.
+      setStatus("empty");
       return;
     }
     // Probe whether any passkeys are enrolled at all.
@@ -91,6 +98,32 @@ export default function LoginPage() {
     }
   }
 
+  async function handlePasswordSignIn(e: React.FormEvent) {
+    e.preventDefault();
+    setPwSubmitting(true);
+    setPwError("");
+    try {
+      const res = await fetch("/api/auth/login/password", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ email, password }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.verified) {
+        throw new Error(data.error ?? "Incorrect email or password.");
+      }
+      router.push(next);
+    } catch (err) {
+      setPwError(
+        err instanceof Error ? err.message : "Incorrect email or password.",
+      );
+      setPwSubmitting(false);
+    }
+  }
+
+  const showPasskey =
+    status === "ready" || status === "running" || status === "error";
+
   return (
     <main className="min-h-screen flex items-center justify-center px-4 py-12">
       <Card className="w-full max-w-md">
@@ -98,24 +131,9 @@ export default function LoginPage() {
           Sign in to Príncipe
         </h1>
 
-        {status === "empty" && (
+        {showPasskey && (
           <>
-            <p className="text-[14px] text-ink-500 mb-6 leading-relaxed">
-              No passkeys are registered yet. Enroll one at{" "}
-              <Link
-                href="/onboarding/enroll-passkey"
-                className="text-flare-600 hover:text-flare-500 underline underline-offset-4"
-              >
-                /onboarding/enroll-passkey
-              </Link>
-              .
-            </p>
-          </>
-        )}
-
-        {(status === "ready" || status === "running" || status === "error") && (
-          <>
-            <p className="text-[14px] text-ink-500 mb-6 leading-relaxed">
+            <p className="text-[14px] text-ink-500 mb-4 leading-relaxed">
               Authenticate with your passkey (Touch ID, Face ID, or security key).
             </p>
             <Button
@@ -136,17 +154,81 @@ export default function LoginPage() {
                 <p>{error}</p>
                 <p className="mt-2 text-ink-500 text-[12px]">
                   Passkeys are tied to the device and browser where you
-                  completed setup. Use that one to sign in.
+                  completed setup. Use that one, or sign in with your password
+                  below.
                 </p>
               </div>
             )}
+
+            <div className="flex items-center gap-3 my-6" aria-hidden>
+              <div className="h-px flex-1 bg-ink-100" />
+              <span className="text-[11px] uppercase tracking-wide text-ink-300 font-medium">
+                or
+              </span>
+              <div className="h-px flex-1 bg-ink-100" />
+            </div>
           </>
         )}
 
-        {status === "checking" && (
-          <p className="text-[13px] text-ink-300 font-mono">Checking passkeys…</p>
+        {status === "empty" && (
+          <p className="text-[14px] text-ink-500 mb-6 leading-relaxed">
+            Sign in with your password below, or enroll a passkey at{" "}
+            <Link
+              href="/onboarding/enroll-passkey"
+              className="text-flare-600 hover:text-flare-500 underline underline-offset-4"
+            >
+              /onboarding/enroll-passkey
+            </Link>
+            .
+          </p>
         )}
 
+        {status === "checking" ? (
+          <p className="text-[13px] text-ink-300 font-mono">Checking passkeys…</p>
+        ) : (
+          <form onSubmit={handlePasswordSignIn} className="space-y-3">
+            {showPasskey ? null : (
+              <p className="text-[14px] text-ink-500 leading-relaxed">
+                Sign in with your email and password.
+              </p>
+            )}
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@company.com"
+              autoComplete="email"
+              className="w-full h-10 px-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20"
+            />
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              autoComplete="current-password"
+              className="w-full h-10 px-3 rounded-md border border-ink-100 bg-elevated text-[14px] text-ink-900 placeholder:text-ink-300 focus:border-flare-600 focus:outline-none focus:ring-2 focus:ring-flare-600/20"
+            />
+            {pwError && (
+              <div
+                className="p-3 rounded-md bg-verdict-fail/10 text-verdict-fail text-[13px]"
+                role="alert"
+              >
+                {pwError}
+              </div>
+            )}
+            <Button
+              type="submit"
+              variant={showPasskey ? "secondary" : "primary"}
+              size="lg"
+              className="w-full"
+              disabled={
+                email.length === 0 || password.length === 0 || pwSubmitting
+              }
+            >
+              {pwSubmitting ? "Signing in…" : "Sign in with password"}
+            </Button>
+          </form>
+        )}
       </Card>
     </main>
   );
