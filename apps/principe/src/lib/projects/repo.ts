@@ -121,6 +121,13 @@ export interface CreateProjectInput {
   panelSize?: number;
 }
 
+// OSS edition build constants. There is no Firm.plan / entitlements /
+// billing in the self-hosted edition (single-user), so the pricing-page
+// promise — "30-CISO panels, fixed; 10 industries, max" — is enforced as
+// build constants, not a runtime tier lookup.
+export const SELF_HOSTED_PANEL_SIZE = 30; // OSS edition: 30-CISO panels, fixed (pricing claim).
+export const SELF_HOSTED_MAX_INDUSTRIES = 10; // OSS edition: up to 10 of the 24-industry catalogue.
+
 export async function createProject(
   input: CreateProjectInput,
 ): Promise<{ id: string }> {
@@ -129,7 +136,13 @@ export async function createProject(
     throw new Error("Project name must be 2-80 characters.");
   }
   const composition = normaliseComposition(input.composition);
-  const panelSize = Math.max(30, Math.min(200, Math.round(input.panelSize ?? 100)));
+  if (composition.industries.length > SELF_HOSTED_MAX_INDUSTRIES) {
+    throw new Error(
+      `The self-hosted edition supports up to ${SELF_HOSTED_MAX_INDUSTRIES} industries; you selected ${composition.industries.length}. The managed editions unlock all 24.`,
+    );
+  }
+  // The input panel size is ignored in the free edition — panels are fixed at 30.
+  const panelSize = SELF_HOSTED_PANEL_SIZE;
 
   const project = await prisma.project.create({
     data: {

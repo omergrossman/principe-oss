@@ -1,4 +1,10 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
+import { INDUSTRIES } from "@/lib/canon";
+
+// Canonical industry catalogue (the 24). Industries on a composition must
+// come from this set — users can't invent one.
+const CANON_INDUSTRIES = new Set<string>(INDUSTRIES);
+
 /**
  * Panel composition — the JSON shape stored on Project.composition.
  *
@@ -116,7 +122,11 @@ export function normaliseComposition(
   }
 
   const industries = Array.from(
-    new Set((input.industries ?? []).filter((s) => typeof s === "string")),
+    new Set(
+      (input.industries ?? []).filter(
+        (s): s is string => typeof s === "string" && CANON_INDUSTRIES.has(s),
+      ),
+    ),
   ).sort();
 
   const stanceWeights: Record<StanceKey, number> = { ...input.stanceWeights } as Record<StanceKey, number>;
