@@ -43,7 +43,7 @@ export async function GET() {
   // reject as "credential not found".
   const options = await generateAuthOptions({
     rpID: RP_ID,
-    userVerification: "preferred",
+    userVerification: "required",
     allowCredentials: credentials.map((c) => ({
       id: c.credentialId,
       transports: c.transports,
@@ -86,6 +86,7 @@ export async function POST(req: NextRequest) {
       expectedChallenge: challenge,
       expectedOrigin: ORIGIN,
       expectedRPID: RP_ID,
+      requireUserVerification: true,
       credential: {
         id: passkey.credentialId,
         publicKey: passkey.publicKey as Uint8Array<ArrayBuffer>,

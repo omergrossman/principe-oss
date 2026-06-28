@@ -61,7 +61,7 @@ export async function GET() {
     })),
     authenticatorSelection: {
       residentKey: "preferred",
-      userVerification: "preferred",
+      userVerification: "required",
     },
   });
 
@@ -93,6 +93,7 @@ export async function POST(req: NextRequest) {
       expectedChallenge: challenge,
       expectedOrigin: ORIGIN,
       expectedRPID: RP_ID,
+      requireUserVerification: true,
     });
 
     await clearRegistrationChallenge();

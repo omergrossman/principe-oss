@@ -36,7 +36,7 @@ export async function GET() {
 
   const options = await generateAuthOptions({
     rpID: RP_ID,
-    userVerification: "preferred",
+    userVerification: "required",
   });
 
   await setAuthenticationChallenge(options.challenge);
@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
       expectedChallenge: challenge,
       expectedOrigin: ORIGIN,
       expectedRPID: RP_ID,
+      requireUserVerification: true,
       credential: {
         id: passkey.credentialId,
         publicKey: passkey.publicKey as Uint8Array<ArrayBuffer>,
