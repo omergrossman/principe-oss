@@ -27,6 +27,7 @@ interface PanelAggregates {
 }
 
 import { ValidationBanner, type AskValidation } from "./ValidationBanner";
+import { MarketSignalCard, type TrendContext } from "./MarketSignalCard";
 import { MarkdownLite } from "./MarkdownLite";
 import { ThemesCard, type Theme } from "./ThemesCard";
 import { DecisionCard } from "./DecisionCard";
@@ -52,9 +53,10 @@ interface AskResult {
     themes?: Theme[];
     decision?: PanelDecision;
   };
-  // Sprint 5.5 — hybrid statistical validation. Silent on PASS; renders
-  // a warning banner on WARN/FAIL. Undefined for pre-Sprint-5.5 asks.
+  // Sprint 5.5 — hybrid statistical validation.
   validation?: AskValidation;
+  // Market trend layer — null when analyzeTrends() failed or wasn't seeded.
+  trendContext?: TrendContext | null;
 }
 
 interface Iteration {
@@ -654,6 +656,7 @@ function ResultBody({ result }: { result: AskResult }) {
         <RateLimitBanner failures={panel.aggregates.apiFailures} total={panel.responses.length} />
       )}
       {result.validation && <ValidationBanner validation={result.validation} />}
+      {result.trendContext && <MarketSignalCard ctx={result.trendContext} />}
 
       {/* Decision-grade output — the headline call sits above everything. */}
       <DecisionCard decision={summary.decision} />

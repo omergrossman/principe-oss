@@ -13,6 +13,8 @@ import {
 } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
 import { analyzeTrends } from "@/lib/ciso-panel/trend-analysis";
+import type { TrendContext } from "@/lib/ciso-panel/trend-analysis";
+import { getUpdatesMode } from "@/lib/updates/manifest";
 import { computeDecision } from "@/lib/ciso-panel/decision";
 import { calibrate } from "@/lib/ciso-panel/calibration-map";
 import type { QuestionType } from "@/lib/ciso-panel/question-router";
@@ -142,9 +144,7 @@ export async function POST(req: Request) {
       project.id,
     );
 
-    const hasLiveFeed =
-      !!process.env.PRINCIPE_UPDATES_URL &&
-      process.env.PRINCIPE_UPDATES_URL !== "disabled";
+    const hasLiveFeed = getUpdatesMode() === "remote";
 
     const [corpusSources, feedSources] = await Promise.all([
       prisma.knowledgeSource.findMany({
@@ -170,13 +170,18 @@ export async function POST(req: Request) {
         : Promise.resolve([]),
     ]);
 
-    const trendContext = await analyzeTrends(
-      question,
-      panel.aggregates,
-      panel.questionType,
-      client,
-      [...corpusSources, ...feedSources],
-    );
+    const dataSource: TrendContext["dataSource"] =
+      feedSources.length > 0 ? "corpus+updates" : "corpus-only";
+
+    const { trendContext, tokensIn: trendTokensIn, tokensOut: trendTokensOut } =
+      await analyzeTrends(
+        question,
+        panel.aggregates,
+        panel.questionType,
+        client,
+        [...corpusSources, ...feedSources],
+        dataSource,
+      );
 
     markSynthesisStarted(session.firmId);
     let summary;
@@ -217,8 +222,8 @@ export async function POST(req: Request) {
 
     // Auto-save: persist the ProjectAsk row idempotently. costUsd is
     // a snapshot at save time using the current Haiku price table.
-    const totalInput = panel.totalInputTokens + (summary.inputTokens ?? 0);
-    const totalOutput = panel.totalOutputTokens + (summary.outputTokens ?? 0);
+    const totalInput = panel.totalInputTokens + (summary.inputTokens ?? 0) + trendTokensIn;
+    const totalOutput = panel.totalOutputTokens + (summary.outputTokens ?? 0) + trendTokensOut;
     const costUsd = new Prisma.Decimal(
       (totalInput / 1_000_000) * HAIKU_INPUT_PER_M +
         (totalOutput / 1_000_000) * HAIKU_OUTPUT_PER_M,

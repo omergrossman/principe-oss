@@ -94,12 +94,11 @@ describe("buildAnalyzeTrendsPrompt — with knowledge sources", () => {
   });
 
   it("handles a null content field gracefully (skips the source)", () => {
-    const prompt = buildAnalyzeTrendsPrompt(QUESTION, agg(), CATEGORIES, [
-      { title: "No Content", content: null },
-    ]);
-    // The MARKET KNOWLEDGE SOURCES section is still rendered (title is there),
-    // but null content doesn't crash and produces empty snippet.
-    expect(prompt).not.toThrowError;
+    expect(() =>
+      buildAnalyzeTrendsPrompt(QUESTION, agg(), CATEGORIES, [
+        { title: "No Content", content: null },
+      ])
+    ).not.toThrow();
   });
 
   it("knowledge section appears after the stats, before the end", () => {

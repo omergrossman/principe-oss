@@ -10,6 +10,7 @@ import {
 import { RegionalGlobe } from "./RegionalGlobe";
 import { IndustryBreakdown } from "./IndustryBreakdown";
 import { ValidationBanner, type AskValidation } from "./ValidationBanner";
+import { MarketSignalCard, type TrendContext } from "./MarketSignalCard";
 import { MarkdownLite } from "./MarkdownLite";
 import { ThemesCard, type Theme } from "./ThemesCard";
 import { DecisionCard } from "./DecisionCard";
@@ -55,6 +56,7 @@ export function SavedAskDashboard({
   tokensOut,
   costUsd,
   validation,
+  trendContext,
   questionActions,
 }: {
   question: string;
@@ -69,6 +71,8 @@ export function SavedAskDashboard({
   // Undefined for legacy asks (pre-5.5) or when the Statistician was
   // unavailable. ValidationBanner self-hides on PASS / undefined.
   validation?: AskValidation | null;
+  // Sprint 6 — market trend layer. Null for legacy asks or when analyzeTrends() failed.
+  trendContext?: TrendContext | null;
   // Sprint 6 — optional inline actions to render in the question card
   // (Re-ask / Edit & ask on the past-asks detail page).
   questionActions?: React.ReactNode;
@@ -92,6 +96,7 @@ export function SavedAskDashboard({
       </Card>
 
       {validation && <ValidationBanner validation={validation} />}
+      {trendContext && <MarketSignalCard ctx={trendContext} />}
 
       {/* Decision-grade output — the headline call sits above everything. */}
       <DecisionCard decision={summary.decision} />

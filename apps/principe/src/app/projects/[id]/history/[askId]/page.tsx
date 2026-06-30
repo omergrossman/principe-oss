@@ -58,6 +58,7 @@ export default async function SavedAskPage({
       aggregates: true,
       summary: true,
       validation: true,
+      trendContext: true,
       tokensIn: true,
       tokensOut: true,
       costUsd: true,
@@ -164,6 +165,7 @@ export default async function SavedAskPage({
           tokensOut={ask.tokensOut}
           costUsd={Number(ask.costUsd)}
           validation={ask.validation as never}
+          trendContext={ask.trendContext as never}
           questionActions={
             readOnly ? null : <ReuseActions question={ask.question} />
           }

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-or-later
 import type Anthropic from "@anthropic-ai/sdk";
 import type { PanelAggregates } from "./ask";
-import { calibrate } from "./calibration-map";
 import type { QuestionType } from "./question-router";
 import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";
 
@@ -105,23 +104,25 @@ export function buildAnalyzeTrendsPrompt(
   return lines.join("\n");
 }
 
+export type AnalyzeTrendsResult = {
+  trendContext: TrendContext | null;
+  tokensIn: number;
+  tokensOut: number;
+};
+
 export async function analyzeTrends(
   question: string,
   aggregates: PanelAggregates,
   questionType: QuestionType | undefined,
   client: Anthropic,
   knowledgeSources: KnowledgeSnippet[] = [],
-): Promise<TrendContext | null> {
+  dataSource: TrendContext["dataSource"] = "corpus-only",
+): Promise<AnalyzeTrendsResult> {
+  if (knowledgeSources.length === 0) {
+    return { trendContext: null, tokensIn: 0, tokensOut: 0 };
+  }
   try {
-    const cal = calibrate(questionType ?? "PITCH", aggregates.proCount);
-    const matchedCategories = cal.categories;
-    const hasLiveFeed =
-      !!process.env.PRINCIPE_UPDATES_URL &&
-      process.env.PRINCIPE_UPDATES_URL !== "disabled";
-    const dataSource: TrendContext["dataSource"] = hasLiveFeed
-      ? "corpus+updates"
-      : "corpus-only";
-
+    const matchedCategories: string[] = questionType ? [questionType] : [];
     const panelAgreementRate = aggregates.proPct / 100;
 
     const userPayload = buildAnalyzeTrendsPrompt(
@@ -138,17 +139,25 @@ export async function analyzeTrends(
       messages: [{ role: "user", content: userPayload }],
     });
 
+    const tokensIn = res.usage.input_tokens;
+    const tokensOut = res.usage.output_tokens;
+
     const text = res.content
       .map((c) => (c.type === "text" ? c.text : ""))
       .join("")
       .trim();
 
     const signals = parseAnalyzeTrendsResponse(text);
-    if (!signals) return null;
+    if (!signals) return { trendContext: null, tokensIn, tokensOut };
 
-    return buildTrendContext(signals, panelAgreementRate, matchedCategories, dataSource);
-  } catch {
-    return null;
+    return {
+      trendContext: buildTrendContext(signals, panelAgreementRate, matchedCategories, dataSource),
+      tokensIn,
+      tokensOut,
+    };
+  } catch (e) {
+    console.warn("[analyzeTrends] failed:", e instanceof Error ? e.message : String(e));
+    return { trendContext: null, tokensIn: 0, tokensOut: 0 };
   }
 }
 
