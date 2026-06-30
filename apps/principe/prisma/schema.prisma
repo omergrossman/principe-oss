@@ -832,6 +832,9 @@ model ProjectAsk {
   // Statistician returns. Shape: { error: "..." } when Statistician was
   // unavailable. Null when validation was never attempted (legacy rows).
   validation      Json?
+  // Market trend layer — TrendContext from analyzeTrends(), nullable so
+  // existing rows and failure paths are unaffected.
+  trendContext    Json?
   createdAt       DateTime        @default(now())
 
   project         Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)

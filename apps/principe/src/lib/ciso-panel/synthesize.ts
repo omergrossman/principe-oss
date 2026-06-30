@@ -5,6 +5,7 @@ import { ANTHROPIC_MODELS } from "@/lib/anthropic/models";
 import { computeDecision, type PanelDecision } from "./decision";
 import { reviewObjections } from "./review";
 import type { QuestionType } from "./question-router";
+import { shouldTemperSynthesis, type TrendContext } from "./trend-analysis";
 
 /**
  * One synthesis call that turns the 100 structured responses into an
@@ -84,13 +85,57 @@ Rules:
 - Impact comes from PRECISION, never hype. Don't overstate strength or certainty, and never invent it — a sharp, specific read of a divided room ("EU banks back it; US healthcare won't touch it") lands harder than false confidence. The honesty is the credibility.
 - Never invent persona names or quotes that aren't in the input.`;
 
+export function buildSynthesisUserPayload(
+  question: string,
+  aggregates: PanelAggregates,
+  compact: object[],
+  trendContext: TrendContext | null,
+): string {
+  const lines = [
+    `FOUNDER'S QUESTION:`,
+    question,
+    ``,
+    `AGGREGATE STATS:`,
+    `- pro: ${aggregates.proCount} (${aggregates.proPct}%)`,
+    `- con: ${aggregates.conCount} (${aggregates.conPct}%)`,
+    `- neutral: ${aggregates.neutralCount} (${aggregates.neutralPct}%)`,
+    `- sentiment: mean ${aggregates.sentimentMean} / 10 · σ ${aggregates.sentimentStdDev} · ${aggregates.spreadLabel}`,
+    `- by region: ${JSON.stringify(aggregates.byRegion)}`,
+    `- by stance: ${JSON.stringify(aggregates.byStance)}`,
+  ];
+
+  if (trendContext && shouldTemperSynthesis(trendContext)) {
+    const instructions: string[] = [];
+    if (trendContext.viabilityScore < 60)
+      instructions.push("Lead with the market risk before summarising panel agreement.");
+    if (trendContext.marketSaturation === "high")
+      instructions.push("Explicitly name crowding in the summary.");
+    if (trendContext.vcMomentum === "cooling")
+      instructions.push("Flag timing risk.");
+
+    lines.push(
+      ``,
+      `MARKET TREND CONTEXT (factor this in — temper your summary accordingly):`,
+      `- Viability score: ${trendContext.viabilityScore}/100`,
+      `- Market saturation: ${trendContext.marketSaturation}`,
+      `- VC momentum: ${trendContext.vcMomentum}`,
+      `- Timing: ${trendContext.timingSignal}`,
+      `- Context: ${trendContext.narrative}`,
+      `Note: ${instructions.join(" ")}`,
+    );
+  }
+
+  lines.push(``, `100 RESPONSES (JSON):`, JSON.stringify(compact));
+  return lines.join("\n");
+}
+
 export async function synthesizePanel(
   question: string,
   responses: PanelResponse[],
   aggregates: PanelAggregates,
   client: Anthropic,
   questionType?: QuestionType,
-  opts?: { deepReview?: boolean },
+  opts?: { deepReview?: boolean; trendContext?: TrendContext | null },
 ): Promise<ExecSummary> {
   const started = Date.now();
   const compact = responses.map((r) => ({
@@ -105,21 +150,12 @@ export async function synthesizePanel(
     reasoning: r.reasoning,
   }));
 
-  const userPayload = [
-    `FOUNDER'S QUESTION:`,
+  const userPayload = buildSynthesisUserPayload(
     question,
-    ``,
-    `AGGREGATE STATS:`,
-    `- pro: ${aggregates.proCount} (${aggregates.proPct}%)`,
-    `- con: ${aggregates.conCount} (${aggregates.conPct}%)`,
-    `- neutral: ${aggregates.neutralCount} (${aggregates.neutralPct}%)`,
-    `- sentiment: mean ${aggregates.sentimentMean} / 10 · σ ${aggregates.sentimentStdDev} · ${aggregates.spreadLabel}`,
-    `- by region: ${JSON.stringify(aggregates.byRegion)}`,
-    `- by stance: ${JSON.stringify(aggregates.byStance)}`,
-    ``,
-    `100 RESPONSES (JSON):`,
-    JSON.stringify(compact),
-  ].join("\n");
+    aggregates,
+    compact,
+    opts?.trendContext ?? null,
+  );
 
   const res = await client.messages.create({
     model: SYNTH_MODEL,

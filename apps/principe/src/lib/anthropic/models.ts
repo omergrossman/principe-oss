@@ -13,4 +13,6 @@ export const ANTHROPIC_MODELS = {
   /** Used by the synthesis pass (exec summary, pros/cons, insights). Sonnet —
    *  a single call per report, for more impactful, higher-quality report prose. */
   synthesis: "claude-sonnet-4-6",
+  /** Used by the market trend analysis pass. Haiku — single best-effort call. */
+  trend: "claude-haiku-4-5",
 } as const;

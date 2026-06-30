@@ -12,6 +12,9 @@ import {
   classifyAnthropicError,
 } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
+import { analyzeTrends } from "@/lib/ciso-panel/trend-analysis";
+import type { TrendContext } from "@/lib/ciso-panel/trend-analysis";
+import { getUpdatesMode } from "@/lib/updates/manifest";
 import { computeDecision } from "@/lib/ciso-panel/decision";
 import { calibrate } from "@/lib/ciso-panel/calibration-map";
 import type { QuestionType } from "@/lib/ciso-panel/question-router";
@@ -141,6 +144,45 @@ export async function POST(req: Request) {
       project.id,
     );
 
+    const hasLiveFeed = getUpdatesMode() === "remote";
+
+    const [corpusSources, feedSources] = await Promise.all([
+      prisma.knowledgeSource.findMany({
+        where: {
+          firmId: session.firmId,
+          category: { in: ["analyst", "pitch_deck_reference"] },
+          enabled: true,
+        },
+        select: { title: true, content: true },
+        take: 5,
+      }),
+      hasLiveFeed
+        ? prisma.knowledgeSource.findMany({
+            where: {
+              firmId: session.firmId,
+              kind: "BUNDLE",
+              category: "market-trend",
+              enabled: true,
+            },
+            select: { title: true, content: true },
+            take: 10,
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const dataSource: TrendContext["dataSource"] =
+      feedSources.length > 0 ? "corpus+updates" : "corpus-only";
+
+    const { trendContext, tokensIn: trendTokensIn, tokensOut: trendTokensOut } =
+      await analyzeTrends(
+        question,
+        panel.aggregates,
+        panel.questionType,
+        client,
+        [...corpusSources, ...feedSources],
+        dataSource,
+      );
+
     markSynthesisStarted(session.firmId);
     let summary;
     try {
@@ -155,7 +197,7 @@ export async function POST(req: Request) {
         panel.aggregates,
         client,
         panel.questionType,
-        { deepReview },
+        { deepReview, trendContext },
       );
     } catch (synthErr) {
       // The 100 per-persona verdicts already succeeded; only the summarising
@@ -180,8 +222,8 @@ export async function POST(req: Request) {
 
     // Auto-save: persist the ProjectAsk row idempotently. costUsd is
     // a snapshot at save time using the current Haiku price table.
-    const totalInput = panel.totalInputTokens + (summary.inputTokens ?? 0);
-    const totalOutput = panel.totalOutputTokens + (summary.outputTokens ?? 0);
+    const totalInput = panel.totalInputTokens + (summary.inputTokens ?? 0) + trendTokensIn;
+    const totalOutput = panel.totalOutputTokens + (summary.outputTokens ?? 0) + trendTokensOut;
     const costUsd = new Prisma.Decimal(
       (totalInput / 1_000_000) * HAIKU_INPUT_PER_M +
         (totalOutput / 1_000_000) * HAIKU_OUTPUT_PER_M,
@@ -247,6 +289,9 @@ export async function POST(req: Request) {
         costUsd: new Prisma.Decimal(costUsd),
         durationMs: panel.durationMs,
         validation: validation as unknown as Prisma.InputJsonValue,
+        trendContext: trendContext
+          ? (trendContext as unknown as Prisma.InputJsonValue)
+          : Prisma.DbNull,
       },
       select: { id: true, createdAt: true },
     });
@@ -266,6 +311,7 @@ export async function POST(req: Request) {
       panel,
       summary,
       validation,
+      trendContext,
     });
   } catch (e) {
     // Fail-fast: the panel bailed early (bad key, no credit, outage). Surface
