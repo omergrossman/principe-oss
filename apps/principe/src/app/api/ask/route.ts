@@ -12,6 +12,7 @@ import {
   classifyAnthropicError,
 } from "@/lib/ciso-panel/ask";
 import { synthesizePanel } from "@/lib/ciso-panel/synthesize";
+import { analyzeTrends } from "@/lib/ciso-panel/trend-analysis";
 import { computeDecision } from "@/lib/ciso-panel/decision";
 import { calibrate } from "@/lib/ciso-panel/calibration-map";
 import type { QuestionType } from "@/lib/ciso-panel/question-router";
@@ -141,6 +142,42 @@ export async function POST(req: Request) {
       project.id,
     );
 
+    const hasLiveFeed =
+      !!process.env.PRINCIPE_UPDATES_URL &&
+      process.env.PRINCIPE_UPDATES_URL !== "disabled";
+
+    const [corpusSources, feedSources] = await Promise.all([
+      prisma.knowledgeSource.findMany({
+        where: {
+          firmId: session.firmId,
+          category: { in: ["analyst", "pitch_deck_reference"] },
+          enabled: true,
+        },
+        select: { title: true, content: true },
+        take: 5,
+      }),
+      hasLiveFeed
+        ? prisma.knowledgeSource.findMany({
+            where: {
+              firmId: session.firmId,
+              kind: "BUNDLE",
+              category: "market-trend",
+              enabled: true,
+            },
+            select: { title: true, content: true },
+            take: 10,
+          })
+        : Promise.resolve([]),
+    ]);
+
+    const trendContext = await analyzeTrends(
+      question,
+      panel.aggregates,
+      panel.questionType,
+      client,
+      [...corpusSources, ...feedSources],
+    );
+
     markSynthesisStarted(session.firmId);
     let summary;
     try {
@@ -155,7 +192,7 @@ export async function POST(req: Request) {
         panel.aggregates,
         client,
         panel.questionType,
-        { deepReview },
+        { deepReview, trendContext },
       );
     } catch (synthErr) {
       // The 100 per-persona verdicts already succeeded; only the summarising
@@ -247,6 +284,9 @@ export async function POST(req: Request) {
         costUsd: new Prisma.Decimal(costUsd),
         durationMs: panel.durationMs,
         validation: validation as unknown as Prisma.InputJsonValue,
+        trendContext: trendContext
+          ? (trendContext as unknown as Prisma.InputJsonValue)
+          : Prisma.DbNull,
       },
       select: { id: true, createdAt: true },
     });
@@ -266,6 +306,7 @@ export async function POST(req: Request) {
       panel,
       summary,
       validation,
+      trendContext,
     });
   } catch (e) {
     // Fail-fast: the panel bailed early (bad key, no credit, outage). Surface
